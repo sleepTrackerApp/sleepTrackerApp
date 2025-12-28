@@ -3,6 +3,8 @@
  */
 
 const express = require('express');
+
+// Import route handlers
 const homeRoutes = require('./homeRoutes');
 const apiRoutes = require('./apiRoutes');
 

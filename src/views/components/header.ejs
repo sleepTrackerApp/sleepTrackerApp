@@ -3,8 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <% const pageTitle = typeof title !== 'undefined' && title ? title : null; %>
-    <title><%= pageTitle ? `${pageTitle} | ` : '' %>Alive Sleep Tracker</title>
+    <title><%= title ? `${title} | ` : '' %>Alive Sleep Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/styles.css" />
@@ -13,16 +12,14 @@
     <nav class="grey darken-3">
       <div class="nav-wrapper container nav-layout">
         <div class="nav-left">
-          <a href="#" class="nav-brand white-text">Alive</a>
+          <a href="/" class="nav-brand white-text">Alive</a>
         </div>
         <a href="#" data-target="mobile-nav" class="sidenav-trigger white-text hide-on-large-only">
           <i class="material-icons white-text">menu</i>
         </a>
         <div class="nav-center hide-on-med-and-down">
           <ul class="nav-menu">
-            <li><a class="white-text" href="#">Home</a></li>
-            <li><a class="white-text" href="#">About Us</a></li>
-            <li><a class="white-text" href="#">Insights</a></li>
+            <%- include('./navMenu') %>
           </ul>
         </div>
         <div class="nav-right hide-on-med-and-down">
@@ -31,9 +28,7 @@
       </div>
     </nav>
     <ul class="sidenav" id="mobile-nav">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">About Us</a></li>
-      <li><a href="#">Insights</a></li>
+      <%- include('./navMenu') %>
       <li><a href="#">Sign In / Register</a></li>
     </ul>
 

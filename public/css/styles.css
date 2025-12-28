@@ -31,12 +31,17 @@
 
 .nav-menu a {
   font-weight: 500;
-  padding: 0 12px;
+  padding: 0 16px;
 }
 
 .nav-right .btn {
   border-radius: 9999px;
   padding: 0 1.75rem;
+}
+
+.nav-menu li.active a,
+.sidenav li.active a {
+  font-weight: 600;
 }
 
 .hero-section {
@@ -45,3 +50,6 @@
   align-items: center;
 }
 
+.page-footer a {
+  color: #FFF;
+}
