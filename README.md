@@ -28,6 +28,7 @@ EJS
 
 dotenv
 
+
 ## Project Structure
 
 ```text
@@ -52,6 +53,7 @@ tests/
 README.md
 package.json
 package-lock.json
+---
 
 Environment Variables
 
@@ -102,3 +104,7 @@ Sensitive configuration values are not committed to GitHub
 A .env.example file documents required environment variables
 
 Feature branches and pull requests are used to demonstrate proper Git workflow and provide development evidence
+
+Author
+
+Akashdeep Singh
