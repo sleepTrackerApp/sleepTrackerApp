@@ -1,10 +1,11 @@
-<li class="<%= activeMenu === 'home' ? 'active' : '' %>">
+<% const currentActiveMenu = typeof activeMenu === 'undefined' ? '' : activeMenu; %>
+<li class="<%= currentActiveMenu === 'home' ? 'active' : '' %>">
   <a href="/">Home</a>
 </li>
-<li class="<%= activeMenu === 'about' ? 'active' : '' %>">
+<li class="<%= currentActiveMenu === 'about' ? 'active' : '' %>">
   <a href="/about">About Us</a>
 </li>
-<li class="<%= activeMenu === 'insights' ? 'active' : '' %>">
+<li class="<%= currentActiveMenu === 'insights' ? 'active' : '' %>">
   <a href="/insights">Insights</a>
 </li>
 

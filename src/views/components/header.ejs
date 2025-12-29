@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><%= title ? `${title} | ` : '' %>Alive Sleep Tracker</title>
+    <% const resolvedTitle = typeof title === 'undefined' || title === null ? '' : title; %>
+    <title><%= resolvedTitle ? `${resolvedTitle} | ` : '' %>Alive Sleep Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/styles.css" />
@@ -23,12 +24,12 @@
           </ul>
         </div>
         <div class="nav-right hide-on-med-and-down">
-          <a href="#" class="btn waves-effect waves-light">Sign In / Register</a>
+          <a href="/auth/login" class="btn waves-effect waves-light">Sign In / Register</a>
         </div>
       </div>
     </nav>
     <ul class="sidenav" id="mobile-nav">
       <%- include('./navMenu') %>
-      <li><a href="#">Sign In / Register</a></li>
+      <li><a href="/auth/login">Sign In / Register</a></li>
     </ul>
 
