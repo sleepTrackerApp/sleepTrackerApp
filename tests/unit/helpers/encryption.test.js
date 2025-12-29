@@ -7,7 +7,6 @@ describe('Encryption function', () => {
     const hashA = hashValue('auth0-user-123');
     const hashB = hashValue('auth0-user-123');
     const hashC = hashValue('auth0-user-456');
-
     expect(hashA).to.equal(hashB);
     expect(hashA).to.match(/^[a-f0-9]{64}$/);
     expect(hashA).to.not.equal(hashC);

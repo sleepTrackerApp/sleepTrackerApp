@@ -6,6 +6,7 @@ const path = require('path');
 const express = require('express');
 const { createAuthMiddleware, userSyncMiddleware } = require('./helpers/auth');
 const routes = require('./routes');
+const { render404, render500 } = require('./controllers/errorControllers');
 
 /**
  * Application factory to create and configure the Express app
@@ -39,30 +40,10 @@ function createApp() {
   /* ---------------- Error Handling ---------------- */
 
   // 404 handler
-  app.use((req, res) => {
-    res.status(404).render('pages/errors/404', {
-      title: '404 - Page Not Found',
-    });
-  });
+  app.use(render404);
 
   // Global error handler
-  app.use((err, req, res, next) => {
-    // If headers are already sent, delegate to the default Express error handler
-    if (res.headersSent) {
-      return next(err);
-    }
-
-    // Log the error for debugging
-    console.error('Unhandled error:', err);
-
-    // Get status code and error name
-    const status = err.status || err.statusCode || 500;
-    const errorName = err.name || 'Internal Server Error';
-
-    res.status(status).render('pages/errors/500', {
-      title: `${status} - ${errorName}`,
-    });
-  });
+  app.use(render500);
 
   return app;
 }

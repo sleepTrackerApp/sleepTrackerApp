@@ -71,11 +71,10 @@ async function userSyncMiddleware(req, res, next) {
     const userRecord = await userService.getOrCreateUser(req.oidc.user.sub);
     res.locals.userRecord = userRecord;
     // Determine if this is the first login based on timestamps, if available
-    if (userRecord && userRecord.createdAt && userRecord.updatedAt) {
-      res.locals.isFirstLogin = userRecord.createdAt.getTime
-          ? userRecord.createdAt.getTime() === userRecord.updatedAt.getTime()
-          : userRecord.createdAt === userRecord.updatedAt;
-    }
+    res.locals.isFirstLogin =
+      userRecord?.createdAt instanceof Date &&
+      userRecord?.updatedAt instanceof Date &&
+      userRecord.createdAt.getTime() === userRecord.updatedAt.getTime();
 
     return next();
   } catch (error) {
