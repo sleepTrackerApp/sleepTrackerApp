@@ -1,10 +1,10 @@
-// app.js
 /**
  * Builds and configures the Express application instance
  */
 
 const path = require('path');
 const express = require('express');
+const { createAuthMiddleware } = require('./helpers/auth');
 const routes = require('./routes');
 
 /**
@@ -16,6 +16,9 @@ function createApp() {
 
   /* ---------------- Middleware ---------------- */
 
+  // Auth0 OIDC middleware
+  app.use(createAuthMiddleware());
+
   // Parse incoming request bodies
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -24,12 +27,6 @@ function createApp() {
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
 
-  // Default template locals
-  app.use((req, res, next) => {
-    res.locals.title = null;
-    res.locals.activeMenu = '';
-    next();
-  });
 
   // Serve static files
   app.use(express.static(path.join(__dirname, '..', 'public')));
@@ -49,12 +46,15 @@ function createApp() {
 
   // Global error handler
   app.use((err, req, res, next) => {
+    // If headers are already sent, delegate to the default Express error handler
     if (res.headersSent) {
       return next(err);
     }
 
+    // Log the error for debugging
     console.error('Unhandled error:', err);
 
+    // Get status code and error name
     const status = err.status || err.statusCode || 500;
     const errorName = err.name || 'Internal Server Error';
 

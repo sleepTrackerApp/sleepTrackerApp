@@ -1,14 +1,12 @@
-require("dotenv").config();
 /**
  * Alive Sleep Tracker Application
  * Entry point for the server.
  */
 const { createApp } = require('./app');
 const { connectDb } = require('./helpers/db');
+const { appConfig } = require('./helpers/settings');
 
-const PORT = process.env.PORT || 3000;
-const MONGODB_URI =
-  process.env.MONGODB_URI || 'mongodb://localhost:27017/alive-sleep-tracker';
+const { PORT, MONGODB_URI } = appConfig;
 
 /**
  * Connects to the database and starts the Express server.
