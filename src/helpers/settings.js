@@ -51,6 +51,7 @@ function getEnvBool(name, defaultValue) {
  *   MONGODB_URI: string,
  *   BASE_URL: string,
  *   NODE_ENV: string,
+ *   ENCRYPTION_KEY: string,
  *   AUTH0: Readonly<{
  *     ISSUER_BASE_URL: string,
  *     CLIENT_ID: string,
@@ -68,6 +69,8 @@ const appConfig = Object.freeze({
     BASE_URL: getEnv('BASE_URL', 'http://localhost'),
     // Current application environment (development, test, production)
     NODE_ENV: getEnv('NODE_ENV', 'development'),
+    // Symmetric encryption key used for hashing/encrypting sensitive data
+    ENCRYPTION_KEY: getEnv('ENCRYPTION_KEY', 'development-only-secret-key'),
     // Auth0 configuration
     AUTH0: Object.freeze({
         ISSUER_BASE_URL: getEnv('AUTH0_ISSUER_BASE_URL', 'https://dev-example.us.auth0.com'),

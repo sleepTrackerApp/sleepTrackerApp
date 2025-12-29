@@ -4,7 +4,7 @@
 
 const path = require('path');
 const express = require('express');
-const { createAuthMiddleware } = require('./helpers/auth');
+const { createAuthMiddleware, userSyncMiddleware } = require('./helpers/auth');
 const routes = require('./routes');
 
 /**
@@ -16,8 +16,9 @@ function createApp() {
 
   /* ---------------- Middleware ---------------- */
 
-  // Auth0 OIDC middleware
+  // Auth0 OIDC middleware & user sync
   app.use(createAuthMiddleware());
+  app.use(userSyncMiddleware);
 
   // Parse incoming request bodies
   app.use(express.json());
