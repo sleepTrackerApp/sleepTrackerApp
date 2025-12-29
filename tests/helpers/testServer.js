@@ -10,8 +10,6 @@ const { createApp } = require('../../src/app');
 /**
  * Creates a fresh Express application instance for testing.
  * @returns {import('express').Express}
- *
- * @todo: Add custom test configuration when config module will be created
  */
 function buildApp() {
   return createApp();
@@ -26,9 +24,5 @@ function buildRequest() {
 }
 
 module.exports = {
-  buildApp,
   buildRequest,
 };
-
-
-

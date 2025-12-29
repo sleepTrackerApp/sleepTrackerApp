@@ -10,8 +10,8 @@ The Alive Sleep Tracker App is a Node.js and Express-based web application that 
 - [Mongoose](https://mongoosejs.com/) (MongoDB object modeling)
 - [EJS](https://ejs.co/) (Embedded JavaScript templating)
 - [dotenv](https://github.com/motdotla/dotenv) (Configuration management)
-- [express-openid-connect](https://auth0.github.io/node-auth0/modules/_auth0_express_openid_connect.html) (Authentication)
-- [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), & [Supertest](https://github.com/visionmedia/supertest) (Testing)
+- [express-openid-connect](https://www.npmjs.com/package/express-openid-connect) (Authentication)
+- [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), [Sinon](https://sinonjs.org/), & [Supertest](https://github.com/visionmedia/supertest) (Testing)
 
 # Project Features
 
@@ -28,7 +28,7 @@ The Alive Sleep Tracker App is a Node.js and Express-based web application that 
 
 The codebase follows a clear MVC-aligned layout to keep responsibilities separated and easy to maintain. Public assets such as CSS, JavaScript, and images live in the `public` directory so they can be served directly without touching application code. Core application logic is organised under `src`, where controllers, helpers, models, routes, and views sit in their own folders, making it simple to find and modify related functionality. Automated tests reside in `tests`, grouped into helper utilities and integration flows, so quality checks stay close to the code they validate. This separation keeps changes isolated, improves onboarding for new contributors, and lets teams iterate on features without stepping on each other’s work.
 
-### Directory Layout
+### Project Layout
 
 ```text
 public/
@@ -41,13 +41,15 @@ src/
 ├── helpers/             # Utility functions (DB, Auth0, config)
 ├── models/              # Database schemas
 ├── routes/              # Application routes
+├── services/            # Domain-specific services
 ├── views/               # EJS templates and components
 ├── app.js               # Express app factory
 └── server.js            # Server bootstrap
 
 tests/
 ├── helpers/             # Test utilities
-└── integration/         # Integration test suites
+├── integration/         # Integration test suites
+└── unit/                # Unit test suites
 
 .env.example             # Example environment variables
 .gitignore               # Git ignore rules
@@ -66,7 +68,7 @@ Database connectivity is handled through helper modules in `src/helpers/db.js`, 
 
 ## Secure Environment Variable Management
 
-Configuration is centralised in `src/helpers/settings.js`, which loads values via `dotenv` and exposes a frozen `appConfig` object. This ensures all modules read settings from a single source of truth and that defaults are well-defined for local development.
+Configuration is centralised in `src/helpers/settings.js`, which loads values via `dotenv` and exposes a frozen `appConfig` object. This ensures all modules read settings from a single source of truth and that defaults are well-defined for local development. Secrets such as `ENCRYPTION_KEY` are required for hashing sensitive identifiers before they are persisted.
 
 ## Error Handling
 
@@ -82,7 +84,23 @@ Frontend assets (stylesheets, scripts, images) are served from the `public` dire
 
 ## Auth0 Integration
 
-Authentication flows are powered by `express-openid-connect`. Configuration is read from environment variables via `appConfig`, and middleware is instantiated in `src/helpers/auth.js`. Navigating to “Sign In / Register” triggers the Auth0-hosted login, with callbacks handled automatically under `/auth/login` and `/auth/callback`.
+Authentication flows are powered by `express-openid-connect`. Configuration is read from environment variables via `appConfig`, and middleware is instantiated in `src/helpers/auth.js`. Navigating to “Sign In / Register” triggers the Auth0-hosted login, with callbacks handled automatically under `/auth/login` and `/auth/callback`. User identifiers emitted by Auth0 are HMAC-hashed before being stored in MongoDB via the service layer.
+
+# Environment Variables
+
+Create a `.env` file in the project root (or use system environment variables) with the following keys:
+
+| Variable                | Example                                         | Description                                            |
+|-------------------------|-------------------------------------------------|--------------------------------------------------------|
+| `PORT`                  | `3000`                                          | Application port                                       |
+| `BASE_URL`              | `http://localhost`                              | Application base URL                                   |
+| `MONGODB_URI`           | `mongodb://localhost:27017/alive-sleep-tracker` | MongoDB connection string                              |
+| `NODE_ENV`              | `development`                                   | Node environment (`development`, `test`, `production`) |
+| `ENCRYPTION_KEY`        | `development-only-secret-key`                   | Secret used to hash Auth0 identifiers                  |
+| `AUTH0_ISSUER_BASE_URL` | `https://dev-example.us.auth0.com`              | Auth0 application domain                               |
+| `AUTH0_CLIENT_ID`       | `replace-with-auth0-client-id`                  | Auth0 client ID                                        |
+| `AUTH0_CLIENT_SECRET`   | `replace-with-auth0-client-secret`              | Auth0 client secret                                    |
+| `AUTH0_SECRET`          | `replace-with-auth0-session-secret`             | Auth0 session secret                                   |
 
 # How to Run
 
