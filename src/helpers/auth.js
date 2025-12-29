@@ -104,7 +104,8 @@ function buildAuthConfig() {
       scope: 'openid profile email',
     },
     routes: {
-      login: '/auth/login',
+      login: false,
+      logout: false,
       callback: '/auth/callback',
     },
   };

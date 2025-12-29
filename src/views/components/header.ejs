@@ -24,12 +24,22 @@
           </ul>
         </div>
         <div class="nav-right hide-on-med-and-down">
-          <a href="/auth/login" class="btn waves-effect waves-light">Sign In / Register</a>
+          <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+            <a href="/dashboard" class="btn waves-effect waves-light">My Sleep Data</a>
+            <a href="/auth/logout" class="btn-flat waves-effect waves-light white-text">Sign Out</a>
+          <% } else { %>
+            <a href="/auth/login" class="btn waves-effect waves-light">Sign In / Register</a>
+          <% } %>
         </div>
       </div>
     </nav>
     <ul class="sidenav" id="mobile-nav">
       <%- include('./navMenu') %>
-      <li><a href="/auth/login">Sign In / Register</a></li>
+      <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+        <li><a href="/dashboard">My Sleep Data</a></li>
+        <li><a href="/auth/logout">Sign Out</a></li>
+      <% } else { %>
+        <li><a href="/auth/login">Sign In / Register</a></li>
+      <% } %>
     </ul>
 
