@@ -13,7 +13,12 @@
           <div class="col s12 m3">
             <h6 class="white-text">Account</h6>
             <ul>
-              <li><a href="/auth/login" class="white-text">Sign In / Register</a></li>
+              <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                <li><a href="/dashboard" class="white-text">My Sleep Data</a></li>
+                <li><a href="/auth/logout" class="white-text">Sign Out</a></li>
+              <% } else { %>
+                <li><a href="/auth/login" class="white-text">Sign In / Register</a></li>
+              <% } %>
             </ul>
           </div>
         </div>

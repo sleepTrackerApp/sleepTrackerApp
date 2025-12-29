@@ -67,15 +67,14 @@ async function userSyncMiddleware(req, res, next) {
       return next();
     }
 
-    // Attempt to find an existing user record by Auth0 user ID
-    const existing = await userService.findUserByAuthId(req.oidc.user.sub);
-    // If found, attach it
-    if (existing) {
-      res.locals.userRecord = existing;
-    } else {
-      // If not found, create a new user record
-      res.locals.userRecord = await userService.getOrCreateUser(req.oidc.user.sub);
-      res.locals.isFirstLogin = true;
+    // Retrieve or create the user record in a single atomic operation
+    const userRecord = await userService.getOrCreateUser(req.oidc.user.sub);
+    res.locals.userRecord = userRecord;
+    // Determine if this is the first login based on timestamps, if available
+    if (userRecord && userRecord.createdAt && userRecord.updatedAt) {
+      res.locals.isFirstLogin = userRecord.createdAt.getTime
+          ? userRecord.createdAt.getTime() === userRecord.updatedAt.getTime()
+          : userRecord.createdAt === userRecord.updatedAt;
     }
 
     return next();
@@ -104,7 +103,8 @@ function buildAuthConfig() {
       scope: 'openid profile email',
     },
     routes: {
-      login: '/auth/login',
+      login: false,
+      logout: false,
       callback: '/auth/callback',
     },
   };

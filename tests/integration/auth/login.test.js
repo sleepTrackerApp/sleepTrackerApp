@@ -16,12 +16,15 @@ describe('Auth0 auth helpers', () => {
     sandbox.restore();
   });
 
-  it('creates middleware config without requiring afterCallback', () => {
+  it('creates middleware config with custom routes disabled', () => {
     const config = buildAuthConfig();
     expect(config.authRequired).to.be.false;
     expect(config.auth0Logout).to.be.true;
-    expect(config.routes).to.deep.equal({ login: '/auth/login', callback: '/auth/callback' });
-    expect(config).to.not.have.property('afterCallback');
+    expect(config.routes).to.deep.equal({
+      login: false,
+      logout: false,
+      callback: '/auth/callback',
+    });
   });
 
   it('sync middleware populates locals and reuses existing user', async () => {
