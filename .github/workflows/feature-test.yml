@@ -1,0 +1,55 @@
+name: Run Test Suite
+
+# Trigger the workflow on push to a feature branch or on pull requests to main
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - 'public/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'public/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  # Job to run the test suite
+  test:
+    runs-on: ubuntu-latest
+
+    # Set up MongoDB service
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.adminCommand(\"ping\")'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Set environment variable for MongoDB connection
+    env:
+      MONGODB_URI: mongodb://localhost:27017/test
+
+    # Steps to run the test suite
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
