@@ -1,0 +1,31 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: Set Sleep Goal and View Goal Progress
+
+    U->>F: Open Goals
+    U->>F: Enter target sleep duration (e.g., 8 hours)
+    U->>F: Click "Save goal"
+    F->>B: PUT /goal (target duration)
+    B->>B: Validate goal value (range/format)
+    alt Invalid goal
+        B-->>F: 400 Bad Request (validation error)
+        F-->>U: Show error message
+    else Valid goal
+        B->>D: Save goal (user scoped)
+        D-->>B: Saved
+        B-->>F: 200 OK (goal saved)
+        F-->>U: Show confirmation
+    end
+
+    U->>F: View goal progress (dashboard/goals)
+    F->>B: GET /goal-progress?range=...
+    B->>D: Fetch goal + sleep entries for range
+    D-->>B: Goal + entries
+    B->>B: Calculate progress metrics
+    B-->>F: 200 OK + progress data
+    F-->>U: Display progress (met goal %, average hours, streaks)

@@ -1,0 +1,37 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: Record Sleep Entry
+
+    U->>F: Open "Add Sleep Entry" form
+    U->>F: Enter date + total hours (+ optional start/end)
+    U->>F: Click "Save"
+    F->>B: POST /sleep-entries (sleep data)
+    B->>B: Validate input (required fields, ranges, formats)
+
+    alt Invalid input
+        B-->>F: 400 Bad Request (validation errors)
+        F-->>U: Show field errors
+    else Valid input
+        B->>D: Check if entry exists for same date (user scoped)
+        alt Entry already exists
+            D-->>B: Existing entry found
+            B-->>F: 409 Conflict (entry exists)
+            F-->>U: Show message + offer "Edit entry"
+        else No existing entry
+            D-->>B: No entry found
+            B->>D: Insert new sleep entry (linked to user id)
+            D-->>B: Insert success
+            B-->>F: 201 Created + saved entry
+            F-->>U: Show success + update history/charts
+        end
+    end
+
+    alt Database unavailable / write failure
+        B-->>F: 503 Service Unavailable
+        F-->>U: Show error + allow retry
+    end

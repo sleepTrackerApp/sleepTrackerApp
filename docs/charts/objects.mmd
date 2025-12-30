@@ -1,0 +1,90 @@
+classDiagram
+
+    class User {
+        string id
+        string auth0Id (encrypted)
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    class SleepEntry {
+        string id
+        string userId
+        date entryDate
+        number hours
+        datetime startTime
+        datetime endTime
+        number rating
+        more data...
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    class SleepGoal {
+        string id
+        string userId
+        number targetHours
+        datetime updatedAt
+    }
+
+    class Summary {
+        string id
+        string userId
+        date date
+        number avgHours
+        more data...
+        datetime createdAt
+    }
+
+    class Score {
+        string id
+        string userId
+        date date
+        number value
+        datetime createdAt
+    }
+
+    class Insight {
+        string id
+        string userId
+        string text
+        datetime updatedAt
+    }
+
+    class Message {
+        string id
+        string userId
+        string title
+        string body
+        boolean isRead
+        datetime createdAt
+    }
+
+    class DataExport {
+        string id
+        string userId
+        string status
+        datetime createdAt
+    }
+
+    class Category {
+        string id
+        string name
+    }
+
+    class Article {
+        string id
+        string categoryId
+        string title
+        string slug
+    }
+
+    User "1" --> "0..*" SleepEntry
+    User "1" --> "1" SleepGoal
+    User "1" --> "0..*" Summary
+    User "1" --> "0..*" Score
+    User "1" --> "1" Insight
+    User "1" --> "0..*" Message
+    User "1" --> "0..*" DataExport
+
+    Category "1" --> "0..*" Article

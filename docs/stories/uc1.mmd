@@ -1,0 +1,44 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+    participant A as Auth0
+
+    Note over U,A: Register / Sign in with Auth0
+
+    U->>F: Open app page
+    U->>F: Click "Sign in"
+    F->>A: Redirect to Auth0 login page
+
+    alt Auth0 service unavailable
+        A-->>F: No response / error
+        F-->>U: Show "Sign-in service unavailable"
+    else Auth0 available
+        U->>A: Enter credentials / create account
+        alt Invalid credentials
+            A-->>U: Show error + allow retry/reset
+            U->>A: Retry credentials
+        else Credentials valid
+            A-->>F: Return to app with token
+            F->>B: Send token
+            B->>B: Validate token
+
+            alt Token invalid / expired
+                B-->>F: Auth failed
+                F-->>U: Show error + redirect to Sign in
+            else Token valid
+                B->>D: Find user by Auth0 subject
+                alt User exists
+                    D-->>B: User found
+                else New user
+                    D-->>B: Not found
+                    B->>D: Create user record (encrypted pseudonymous id)
+                    D-->>B: User created
+                end
+                B-->>F: Create session + auth success
+                F-->>U: Redirect to destination
+            end
+        end
+    end

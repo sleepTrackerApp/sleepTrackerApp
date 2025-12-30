@@ -1,0 +1,45 @@
+---
+config:
+  layout: elk
+---
+flowchart LR
+    subgraph BE["Backend"]
+        ROUTES["Routes"]
+        CTL["Controllers"]
+        SVC["Services"]
+        MODELS["Models"]
+        HELPERS["Helpers"]
+        MES["Socket IO"]
+    end
+    subgraph FE["Frontend"]
+        VIEWS["Views EJS"]
+        STATIC["Assets"]
+        MATER["Materialize"]
+        JQ["jQuery"]
+        UI["Web UI"]
+        SOCK["Socket.IO"]
+    end
+    subgraph TESTS["Tests"]
+        MOCHA["Mocha/Chai"]
+        UNIT["Unit"]
+        INT["Integration"]
+    end
+    subgraph APP["Alive Sleep Tracking App"]
+        BE
+        FE
+        TESTS
+    end
+    ROUTES --> CTL
+    CTL --> SVC
+    SVC --> MODELS & HELPERS
+    VIEWS --> UI
+    STATIC --> UI
+    MATER --> UI
+    JQ --> UI
+    SOCK --> UI
+    MOCHA --> UNIT & INT
+    UNIT --> SVC & CTL & HELPERS
+    INT --> ROUTES
+    UI --> ROUTES
+    HELPERS --> AUTH0[Auth0] & CONTENTFUL[Contentful] & OPENAI[OpenAI] & MONGODB[MongoDB] & MES
+    MES --> SOCK

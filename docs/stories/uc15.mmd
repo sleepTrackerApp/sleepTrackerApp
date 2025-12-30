@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: Request Account Deletion
+
+    U->>F: Open Settings / Privacy
+    U->>F: Click "Delete my account"
+    F-->>U: Show warning + confirmation prompt
+    U->>F: Confirm deletion (final step)
+    F->>B: DELETE /account
+    B->>D: Delete all user data (sleep entries, goals, insights, messages)
+    alt Data deleted successfully
+        D-->>B: Deleted
+        B-->>F: 204 No Content (deleted)
+        F-->>U: Sign out + show deletion confirmation
+    else Delete fails
+        D-->>B: Error
+        B-->>F: 503/500 Deletion failed
+        F-->>U: Show error + allow retry
+    end

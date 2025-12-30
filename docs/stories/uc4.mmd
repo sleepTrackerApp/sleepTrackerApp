@@ -1,0 +1,37 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: Edit Sleep Entry
+
+    U->>F: Open Sleep History
+    U->>F: Select an entry and click "Edit"
+    F-->>U: Display edit form with existing values
+    U->>F: Update hours/time fields
+    U->>F: Click "Save changes"
+    F->>B: PUT /sleep-entries/{entryId} (updated data)
+    B->>B: Validate input (required fields, ranges, formats)
+
+    alt Invalid input
+        B-->>F: 400 Bad Request (validation errors)
+        F-->>U: Show field errors
+    else Valid input
+        B->>D: Update entry by entryId (user scoped)
+        alt Entry not found
+            D-->>B: Not found
+            B-->>F: 404 Not Found
+            F-->>U: Show "Entry not found" message
+        else Update success
+            D-->>B: Updated
+            B-->>F: 200 OK + updated entry
+            F-->>U: Show success + refresh history/charts
+        end
+    end
+
+    alt Database unavailable / write failure
+        B-->>F: 503 Service Unavailable
+        F-->>U: Show error + allow retry
+    end

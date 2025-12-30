@@ -1,0 +1,30 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+    participant S as Socket.IO Channel
+
+    Note over U,S: Receive Reminders and Notifications
+
+    B->>B: Scheduled check (daily/weekly)
+    B->>D: Evaluate user status (missing entry / weekly summary / goal progress)
+    D-->>B: Relevant user data
+    B->>D: Create notification message (user scoped)
+    D-->>B: Message stored
+
+    alt User is online
+        B->>S: Emit "message:new" notification
+        S-->>F: Deliver "message:new"
+        F-->>U: Show notification in Messages
+    else User is offline
+        Note over B,D: Message will appear when user opens the app
+    end
+
+    U->>F: Open Messages
+    F->>B: GET /messages
+    B->>D: Fetch messages (user scoped)
+    D-->>B: Messages list
+    B-->>F: 200 OK + messages
+    F-->>U: Display notifications
