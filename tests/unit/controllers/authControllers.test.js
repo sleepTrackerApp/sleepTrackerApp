@@ -18,15 +18,36 @@ describe('Auth controllers', () => {
       expect(loginStub.calledOnceWithExactly({ returnTo: '/dashboard' })).to.be.true;
     });
 
-    it('redirects to provided returnTo parameter', () => {
+    it('redirects to whitelisted returnTo path', () => {
       const loginStub = sinon.stub();
-      const req = { query: { returnTo: '/custom' } };
+      const req = { query: { returnTo: '/dashboard' } };
       const res = { oidc: { login: loginStub } };
 
       login(req, res);
 
-      expect(loginStub.calledOnceWithExactly({ returnTo: '/custom' })).to.be.true;
+      expect(loginStub.calledOnceWithExactly({ returnTo: '/dashboard' })).to.be.true;
     });
+
+    it('redirects to home when returnTo is /', () => {
+      const loginStub = sinon.stub();
+      const req = { query: { returnTo: '/' } };
+      const res = { oidc: { login: loginStub } };
+
+      login(req, res);
+
+      expect(loginStub.calledOnceWithExactly({ returnTo: '/' })).to.be.true;
+    });
+
+    it('rejects external URLs and uses default', () => {
+      const loginStub = sinon.stub();
+      const req = { query: { returnTo: 'https://evil.com' } };
+      const res = { oidc: { login: loginStub } };
+
+      login(req, res);
+
+      expect(loginStub.calledOnceWithExactly({ returnTo: '/dashboard' })).to.be.true;
+    });
+
   });
 
   describe('logout', () => {

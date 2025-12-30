@@ -10,7 +10,7 @@
  */
 function renderDashboard(req, res) {
   // Check authentication status
-  const isAuthenticated = Boolean(req.oidc?.isAuthenticated?.() && req.oidc.user);
+  const isAuthenticated = Boolean(res.locals?.isAuthenticated);
 
   // Redirect unauthenticated users to login
   if (!isAuthenticated) {

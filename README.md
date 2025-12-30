@@ -258,7 +258,7 @@ The `userSyncMiddleware` automatically populates `res.locals` with authenticatio
 ```javascript
 function myController(req, res) {
   // Check if user is authenticated
-  const isAuthenticated = Boolean(req.oidc?.isAuthenticated?.() && req.oidc.user);
+  const isAuthenticated = Boolean(res.locals?.isAuthenticated);
   
   if (!isAuthenticated) {
     return res.redirect('/auth/login');
@@ -308,7 +308,7 @@ To protect a route and require authentication:
 
 ```javascript
 function protectedRoute(req, res) {
-  const isAuthenticated = Boolean(req.oidc?.isAuthenticated?.() && req.oidc.user);
+  const isAuthenticated = Boolean(res.locals?.isAuthenticated);
   
   if (!isAuthenticated) {
     return res.redirect('/auth/login');

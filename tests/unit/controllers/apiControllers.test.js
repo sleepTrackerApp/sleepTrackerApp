@@ -7,7 +7,7 @@ describe('API controllers', () => {
     sinon.restore();
   });
 
-  describe('API Weclome', () => {
+  describe('API Welcome', () => {
     it('returns welcome message as JSON', () => {
       const req = {};
       const res = {
