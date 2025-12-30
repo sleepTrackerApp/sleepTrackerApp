@@ -11,7 +11,7 @@ The Alive Sleep Tracker App is a Node.js and Express-based web application that 
 - [EJS](https://ejs.co/) (Embedded JavaScript templating)
 - [dotenv](https://github.com/motdotla/dotenv) (Configuration management)
 - [express-openid-connect](https://www.npmjs.com/package/express-openid-connect) (Authentication)
-- [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), [Sinon](https://sinonjs.org/), & [Supertest](https://github.com/visionmedia/supertest) (Testing)
+- [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), [Supertest](https://github.com/visionmedia/supertest), [Sinon](https://sinonjs.org/) & [Proxyquire](https://github.com/thlorenz/proxyquire) (Testing)
 
 # Project Features
 
@@ -20,7 +20,7 @@ The Alive Sleep Tracker App is a Node.js and Express-based web application that 
 - [MongoDB database integration](#mongodb-database-integration)
 - [Secure environment variable management](#secure-environment-variable-management)
 - [Centralised error handling (404 and 500 error pages)](#error-handling)
-- [Centralised unit and integration testing with Mocha, Chai, and Supertest](#testing)
+- [Centralised unit and integration testing](#testing)
 - [Static asset handling for CSS and JavaScript](#static-assets)
 - [Auth0 authentication integration for user login and registration](#auth0-integration)
 
@@ -72,11 +72,138 @@ Configuration is centralised in `src/helpers/settings.js`, which loads values vi
 
 ## Error Handling
 
-The application defines opinionated 404 and 500 flows inside `src/app.js`, rendering dedicated EJS templates from `src/views/pages/errors`. Centralising these handlers keeps user-facing feedback consistent while ensuring unexpected failures are logged for further investigation.
+The application defines 404 and 500 flows, rendering dedicated EJS templates from `src/views/pages/errors`. Centralising these handlers keeps user-facing feedback consistent while ensuring unexpected failures are logged for further investigation.
 
 ## Testing
 
-`npm test` runs the project’s Mocha suites, which rely on Chai for assertions and Supertest for HTTP simulation. Integration tests live under `tests/integration` and exercise both API endpoints and rendered pages to ensure end-to-end behaviour works as expected.
+The project uses a comprehensive testing setup with multiple libraries, each serving a specific purpose:
+
+### Testing Libraries
+
+- **Mocha**: Test framework that provides the structure for organising and running tests with `describe` and `it` blocks
+- **Chai**: Assertion library that provides readable assertions like `expect().to.be.true` and `expect().to.equal()`
+- **Supertest**: HTTP assertion library that allows testing Express routes and middleware by simulating HTTP requests
+- **Sinon**: Mocking and stubbing library used to create spies, stubs, and mocks for isolating units under test
+- **Proxyquire**: Module replacement library that enables mocking dependencies when requiring modules, to isolate code under test
+
+### How to Add Tests
+
+1. **Unit Tests**: Place in `tests/unit/` matching the source structure
+   - Example: `src/controllers/homeControllers.js` → `tests/unit/controllers/homeControllers.test.js`
+
+2. **Integration Tests**: Place in `tests/integration/` organized by feature area
+   - Example: API tests in `tests/integration/api/`, page tests in `tests/integration/pages/`
+
+3. **Test Structure**:
+   ```javascript
+   const { expect } = require('chai');
+   const sinon = require('sinon');
+   const { functionToTest } = require('../../../src/path/to/module');
+
+   describe('Module name', () => {
+     afterEach(() => {
+       sinon.restore(); // Clean up stubs after each test
+     });
+
+     it('should do something', () => {
+       // Test implementation
+       expect(result).to.equal(expected);
+     });
+   });
+   ```
+
+### Using Supertest
+
+Supertest is used for integration tests that need to make HTTP requests to your Express app:
+
+```javascript
+const { expect } = require('chai');
+const { buildRequest } = require('../../helpers/testServer');
+
+describe('API endpoints', () => {
+  it('returns JSON response', async () => {
+    const response = await buildRequest().get('/api');
+    expect(response.status).to.equal(200);
+    expect(response.type).to.match(/json/);
+    expect(response.body).to.deep.equal({ message: 'Welcome' });
+  });
+});
+```
+
+The `buildRequest()` helper from `tests/helpers/testServer.js` creates a test client for the app.
+
+### Using Sinon
+
+Sinon is used for creating stubs, spies, and mocks to isolate code under test:
+
+```javascript
+const sinon = require('sinon');
+
+// Stub a function
+const stub = sinon.stub(module, 'functionName').returns('mocked value');
+
+// Stub console methods
+sinon.stub(console, 'error');
+
+// Stub Express response methods
+const res = {
+  status: sinon.stub().returnsThis(),
+  render: sinon.stub(),
+  json: sinon.stub(),
+};
+
+// Verify calls
+expect(res.render.calledOnceWithExactly('template', { data })).to.be.true;
+
+// Clean up
+sinon.restore();
+```
+
+### Using Proxyquire
+
+Proxyquire is used to replace dependencies when requiring modules, allowing you to inject mocks:
+
+```javascript
+const proxyquire = require('proxyquire').noCallThru().noPreserveCache();
+
+describe('Module with dependencies', () => {
+  it('should use mocked dependency', () => {
+    const mockDependency = {
+      someFunction: sinon.stub().returns('mocked'),
+    };
+
+    const moduleUnderTest = proxyquire('../../../src/path/to/module', {
+      '../path/to/dependency': mockDependency,
+    });
+
+    const result = moduleUnderTest.functionToTest();
+    
+    expect(mockDependency.someFunction.calledOnce).to.be.true;
+    expect(result).to.equal('mocked');
+  });
+});
+```
+
+**Key Proxyquire options:**
+- `.noCallThru()`: Prevents the original module from being loaded
+- `.noPreserveCache()`: Ensures fresh module loads for each test
+
+### Running Tests
+
+Run all tests:
+```bash
+npm test
+```
+
+Run specific test file:
+```bash
+npx mocha tests/unit/controllers/homeControllers.test.js
+```
+
+Run tests matching a pattern:
+```bash
+npm test -- --grep "Error controllers"
+```
 
 ## Static Assets
 
@@ -84,7 +211,126 @@ Frontend assets (stylesheets, scripts, images) are served from the `public` dire
 
 ## Auth0 Integration
 
-Authentication flows are powered by `express-openid-connect`. Configuration is read from environment variables via `appConfig`, and middleware is instantiated in `src/helpers/auth.js`. Navigating to “Sign In / Register” triggers the Auth0-hosted login, with callbacks handled automatically under `/auth/login` and `/auth/callback`. User identifiers emitted by Auth0 are HMAC-hashed before being stored in MongoDB via the service layer.
+Authentication flows are powered by `express-openid-connect`. Configuration is read from environment variables via `appConfig`, and middleware is instantiated in `src/helpers/auth.js`.
+
+### Privacy and Security
+
+The application follows a privacy-first approach:
+- **No private information stored**: User email addresses, names, or other personal data from Auth0 are never persisted to the database
+- **Hashed identifiers**: The Auth0 user identifier (`sub`) is hashed using HMAC-SHA256 with a secret key before storage
+- **Session-based data**: User profile information (name, email) is only available during the active session and is not saved
+- **Secure hashing**: The `ENCRYPTION_KEY` environment variable is used as the secret for hashing, ensuring identifiers cannot be reversed
+
+### User Login
+
+To initiate a login flow, redirect users to `/auth/login`:
+
+```javascript
+// In a controller
+res.redirect('/auth/login');
+
+// Or with a custom return URL
+res.redirect('/auth/login?returnTo=/dashboard');
+```
+
+The login route (`/auth/login`) automatically redirects to Auth0's hosted login page. After successful authentication, users are redirected back to the application (default: `/dashboard`).
+
+### User Logout
+
+To log out a user, redirect to `/auth/logout`:
+
+```javascript
+// In a controller
+res.redirect('/auth/logout');
+
+// Or in a template
+<a href="/auth/logout">Sign Out</a>
+```
+
+The logout route invalidates the Auth0 session and redirects users to the home page (`/`).
+
+### Checking Authentication Status
+
+The `userSyncMiddleware` automatically populates `res.locals` with authentication information on every request.
+
+**In Controllers:**
+
+```javascript
+function myController(req, res) {
+  // Check if user is authenticated
+  const isAuthenticated = Boolean(req.oidc?.isAuthenticated?.() && req.oidc.user);
+  
+  if (!isAuthenticated) {
+    return res.redirect('/auth/login');
+  }
+  
+  // Access user information from res.locals (set by middleware)
+  const displayName = res.locals.displayName;
+  const userProfile = res.locals.userProfile;
+  const userRecord = res.locals.userRecord;
+  const isFirstLogin = res.locals.isFirstLogin;
+  
+  res.render('template', {
+    displayName,
+    isAuthenticated: true,
+  });
+}
+```
+
+**In Templates (EJS):**
+
+The middleware automatically makes authentication data available in all templates:
+
+```ejs
+<% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+  <p>Welcome, <%= displayName %>!</p>
+  <a href="/dashboard">My Sleep Data</a>
+  <a href="/auth/logout">Sign Out</a>
+<% } else { %>
+  <a href="/auth/login">Sign In / Register</a>
+<% } %>
+```
+
+### Available User Data
+
+The `userSyncMiddleware` populates the following in `res.locals`:
+
+- **`isAuthenticated`** (boolean): Whether the user is currently authenticated
+- **`user`** (object|null): The full Auth0 user object (only during session)
+- **`displayName`** (string|null): User's display name (name or email, fallback to null)
+- **`userProfile`** (object|null): Non-sensitive profile with `sub`, `email`, and `name`
+- **`userRecord`** (object|null): The database user record (contains only hashed identifier and timestamps)
+- **`isFirstLogin`** (boolean): Whether this is the user's first login (based on timestamps)
+
+### Protecting Routes
+
+To protect a route and require authentication:
+
+```javascript
+function protectedRoute(req, res) {
+  const isAuthenticated = Boolean(req.oidc?.isAuthenticated?.() && req.oidc.user);
+  
+  if (!isAuthenticated) {
+    return res.redirect('/auth/login');
+  }
+  
+  // User is authenticated, proceed with route logic
+  res.render('protected-page');
+}
+```
+
+### User Data Storage
+
+When a user logs in for the first time:
+1. Auth0 authenticates the user and returns their profile
+2. The `userSyncMiddleware` extracts the Auth0 identifier (`sub`)
+3. The identifier is hashed using HMAC-SHA256 with `ENCRYPTION_KEY`
+4. A `User` document is created/updated in MongoDB with only:
+   - `authIdHash`: The hashed Auth0 identifier
+   - `lastLoginAt`: Timestamp of the last login
+   - `createdAt` and `updatedAt`: Automatic timestamps
+
+No email addresses, names, or other personal information are stored in the database.
 
 # Environment Variables
 
