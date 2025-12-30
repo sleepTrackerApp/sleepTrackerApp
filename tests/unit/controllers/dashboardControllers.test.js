@@ -8,8 +8,9 @@ describe('Dashboard controller tests', () => {
   });
 
   it('redirects to /auth/login when user is not authenticated', () => {
-    const req = { oidc: { isAuthenticated: () => false } };
+    const req = {};
     const res = {
+      locals: { isAuthenticated: false },
       redirect: sinon.stub(),
     };
 
@@ -19,14 +20,13 @@ describe('Dashboard controller tests', () => {
   });
 
   it('renders dashboard when user is authenticated', () => {
-    const req = {
-      oidc: {
-        isAuthenticated: () => true,
-        user: { sub: 'auth0|user', name: 'Tester', email: 'tester@example.com' },
-      },
-    };
+    const req = {};
     const res = {
-      locals: { displayName: 'Display Tester' },
+      locals: {
+        isAuthenticated: true,
+        displayName: 'Display Tester',
+      },
+      redirect: sinon.stub(),
       render: sinon.stub(),
     };
 
