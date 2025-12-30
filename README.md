@@ -57,15 +57,8 @@ tests/
 └── unit/                # Unit test suites
 
 docs/                    # Supporting documentation
-├── charts/              # Architecture and design diagrams
-│   ├── layout.png       # System architecture diagram
-│   ├── layout.mmd       # Mermaid source for layout
-│   ├── objects.png      # Object relationship diagram
-│   └── objects.mmd      # Mermaid source for objects
-└── stories/             # User story diagrams
 
-.github/                 # GitHub configuration (to be added)
-└── workflows/           # GitHub Actions workflows
+.github/                 # GitHub actions
 
 .env.example             # Example environment variables
 .gitignore               # Git ignore rules
@@ -87,6 +80,12 @@ The following diagram shows the main elements of the application, third-party se
 The following diagram illustrates the object relationships and data flow within the application:
 
 ![Object Relationships](docs/charts/objects.png)
+
+### Database Model
+
+The following diagram shows the database model and relations between collections:
+
+![Database Model](docs/charts/model.png)
 
 Source files for these diagrams (Mermaid format) are available in `docs/charts/` and can be edited to reflect architectural changes.
 
