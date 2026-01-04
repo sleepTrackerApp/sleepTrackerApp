@@ -279,24 +279,21 @@ The logout route invalidates the Auth0 session and redirects users to the home p
 
 ### Checking Authentication Status
 
-The `userSyncMiddleware` automatically populates `res.locals` with authentication information on every request.
+Authentication checks should be handled by middleware at the route level. The application provides two middleware functions for protecting routes:
 
-**In Controllers:**
+- **`requireAuthRoute`**: Use this for page routes (HTML responses). If the user is not authenticated, it redirects them to `/auth/login` with a `returnTo` parameter containing the original URL. If authenticated, it calls `next()` to proceed to the route handler.
 
+- **`requireAuthAPI`**: Use this for API routes (JSON responses). If the user is not authenticated, it returns a `401` status with a JSON error response. If authenticated, it calls `next()` to proceed to the route handler.
+
+The `userSyncMiddleware` automatically populates `res.locals` with authentication information when user is signed in. Controllers can access user information from `res.locals` when needed:
 ```javascript
 function myController(req, res) {
-   // Check if user is authenticated
-   const isAuthenticated = Boolean(res.locals?.isAuthenticated);
-
-   if (!isAuthenticated) {
-      return res.redirect('/auth/login');
-   }
-
    // Access user information from res.locals (set by middleware)
-   const displayName = res.locals.displayName;
-   const userProfile = res.locals.userProfile;
-   const userRecord = res.locals.userRecord;
-   const isFirstLogin = res.locals.isFirstLogin;
+   const isAuthenticated = res.locals.isAuthenticated; // Flag to check user auth status
+   const isFirstLogin = res.locals.isFirstLogin; // Flag to check if first login
+   const displayName = res.locals.displayName; // User's display name
+   const userProfile = res.locals.userProfile; // User profile data
+   const userRecord = res.locals.userRecord; // User record from DB
 
    res.render('template', {
       displayName,
@@ -305,9 +302,7 @@ function myController(req, res) {
 }
 ```
 
-**In Templates (EJS):**
-
-The middleware automatically makes authentication data available in all templates:
+Authentication data set by the middleware ia also available in templates:
 
 ```ejs
 <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
@@ -332,20 +327,47 @@ The `userSyncMiddleware` populates the following in `res.locals`:
 
 ### Protecting Routes
 
-To protect a route and require authentication:
+To protect routes and require authentication, use the provided middleware functions in your route definitions:
+
+**For Page Routes (HTML responses):**
+
+Use `requireAuthRoute` middleware to protect page routes. Unauthenticated users will be redirected to `/auth/login` with a `returnTo` parameter:
 
 ```javascript
-function protectedRoute(req, res) {
-   const isAuthenticated = Boolean(res.locals?.isAuthenticated);
+const express = require('express');
+const { requireAuthRoute } = require('../helpers/auth');
+const { renderDashboard } = require('../controllers/dashboardControllers');
 
-   if (!isAuthenticated) {
-      return res.redirect('/auth/login');
-   }
+const router = express.Router();
 
-   // User is authenticated, proceed with route logic
-   res.render('protected-page');
-}
+// Protected route - redirects to login if not authenticated
+router.get('/dashboard', requireAuthRoute, renderDashboard);
+
+module.exports = router;
 ```
+
+**For API Routes (JSON responses):**
+
+Use `requireAuthAPI` middleware to protect API routes. Unauthenticated users will receive a 401 JSON error:
+
+```javascript
+const express = require('express');
+const { requireAuthAPI } = require('../helpers/auth');
+const { getUserData } = require('../controllers/apiControllers');
+
+const router = express.Router();
+
+// Protected API route - returns 401 JSON error if not authenticated
+router.get('/api/user', requireAuthAPI, getUserData);
+
+module.exports = router;
+```
+
+**Middleware Behavior:**
+
+- `requireAuthRoute`: Redirects unauthenticated users to `/auth/login?returnTo=<originalUrl>`
+- `requireAuthAPI`: Returns `401` status with JSON error: `{ success: false, error: { code: 'AUTH_REQUIRED', message: 'Authentication required' } }`
+- Both middleware functions call `next()` if the user is authenticated, allowing the route handler to proceed
 
 ### User Data Storage
 
