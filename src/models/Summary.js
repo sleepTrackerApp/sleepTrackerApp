@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
  * Summary Schema
  * References the User ID to correlate data owner.
  */
-const sumSchema = new mongoose.Schema(
+const summarySchema = new mongoose.Schema(
     {
         // Reference User
         userId: {
@@ -29,5 +29,5 @@ const sumSchema = new mongoose.Schema(
     }
 );
 
-module.exports = mongoose.models.Summary || mongoose.model('Summary', sumSchema);
+module.exports = mongoose.models.Summary || mongoose.model('Summary', summarySchema);
 
