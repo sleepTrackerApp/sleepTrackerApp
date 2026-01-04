@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: Export User Data (CSV)
+
+    U->>F: Open Settings / Data Export
+    U->>F: Click "Export CSV"
+    F->>B: POST /export/csv
+    B->>D: Fetch all sleep entries (user scoped)
+    alt No data available
+        D-->>B: Empty list
+        B-->>F: 200 OK (no data message)
+        F-->>U: Show "No data to export"
+    else Data available
+        D-->>B: Sleep entries
+        B->>B: Generate CSV file
+        B-->>F: 200 OK + CSV file (or download link)
+        F-->>U: Download CSV
+    end
+
+    alt Database unavailable / export fails
+        B-->>F: 503/500 Export failed
+        F-->>U: Show error + allow retry
+    end

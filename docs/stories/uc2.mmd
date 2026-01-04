@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: Authorise API Request
+
+    U->>F: Trigger protected action (e.g., save/view data)
+    F->>B: API request + token
+    B->>B: Validate token (signature, expiry, audience/issuer)
+    alt Token missing/invalid/expired
+        B-->>F: 401 Unauthorised
+        F-->>U: Redirect to Sign in / show error
+    else Token valid
+        B->>B: Extract pseudonymous user id (subject)
+        B->>B: Check access rules (user scope)
+        alt Action not permitted
+            B-->>F: 403 Forbidden
+            F-->>U: Show "Not allowed"
+        else Action permitted
+            B-->>F: Authorised (continue request)
+            Note over U,D: Request operation continues
+        end
+    end

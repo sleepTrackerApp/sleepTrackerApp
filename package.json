@@ -11,7 +11,8 @@
     "MongoDB",
     "Express",
     "Materialize",
-    "Socket.IO"
+    "Socket.IO",
+    "Contentful"
   ],
   "homepage": "https://github.com/akashjaura16/sleepTrackerApp#readme",
   "bugs": {
@@ -52,11 +53,15 @@
     "test": "mocha \"tests/**/*.test.js\" --recursive --reporter spec"
   },
   "dependencies": {
+    "contentful": "^11.10.1",
     "dotenv": "^17.2.3",
     "ejs": "^3.1.10",
     "express": "^4.18.2",
     "express-openid-connect": "^2.19.3",
     "mongoose": "^9.0.2"
+  },
+  "overrides": {
+    "qs": "6.14.1"
   },
   "devDependencies": {
     "chai": "^4.4.1",

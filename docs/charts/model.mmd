@@ -1,0 +1,65 @@
+erDiagram
+    USER ||--o{ SLEEP_ENTRY : has
+    USER ||--|| SLEEP_GOAL : has
+    USER ||--o{ SUMMARY : has
+    USER ||--o{ SCORE : has
+    USER ||--o{ INSIGHT : has
+    USER ||--o{ MESSAGE : has
+
+    USER {
+        string id PK
+        string auth0Id
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    SLEEP_ENTRY {
+        string id PK
+        string userId FK
+        date entryDate
+        number hours
+        datetime startTime
+        datetime endTime
+        number rating
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    SLEEP_GOAL {
+        string id PK
+        string userId FK
+        number targetHours
+        datetime updatedAt
+    }
+
+    SUMMARY {
+        string id PK
+        string userId FK
+        date date
+        number avgHours
+        datetime createdAt
+    }
+
+    SCORE {
+        string id PK
+        string userId FK
+        date date
+        number value
+        datetime createdAt
+    }
+
+    INSIGHT {
+        string id PK
+        string userId FK
+        string text
+        datetime updatedAt
+    }
+
+    MESSAGE {
+        string id PK
+        string userId FK
+        string title
+        string body
+        boolean isRead
+        datetime createdAt
+    }

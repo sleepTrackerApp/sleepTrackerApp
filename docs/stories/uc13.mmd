@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant CMS as Headless CMS
+
+    Note over U,CMS: View Educational Insights
+
+    U->>F: Open Educational Insights
+    U->>F: Select category/article (optional search/filter)
+    F->>B: GET /content?query=...&category=...
+    B->>CMS: Fetch articles/resources
+    alt CMS unavailable / error
+        CMS-->>B: Error / timeout
+        B-->>F: 503/500 Content unavailable
+        F-->>U: Show "Content unavailable" message
+    else Success
+        CMS-->>B: Articles/resources
+        B-->>F: 200 OK + content list/content item
+        F-->>U: Display content
+    end

@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: View Sleep Data Visualisation
+
+    U->>F: Open Visualisation/Dashboard
+    U->>F: Select view (Daily / Weekly / Monthly) and date range (optional)
+    F->>B: GET /sleep-stats?granularity=...&from=...&to=...
+    B->>B: Validate parameters (granularity, date range)
+    B->>D: Fetch sleep entries for user within range
+    B->>B: Aggregate data by granularity (daily/weekly/monthly)
+    alt Invalid parameters
+        B-->>F: 400 Bad Request
+        F-->>U: Show validation message
+    else Success
+        D-->>B: Entries (or empty list)
+        B-->>F: 200 OK + aggregated series + summary stats
+        F-->>U: Render charts and summaries (or empty state)
+    end
+
+    alt Database unavailable / fetch fails
+        B-->>F: 503 Service Unavailable
+        F-->>U: Show error + allow retry
+    end

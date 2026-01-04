@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+
+    Note over U,D: View Weekly Summary
+
+    B->>B: Weekly summary job runs (scheduled)
+    B->>D: Fetch sleep entries for the week (user scoped)
+    D-->>B: Sleep entries (or empty list)
+    B->>B: Calculate weekly metrics (avg hours, consistency, best/worst day)
+    B->>D: Store weekly summary (optional cache)
+    D-->>B: Stored
+
+    U->>F: Open dashboard (Weekly Summary section)
+    F->>B: GET /weekly-summary?week=...
+    B->>D: Fetch stored summary (or compute if not cached)
+    D-->>B: Summary data (or empty)
+    B-->>F: 200 OK + summary
+    F-->>U: Display weekly summary on dashboard

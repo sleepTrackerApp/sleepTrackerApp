@@ -1,17 +1,22 @@
 # Alive Sleep Tracker App
 
-The Alive Sleep Tracker App is a Node.js and Express-based web application that provides a foundation for tracking and managing sleep-related data. The application follows a clean, modular architecture and uses environment variables to securely manage configuration across different environments.
+The Alive Sleep Tracker App is a Node.js and Express-based web application that provides a foundation for tracking and managing sleep-related data. The application follows a clean, modular architecture and uses environment variables to manage configuration across environments securely.
 
 # Technologies Used
 
 - [Node.js](https://nodejs.org/) (Run-time environment)
 - [Express.js](https://expressjs.com/) (Web framework)
+- [Nodemon](https://nodemon.io/) (Development server auto-reloading)
 - [MongoDB](https://www.mongodb.com/) (Database)
-- [Mongoose](https://mongoosejs.com/) (MongoDB object modeling)
+- [Mongoose](https://mongoosejs.com/) (MongoDB object modelling)
 - [EJS](https://ejs.co/) (Embedded JavaScript templating)
 - [dotenv](https://github.com/motdotla/dotenv) (Configuration management)
 - [express-openid-connect](https://www.npmjs.com/package/express-openid-connect) (Authentication)
-- [Mocha](https://mochajs.org/), [Chai](https://www.chaijs.com/), [Supertest](https://github.com/visionmedia/supertest), [Sinon](https://sinonjs.org/) & [Proxyquire](https://github.com/thlorenz/proxyquire) (Testing)
+- [Mocha](https://mochajs.org/) (Test framework)
+- [Chai](https://www.chaijs.com/) (Assertion library)
+- [Supertest](https://github.com/visionmedia/supertest) (HTTP assertion library)
+- [Sinon](https://sinonjs.org/) (Mock/stub library)
+- [Proxyquire](https://github.com/thlorenz/proxyquire) (Testing module replacement library)
 
 # Project Features
 
@@ -26,7 +31,7 @@ The Alive Sleep Tracker App is a Node.js and Express-based web application that 
 
 ## Project Structure
 
-The codebase follows a clear MVC-aligned layout to keep responsibilities separated and easy to maintain. Public assets such as CSS, JavaScript, and images live in the `public` directory so they can be served directly without touching application code. Core application logic is organised under `src`, where controllers, helpers, models, routes, and views sit in their own folders, making it simple to find and modify related functionality. Automated tests reside in `tests`, grouped into helper utilities and integration flows, so quality checks stay close to the code they validate. This separation keeps changes isolated, improves onboarding for new contributors, and lets teams iterate on features without stepping on each other’s work.
+The codebase follows MVC-aligned architecture to keep responsibilities separated and maintainability easy. Public assets such as CSS, JavaScript, and images live in the `public` directory so they can be served directly without touching application code. Core application logic is organised under `src`, where controllers, helpers, models, routes, and views sit in their own folders, making it simple to find and modify related functionality. Automated tests reside in `tests`, grouped into helper utilities and integration flows, so quality checks stay close to the code they validate. This separation keeps changes isolated, improves onboarding for new contributors, and lets teams iterate on features without stepping on each other’s work.
 
 ### Project Layout
 
@@ -51,6 +56,10 @@ tests/
 ├── integration/         # Integration test suites
 └── unit/                # Unit test suites
 
+docs/                    # Supporting documentation
+
+.github/                 # GitHub actions
+
 .env.example             # Example environment variables
 .gitignore               # Git ignore rules
 README.md                # Project documentation
@@ -58,9 +67,31 @@ package.json             # Project metadata and dependencies
 package-lock.json        # Locked dependencies
 ```
 
+## Application Architecture
+
+### System Layout
+
+The following diagram shows the main elements of the application, third-party services, and their relationships:
+
+![System Architecture](docs/charts/layout.png)
+
+### Object Relationships
+
+The following diagram illustrates the object relationships and data flow within the application:
+
+![Object Relationships](docs/charts/objects.png)
+
+### Database Model
+
+The following diagram shows the database model and relations between collections:
+
+![Database Model](docs/charts/model.png)
+
+Source files for these diagrams (Mermaid format) are available in `docs/charts/` and can be edited to reflect architectural changes.
+
 ## Templates
 
-Views are built with EJS templates. Layout components like headers, navigation, and footers live under `src/views/components`, while page-level templates live under `src/views/pages`. Templates receive data through `res.render`, and shared locals are established close to where they are needed, keeping the layout flexible.
+Views are built with EJS templates. Layout components such as headers, navigation, and footers are defined in `src/views/components`, while page-level templates are defined in `src/views/pages`. Templates receive data via `res.render`, and shared locals are defined where they are needed, keeping the layout flexible.
 
 ## MongoDB Database Integration
 
@@ -68,7 +99,7 @@ Database connectivity is handled through helper modules in `src/helpers/db.js`, 
 
 ## Secure Environment Variable Management
 
-Configuration is centralised in `src/helpers/settings.js`, which loads values via `dotenv` and exposes a frozen `appConfig` object. This ensures all modules read settings from a single source of truth and that defaults are well-defined for local development. Secrets such as `ENCRYPTION_KEY` are required for hashing sensitive identifiers before they are persisted.
+Configuration is centralised in `src/helpers/settings.js`, which loads values via `dotenv` and exposes a frozen `appConfig` object. This ensures that all modules read settings from a single source of truth and that defaults are well defined for local development.
 
 ## Error Handling
 
@@ -91,7 +122,7 @@ The project uses a comprehensive testing setup with multiple libraries, each ser
 1. **Unit Tests**: Place in `tests/unit/` matching the source structure
    - Example: `src/controllers/homeControllers.js` → `tests/unit/controllers/homeControllers.test.js`
 
-2. **Integration Tests**: Place in `tests/integration/` organized by feature area
+2. **Integration Tests**: Place in `tests/integration/` organised by feature area
    - Example: API tests in `tests/integration/api/`, page tests in `tests/integration/pages/`
 
 3. **Test Structure**:
@@ -121,12 +152,12 @@ const { expect } = require('chai');
 const { buildRequest } = require('../../helpers/testServer');
 
 describe('API endpoints', () => {
-  it('returns JSON response', async () => {
-    const response = await buildRequest().get('/api');
-    expect(response.status).to.equal(200);
-    expect(response.type).to.match(/json/);
-    expect(response.body).to.deep.equal({ message: 'Welcome' });
-  });
+   it('returns JSON response', async () => {
+      const response = await buildRequest().get('/api');
+      expect(response.status).to.equal(200);
+      expect(response.type).to.match(/json/);
+      expect(response.body).to.deep.equal({ message: 'Welcome' });
+   });
 });
 ```
 
@@ -147,9 +178,9 @@ sinon.stub(console, 'error');
 
 // Stub Express response methods
 const res = {
-  status: sinon.stub().returnsThis(),
-  render: sinon.stub(),
-  json: sinon.stub(),
+   status: sinon.stub().returnsThis(),
+   render: sinon.stub(),
+   json: sinon.stub(),
 };
 
 // Verify calls
@@ -167,20 +198,20 @@ Proxyquire is used to replace dependencies when requiring modules, allowing you 
 const proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 
 describe('Module with dependencies', () => {
-  it('should use mocked dependency', () => {
-    const mockDependency = {
-      someFunction: sinon.stub().returns('mocked'),
-    };
+   it('should use mocked dependency', () => {
+      const mockDependency = {
+         someFunction: sinon.stub().returns('mocked'),
+      };
 
-    const moduleUnderTest = proxyquire('../../../src/path/to/module', {
-      '../path/to/dependency': mockDependency,
-    });
+      const moduleUnderTest = proxyquire('../../../src/path/to/module', {
+         '../path/to/dependency': mockDependency,
+      });
 
-    const result = moduleUnderTest.functionToTest();
-    
-    expect(mockDependency.someFunction.calledOnce).to.be.true;
-    expect(result).to.equal('mocked');
-  });
+      const result = moduleUnderTest.functionToTest();
+
+      expect(mockDependency.someFunction.calledOnce).to.be.true;
+      expect(result).to.equal('mocked');
+   });
 });
 ```
 
@@ -257,23 +288,23 @@ The `userSyncMiddleware` automatically populates `res.locals` with authenticatio
 
 ```javascript
 function myController(req, res) {
-  // Check if user is authenticated
-  const isAuthenticated = Boolean(res.locals?.isAuthenticated);
-  
-  if (!isAuthenticated) {
-    return res.redirect('/auth/login');
-  }
-  
-  // Access user information from res.locals (set by middleware)
-  const displayName = res.locals.displayName;
-  const userProfile = res.locals.userProfile;
-  const userRecord = res.locals.userRecord;
-  const isFirstLogin = res.locals.isFirstLogin;
-  
-  res.render('template', {
-    displayName,
-    isAuthenticated: true,
-  });
+   // Check if user is authenticated
+   const isAuthenticated = Boolean(res.locals?.isAuthenticated);
+
+   if (!isAuthenticated) {
+      return res.redirect('/auth/login');
+   }
+
+   // Access user information from res.locals (set by middleware)
+   const displayName = res.locals.displayName;
+   const userProfile = res.locals.userProfile;
+   const userRecord = res.locals.userRecord;
+   const isFirstLogin = res.locals.isFirstLogin;
+
+   res.render('template', {
+      displayName,
+      isAuthenticated: true,
+   });
 }
 ```
 
@@ -283,11 +314,11 @@ The middleware automatically makes authentication data available in all template
 
 ```ejs
 <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-  <p>Welcome, <%= displayName %>!</p>
-  <a href="/dashboard">My Sleep Data</a>
-  <a href="/auth/logout">Sign Out</a>
+   <p>Welcome, <%= displayName %>!</p>
+   <a href="/dashboard">My Sleep Data</a>
+   <a href="/auth/logout">Sign Out</a>
 <% } else { %>
-  <a href="/auth/login">Sign In / Register</a>
+   <a href="/auth/login">Sign In / Register</a>
 <% } %>
 ```
 
@@ -308,14 +339,14 @@ To protect a route and require authentication:
 
 ```javascript
 function protectedRoute(req, res) {
-  const isAuthenticated = Boolean(res.locals?.isAuthenticated);
-  
-  if (!isAuthenticated) {
-    return res.redirect('/auth/login');
-  }
-  
-  // User is authenticated, proceed with route logic
-  res.render('protected-page');
+   const isAuthenticated = Boolean(res.locals?.isAuthenticated);
+
+   if (!isAuthenticated) {
+      return res.redirect('/auth/login');
+   }
+
+   // User is authenticated, proceed with route logic
+   res.render('protected-page');
 }
 ```
 
@@ -350,17 +381,17 @@ Create a `.env` file in the project root (or use system environment variables) w
 
 # How to Run
 
-1. Install dependencies  
+1. Install dependencies
    ```bash
    npm install
    ```
 2. Set up environment variables  
    Create a `.env` file in the project root based on `.env.example`
-3. Run tests (optional)  
+3. Run tests (optional)
    ```bash
    npm test
    ```
-4. Start the development server  
+4. Start the development server
    ```bash
    cd src
    node server.js

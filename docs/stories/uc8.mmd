@@ -1,0 +1,38 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+    participant S as Socket.IO Channel
+
+    Note over U,S: Receive Real-time Messages and Announcements
+
+    U->>F: Open app (dashboard/messages)
+    F->>S: Connect to Socket.IO
+    S->>B: Register socket for user session
+    B-->>S: Connection accepted
+
+    B->>D: Create message (announcement/reminder/AI update)
+    D-->>B: Message stored
+    B->>S: Emit "message:new" event
+    S-->>F: Deliver "message:new"
+    F-->>U: Display message (unread)
+
+    alt User marks message as read
+        U->>F: Mark as read
+        F->>B: PATCH /messages/{id} (read=true)
+        B->>D: Update message status
+        D-->>B: Updated
+        B-->>F: 200 OK
+        F-->>U: Message shown as read
+    end
+
+    alt User deletes/dismisses message
+        U->>F: Delete/Dismiss message
+        F->>B: DELETE /messages/{id}
+        B->>D: Delete message (or mark deleted)
+        D-->>B: Deleted
+        B-->>F: 200 OK
+        F-->>U: Message removed from list
+    end

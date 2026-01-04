@@ -1,0 +1,35 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+    participant AI as OpenAI API
+    participant S as Socket.IO Channel
+
+    Note over U,S: Generate AI Sleep Score and Tips
+
+    U->>F: Save sleep entry (create/edit)
+    F->>B: POST/PUT sleep entry
+    B->>D: Store updated sleep entry
+    D-->>B: Saved
+
+    B->>D: Fetch updated sleep dataset (user scoped)
+    D-->>B: Sleep dataset
+    B->>B: Prepare minimal dataset (no PII)
+    B->>AI: Request score + tips
+    alt AI error / timeout
+        AI-->>B: Error / timeout
+        B->>D: Store AI status (failed/pending) (optional)
+        D-->>B: Saved
+        B->>S: Emit "insights:status" (unavailable)
+        S-->>F: Deliver status update
+        F-->>U: Show "AI insights unavailable" message
+    else Success
+        AI-->>B: Score + tips
+        B->>D: Save score + tips (user scoped)
+        D-->>B: Saved
+        B->>S: Emit "insights:updated"
+        S-->>F: Deliver update event
+        F-->>U: Show updated score + tips on dashboard
+    end

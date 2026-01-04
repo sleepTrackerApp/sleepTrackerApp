@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant F as Frontend
+    participant B as Backend
+    participant D as MongoDB
+    participant X as External Auth Service
+
+    Note over U,D: View Sleep History
+
+    U->>F: Open Sleep History
+    U->>F: Select date range (optional)
+    F->>B: GET /sleep-entries?from=...&to=...
+    B->>B: Validate query parameters (date range)
+    B->>D: Fetch entries for user within date range
+
+    alt Invalid date range
+        B-->>F: 400 Bad Request (invalid range)
+        F-->>U: Show validation message
+    else Success
+        D-->>B: Entries (or empty list)
+        B-->>F: 200 OK + entries
+        F-->>U: Display list (or "No entries found")
+    end
+
+    alt Database unavailable / read fails
+        B-->>F: 503 Service Unavailable
+        F-->>U: Show error + allow retry
+    end
