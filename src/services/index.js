@@ -6,4 +6,4 @@ module.exports = {
   userService: require('./userService'),
   contentfulService: require('./contentfulService'),
 };
-
+}
