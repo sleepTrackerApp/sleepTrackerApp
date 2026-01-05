@@ -12,9 +12,12 @@ function apiWelcome(req, res) {
 /** Handler for unknown API endpoints (404 Not Found). */
 function apiNotFound(req, res) {
   res.status(404).json({
-    error: 'Not Found',
-    message: 'The requested API endpoint does not exist.',
-    path: req.originalUrl,
+    success: false,
+    error: {
+      code: 'NOT_FOUND',
+      message: 'The requested API endpoint does not exist',
+      path: req.originalUrl,
+    },
   });
 }
 
@@ -23,8 +26,11 @@ function apiError(err, req, res, next) {
   console.error('Unhandled API error:', err);
 
   res.status(err.status || 500).json({
-    error: 'Internal Server Error',
-    message: 'An unexpected error occurred while processing the request.',
+    success: false,
+    error: {
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'An unexpected error occurred while processing the request',
+    },
   });
 }
 

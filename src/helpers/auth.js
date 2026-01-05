@@ -43,6 +43,21 @@ function buildUserProfile(user) {
 }
 
 /**
+ * Determine whether the current session is authenticated.
+ * Ensures function does not crash if data are not available.
+ * @param res - The response object with session data.
+ * @returns {boolean} - True if authenticated, false otherwise.
+ */
+function isAuthenticated(res) {
+  // Return isAuthenticated from res.locals if available
+  if (typeof res?.locals?.isAuthenticated === 'boolean') {
+    return res.locals.isAuthenticated;
+  }
+  // Otherwise return false
+  return false;
+}
+
+/**
  * Middleware to synchronize authenticated user with application user records.
  * @param req - The request object.
  * @param res - The response object.
@@ -55,11 +70,17 @@ async function userSyncMiddleware(req, res, next) {
     const isAuthenticated = Boolean(req.oidc?.isAuthenticated?.() && req.oidc.user);
 
     // Set local variables for use in views and downstream middleware
+    // Flag if user is authenticated
     res.locals.isAuthenticated = isAuthenticated;
+    // Raw user object from Auth0 if authenticated
     res.locals.user = isAuthenticated ? req.oidc.user : null;
+    // User Display name if authenticated
     res.locals.displayName = isAuthenticated ? getDisplayName(req.oidc.user) : null;
+    // User profile with non-sensitive info if authenticated
     res.locals.userProfile = isAuthenticated ? buildUserProfile(req.oidc.user) : null;
+    // User record from application database (will be created later)
     res.locals.userRecord = null;
+    // Flag indicating if this is the user's first login
     res.locals.isFirstLogin = false;
 
     // If not authenticated, proceed to next middleware
@@ -117,8 +138,43 @@ function createAuthMiddleware() {
   return auth(buildAuthConfig());
 }
 
+/**
+ * Require auth for API routes: respond with a consistent 401 JSON error.
+ * Usage: router.get('/api/user', requireAuthAPI, apiControllerFn)
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ */
+function requireAuthAPI(req, res, next) {
+  if (isAuthenticated(res)) return next();
+
+  return res.status(401).json({
+    success: false,
+    error: {
+      code: 'AUTH_REQUIRED',
+      message: 'Authentication required',
+    },
+  });
+}
+
+/**
+ * Require auth for page routes: redirect to /auth/login if not authentificated.
+ * Usage: router.get('/dashboard', requireAuthRoute, pageControllerFn)
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ */
+function requireAuthRoute(req, res, next) {
+  if (isAuthenticated(res)) return next();
+
+  const returnTo = encodeURIComponent(req.originalUrl || '/dashboard');
+  return res.redirect(`/auth/login?returnTo=${returnTo}`);
+}
+
 module.exports = {
   createAuthMiddleware,
   buildAuthConfig,
   userSyncMiddleware,
+  requireAuthAPI,
+  requireAuthRoute,
 };

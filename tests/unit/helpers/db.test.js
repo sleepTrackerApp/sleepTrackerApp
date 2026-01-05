@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const proxyquire = require('proxyquire').noCallThru().noPreserveCache();
 
-describe('DB helper', () => {
+describe('DB helpers', () => {
   let sandbox;
 
   beforeEach(() => {
@@ -30,7 +30,7 @@ describe('DB helper', () => {
     return { dbHelper, mongooseMock };
   }
 
-  describe('DB connection', () => {
+  describe('connectDB', () => {
     it('throws when uri is empty', async () => {
       const { dbHelper } = loadDbHelper();
       try {

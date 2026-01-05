@@ -39,9 +39,12 @@ describe('API controllers', () => {
       expect(res.status.calledOnceWithExactly(404)).to.be.true;
       expect(
         res.json.calledOnceWithExactly({
-          error: 'Not Found',
-          message: 'The requested API endpoint does not exist.',
-          path: '/api/does-not-exist',
+          success: false,
+          error: {
+            code: 'NOT_FOUND',
+            message: 'The requested API endpoint does not exist',
+            path: '/api/does-not-exist',
+          },
         })
       ).to.be.true;
     });
@@ -64,8 +67,11 @@ describe('API controllers', () => {
       expect(res.status.calledOnceWithExactly(500)).to.be.true;
       expect(
         res.json.calledOnceWithExactly({
-          error: 'Internal Server Error',
-          message: 'An unexpected error occurred while processing the request.',
+          success: false,
+          error: {
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'An unexpected error occurred while processing the request',
+          },
         })
       ).to.be.true;
     });
@@ -87,8 +93,11 @@ describe('API controllers', () => {
       expect(res.status.calledOnceWithExactly(404)).to.be.true;
       expect(
         res.json.calledOnceWithExactly({
-          error: 'Internal Server Error',
-          message: 'An unexpected error occurred while processing the request.',
+          success: false,
+          error: {
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'An unexpected error occurred while processing the request',
+          },
         })
       ).to.be.true;
     });

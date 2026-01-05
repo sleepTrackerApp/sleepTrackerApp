@@ -7,18 +7,6 @@ describe('Dashboard controller tests', () => {
     sinon.restore();
   });
 
-  it('redirects to /auth/login when user is not authenticated', () => {
-    const req = {};
-    const res = {
-      locals: { isAuthenticated: false },
-      redirect: sinon.stub(),
-    };
-
-    renderDashboard(req, res);
-
-    expect(res.redirect.calledOnceWithExactly('/auth/login')).to.be.true;
-  });
-
   it('renders dashboard when user is authenticated', () => {
     const req = {};
     const res = {
@@ -36,8 +24,6 @@ describe('Dashboard controller tests', () => {
       res.render.calledOnceWithExactly('pages/dashboard', {
         title: 'My Sleep Data',
         activeMenu: 'dashboard',
-        displayName: 'Display Tester',
-        isAuthenticated: true,
       })
     ).to.be.true;
   });

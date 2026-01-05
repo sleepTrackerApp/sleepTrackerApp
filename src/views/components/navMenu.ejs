@@ -1,11 +1,28 @@
-<% const currentActiveMenu = typeof activeMenu === 'undefined' ? '' : activeMenu; %>
-<li class="<%= currentActiveMenu === 'home' ? 'active' : '' %>">
+<%
+  const menu =
+    typeof activeMenu !== 'undefined'
+      ? activeMenu
+      : typeof currentActiveMenu !== 'undefined'
+      ? currentActiveMenu
+      : '';
+%>
+
+<li class="<%= menu === 'home' ? 'active' : '' %>">
   <a href="/">Home</a>
 </li>
-<li class="<%= currentActiveMenu === 'about' ? 'active' : '' %>">
+
+<li class="<%= menu === 'about' ? 'active' : '' %>">
   <a href="/about">About Us</a>
 </li>
-<li class="<%= currentActiveMenu === 'insights' ? 'active' : '' %>">
+
+<li class="<%= menu === 'insights' ? 'active' : '' %>">
   <a href="/insights">Insights</a>
 </li>
 
+<li class="<%= menu === 'privacy' ? 'active' : '' %>">
+  <a href="/privacy">Privacy Policy</a>
+</li>
+
+<li class="<%= menu === 'terms' ? 'active' : '' %>">
+  <a href="/terms">Terms & Conditions</a>
+</li>
