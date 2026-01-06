@@ -9,7 +9,7 @@ const homeRoutes = require('./homeRoutes');
 const apiRoutes = require('./apiRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const authRoutes = require('./authRoutes');
-const sleepEntriesRoutes = require('./sleepEntriesRoutes');
+//const sleepEntriesRoutes = require('./sleepEntriesRoutes');
 
 // Create a new router instance
 const router = express.Router();
@@ -19,7 +19,7 @@ router.use('/', homeRoutes);
 router.use('/api', apiRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/auth', authRoutes);
-router.use('/sleepEntries', sleepEntriesRoutes);
+//router.use('/sleepEntries', sleepEntriesRoutes);
 
 module.exports = router;
 
