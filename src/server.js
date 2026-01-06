@@ -2,7 +2,7 @@
  * Alive Sleep Tracker Application
  * Entry point for the server.
  */
-const { createApp } = require('./app');
+const createApp = require('./app');
 const { connectDb } = require('./helpers/db');
 const { appConfig } = require('./helpers/settings');
 

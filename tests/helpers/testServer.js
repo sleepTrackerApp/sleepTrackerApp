@@ -5,7 +5,7 @@
  */
 
 const request = require('supertest');
-const { createApp } = require('../../src/app');
+const createApp = require('../../src/app');
 
 /**
  * Creates a fresh Express application instance for testing.
