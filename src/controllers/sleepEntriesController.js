@@ -8,7 +8,7 @@
 
 const { sleepEntriesService, userService } = require("../services")
 
-async function getSleepEntries(req, res) {
+async function getSleepEntries(req, res, next) {
   try {
     const userId = req.oidc.user.sub 
     
@@ -23,14 +23,10 @@ async function getSleepEntries(req, res) {
       count: entries?.length ?? 0,
       data: entries,
     });
-  } catch (err) {
-    console.error("Error fetching sleep entries:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to Fetch",
-    });
+  } catch (error) {
+      next(error)
   }
-}
+};
 
 module.exports = {
   getSleepEntries,
