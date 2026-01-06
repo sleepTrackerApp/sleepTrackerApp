@@ -9,7 +9,9 @@ const router = express.Router();
 // Base welcome endpoint
 router.get('/', apiControllers.apiWelcome);
 router.get('/insights', insightControllers.getInsights);
-router.get("/", sleepEntriesController.getSleepEntries);
+
+// Sleep Entry API
+router.get("/getSleepEntries", sleepEntriesController.getSleepEntries);
 
 // Catch-all for unknown API routes
 router.use(apiControllers.apiNotFound);
