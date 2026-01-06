@@ -4,8 +4,10 @@
 */
 
 const express = require("express");
+const { sleepEntriesController } = require("../controllers");
+
 const router = express.Router();
-const sleepEntriesController = require("../controllers/sleepEntriesController");
+
 
 router.get("/", sleepEntriesController.getSleepEntries);
 

@@ -3,23 +3,28 @@
  *
  */
 
-const sleepEntriesService = require("../services/sleepEntriesService");
+// const sleepEntriesService = require("../services/sleepEntriesService");
+// const userService = require("../services/userService")
+
+const { sleepEntriesService, userService } = require("../services")
 
 async function getSleepEntries(req, res) {
   try {
-    const userId = req.user._id;
+    const userId = req.oidc.user.sub 
+    
+    const user = await userService.findUserByAuthId(userId)
 
     const limit = parseInt(req.query.limit) || 50;
 
-    const entries = await sleepEntriesService.getAllSleepEntries(userId);
-
+    const entries = await sleepEntriesService.getAllSleepEntries(user);
+    console.log(user)
     res.status(200).json({
       success: true,
-      count: entries.length,
+      count: entries?.length ?? 0,
       data: entries,
     });
-  } catch (error) {
-    console.error("Error fetching sleep entries:", error);
+  } catch (err) {
+    console.error("Error fetching sleep entries:", err);
     res.status(500).json({
       success: false,
       message: "Failed to Fetch",
