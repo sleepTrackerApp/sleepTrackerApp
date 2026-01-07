@@ -13,7 +13,7 @@ async function getSleepEntries(req, res, next) {
     const limit = parseInt(req.query.limit) || 50;
 
     const entries = await sleepEntriesService.getAllSleepEntries(user);
-    console.log(user)
+
     res.status(200).json({
       success: true,
       count: entries?.length ?? 0,
