@@ -2,10 +2,6 @@
  * Sleep Entries Controller
  *
  */
-
-// const sleepEntriesService = require("../services/sleepEntriesService");
-// const userService = require("../services/userService")
-
 const { sleepEntriesService, userService } = require("../services")
 
 async function getSleepEntries(req, res, next) {
