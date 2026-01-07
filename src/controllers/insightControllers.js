@@ -16,4 +16,4 @@ const getInsights = async (req, res, next) => {
 
 module.exports = {
   getInsights,
-};f
+};
