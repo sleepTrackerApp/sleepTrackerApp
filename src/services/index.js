@@ -3,9 +3,10 @@
  */
 
 module.exports = {
-  userService: require('./userService'),
-  contentfulService: require('./contentfulService'),
-  sleepEntriesService: require('./sleepEntriesService'),
+    userService: require('./userService'),
+    contentfulService: require('./contentfulService'),
+    sleepEntriesService: require('./sleepEntriesService'),
+    weeklySummaryService: require('./weeklySummaryService'),
 };
 
           

@@ -14,7 +14,7 @@ async function getAllSleepEntries(userId) {
 }
 
 module.exports = {
-    getAllSleepEntries
+    getAllSleepEntries,
 };
 
 

@@ -15,7 +15,7 @@ const summarySchema = new mongoose.Schema(
         // Date of when Average Record created
         date: {
             type: Date,
-            default: Date.now,
+            required: true,
         },
         // Store average with upper and lower bounds.
         avgHours: {
