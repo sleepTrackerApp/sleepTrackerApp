@@ -8,11 +8,12 @@ require('dotenv').config();
  * Retrieves an environment variable from process.env, with optional default.
  * @param name - Name of the environment variable
  * @param defaultValue - Default value if the variable is not set
+ * @param failQuietly - If true, does not throw an error when variable is missing
  * @returns {string} The environment variable value
  */
-function getEnv(name, defaultValue) {
+function getEnv(name, defaultValue, failQuietly = false) {
     const value = process.env[name] || defaultValue;
-    if (!value) throw new Error(`Environment variable "${name}" is required.`);
+    if (!value && !failQuietly) throw new Error(`Environment variable "${name}" is required.`);
     return value;
 }
 
@@ -21,10 +22,11 @@ function getEnv(name, defaultValue) {
  * Uses getEnv to retrieve the value and parseInt to convert it.
  * @param name - Name of the environment variable
  * @param defaultValue - Default value if the variable is not set
+ * @param failQuietly - If true, does not throw an error when variable is missing
  * @returns {number} The integer value of the environment variable
  */
-function getEnvInt(name, defaultValue) {
-    const v = parseInt(getEnv(name, defaultValue));
+function getEnvInt(name, defaultValue, failQuietly = false) {
+    const v = parseInt(getEnv(name, defaultValue, failQuietly));
     if (Number.isNaN(v)) throw new Error(`Environment variable "${name}" must be an integer.`);
     return v;
 }
@@ -34,14 +36,24 @@ function getEnvInt(name, defaultValue) {
  * Accepts 'true', 'false', '1', '0' (case insensitive).
  * @param name - Name of the environment variable
  * @param defaultValue - Default value if the variable is not set
+ * @param failQuietly - If true, does not throw an error when variable is missing
  * @returns {boolean} The boolean value of the environment variable
  */
-function getEnvBool(name, defaultValue) {
-    const v = getEnv(name, defaultValue).toLowerCase();
+function getEnvBool(name, defaultValue, failQuietly = false) {
+    const v = getEnv(name, defaultValue, failQuietly).toLowerCase();
     if (v === 'true' || v === '1') return true;
     if (v === 'false' || v === '0') return false;
     throw new Error(`Environment variable "${name}" must be a boolean value.`);
 }
+
+// Attempt to infer the base URL from Vercel environment variables
+const host =
+    getEnv('VERCEL_PROJECT_PRODUCTION_URL', '', true) ||
+    getEnv('VERCEL_URL', '', true) ||
+    'localhost';
+
+const defaultProtocol = (host === 'localhost') ? 'http' : 'https';
+const inferredUrl = `${defaultProtocol}://${host}`;
 
 /** Application configuration object.
  * Builds up the configuration from environment variables with defaults,
@@ -60,12 +72,10 @@ function getEnvBool(name, defaultValue) {
  *   }>
  * }>}
  */
-const vercelUrl = getEnv('VERCEL_URL', 'http://localhost');
-const baseUrl = getEnv('BASE_URL', vercelUrl);
 
 const appConfig = Object.freeze({
     // Base host used for constructing absolute links
-    BASE_URL: baseUrl,
+    BASE_URL: getEnv('BASE_URL', inferredUrl),
     // Defines the port the application will listen on
     PORT: getEnvInt('PORT', 3000),
     // Defines the MongoDB connection URI
