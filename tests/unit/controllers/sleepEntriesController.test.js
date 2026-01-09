@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+
 const { getSleepEntries } = require('../../../src/controllers/sleepEntriesController');
 const { userService, sleepEntriesService } = require('../../../src/services');
 
