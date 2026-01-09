@@ -16,6 +16,9 @@ const { render404, render500 } = require('./controllers/errorControllers');
 function createApp() {
   const app = express();
 
+  // Serve static files
+  app.use(express.static(path.join(__dirname, '..', 'public')));
+
   /* ---------------- Middleware ---------------- */
 
   // Auth0 OIDC middleware & user sync
@@ -30,9 +33,6 @@ function createApp() {
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
 
-
-  // Serve static files
-  app.use(express.static(path.join(__dirname, '..', 'public')));
 
   /* ---------------- Routes ---------------- */
 

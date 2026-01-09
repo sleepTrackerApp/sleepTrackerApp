@@ -46,16 +46,49 @@ function getEnvBool(name, defaultValue, failQuietly = false) {
     throw new Error(`Environment variable "${name}" must be a boolean value.`);
 }
 
-// Attempt to infer the base URL from Vercel environment variables
-const host =
-    getEnv('VERCEL_PROJECT_PRODUCTION_URL', '', true) ||
-    getEnv('VERCEL_URL', '', true) ||
-    'localhost';
+/**
+ * Constructs the localhost URL based on the PORT environment variable if it sets.
+  * @returns {string} The localhost URL with port
+ */
+function getLocalhostUrl() {
+    const port = getEnvInt('PORT', 3000, true);
+    return `http://localhost:${port}`;
+}
 
-const defaultProtocol = (host === 'localhost') ? 'http' : 'https';
-const inferredUrl = `${defaultProtocol}://${host}`;
+/**
+ * Infers the base URL of the application based on environment variables.
+ * Considers Vercel deployment variables or defaults to localhost.
+ * @returns {string|string}
+ */
+function inferBaseUrl() {
+    // Check if running on Vercel
+    const isVercel = getEnvBool('VERCEL', 'false', true);
+    const vercelEnv = getEnv('VERCEL_ENV', '', true);
 
-console.log("Inferred BASE_URL as:", inferredUrl);
+    // If not on Vercel, default to localhost:port (from env or 3000)
+    if (!isVercel) return getLocalhostUrl();
+
+    // Read hosts and fail quietly if missing
+    const vercelUrlHost = getEnv('VERCEL_URL', '', true);
+    const vercelProdHost = getEnv('VERCEL_PROJECT_PRODUCTION_URL', '', true);
+
+    // Choose host depending on environment
+    const host =
+        vercelEnv === 'production'
+            ? (vercelProdHost || vercelUrlHost)
+            : vercelUrlHost;
+
+    // If no host found, default to localhost
+    if (!host) return getLocalhostUrl();
+
+    // Return the full URL with https
+    return `https://${host}`;
+}
+
+const inferredUrl = inferBaseUrl();
+
+console.log(`Inferred BASE_URL as: ${inferredUrl}`); // For debugging purposes
+
 
 /** Application configuration object.
  * Builds up the configuration from environment variables with defaults,
