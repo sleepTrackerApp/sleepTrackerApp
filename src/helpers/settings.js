@@ -127,6 +127,4 @@ const appConfig = Object.freeze({
     }),
 });
 
-console.log("Application settings loaded");
-
 module.exports = { appConfig };
