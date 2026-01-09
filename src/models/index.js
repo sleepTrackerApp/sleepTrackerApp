@@ -3,5 +3,6 @@
  */
 module.exports = {
   User: require('./User'),
+  sleepLog: require('./sleepLog'),
 };
 
