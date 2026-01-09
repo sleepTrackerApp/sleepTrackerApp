@@ -60,13 +60,16 @@ function getEnvBool(name, defaultValue) {
  *   }>
  * }>}
  */
+const vercelUrl = getEnv('VERCEL_URL', 'http://localhost');
+const baseUrl = getEnv('BASE_URL', vercelUrl);
+
 const appConfig = Object.freeze({
+    // Base host used for constructing absolute links
+    BASE_URL: baseUrl,
     // Defines the port the application will listen on
     PORT: getEnvInt('PORT', 3000),
     // Defines the MongoDB connection URI
     MONGODB_URI: getEnv('MONGODB_URI', 'mongodb://localhost:27017/alive-sleep-tracker'),
-    // Base host used for constructing absolute links
-    BASE_URL: getEnv('BASE_URL', 'http://localhost'),
     // Current application environment (development, test, production)
     NODE_ENV: getEnv('NODE_ENV', 'development'),
     // Symmetric encryption key used for hashing/encrypting sensitive data
