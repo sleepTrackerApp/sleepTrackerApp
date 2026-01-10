@@ -11,7 +11,8 @@ router.get('/', apiControllers.apiWelcome);
 router.get('/insights', insightControllers.getInsights);
 
 // Sleep Entry API
-router.get("/getSleepEntries", sleepEntriesController.getSleepEntries);
+router.route("/sleep-entries")
+    .get(sleepEntriesController.getSleepEntries);
 
 // Catch-all for unknown API routes
 router.use(apiControllers.apiNotFound);
