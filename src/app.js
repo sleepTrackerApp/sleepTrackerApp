@@ -9,6 +9,7 @@ const { createAuthMiddleware, userSyncMiddleware } = require('./helpers/auth');
 const routes = require('./routes');
 const { render404, render500 } = require('./controllers/errorControllers');
 
+
 /**
  * Application factory to create and configure the Express app
  * @returns {import('express').Express}
