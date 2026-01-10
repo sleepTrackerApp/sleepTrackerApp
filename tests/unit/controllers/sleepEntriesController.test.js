@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
 const { getSleepEntries } = require('../../../src/controllers/sleepEntriesController');
-const { userService, sleepEntriesService } = require('../../../src/services');
+const { sleepEntriesService } = require('../../../src/services');
 
 describe("Sleep entries controller tests", () => {
     afterEach(() => {
@@ -10,13 +10,13 @@ describe("Sleep entries controller tests", () => {
 
     it("pull sleep data correctly", async () => {
         const req = {
-            oidc: { 
-                user: { sub: "auth0|123" } 
-            }, 
             query: {},
         }; 
 
         const res = {
+            locals: {
+                userRecords: { _id: "auth0|123"} 
+            },
             status: sinon.stub().returnsThis(),
             json: sinon.stub(),
         }; 
@@ -42,7 +42,6 @@ describe("Sleep entries controller tests", () => {
             }
         ];
 
-        sinon.stub(userService, "findUserByAuthId").resolves({});
         sinon.stub(sleepEntriesService, "getAllSleepEntries").resolves(falseEntries);
 
         await getSleepEntries(req, res);
