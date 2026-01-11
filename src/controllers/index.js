@@ -4,6 +4,7 @@
 const apiControllers = require('./apiControllers');
 const insightControllers = require('./insightControllers');
 const sleepEntryController = require('./sleepEntryController');
+const weeklySummaryController = require('./weeklySummaryController');
 const authControllers = require('./authControllers');
 const errorControllers = require('./errorControllers');
 const homeControllers = require('./homeControllers');
@@ -13,6 +14,7 @@ module.exports = {
   apiControllers,
   insightControllers,
   sleepEntryController,
+  weeklySummaryController,
   authControllers,
   errorControllers,
   homeControllers,

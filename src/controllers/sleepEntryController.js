@@ -22,10 +22,10 @@ async function getSleepEntries(req, res, next) {
   } catch (error) {
       next(error)
   }
-};
+}
 
 module.exports = {
   getSleepEntries,
-};
+}
 
 

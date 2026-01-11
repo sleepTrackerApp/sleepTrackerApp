@@ -4,6 +4,7 @@
 const express = require('express');
 const insigntRoutes = require('./apiInsightRoutes');
 const sleepEntryRoutes = require('./apiSleepEntryRoutes');
+const apiWeeklySummaryRoutes = require('./apiWeeklySummaryRoutes');
 const { apiControllers } = require('../controllers');
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.get('/', apiControllers.apiWelcome);
 // API Namespaces
 router.use('/insights', insigntRoutes);
 router.use('/sleep-entries', sleepEntryRoutes);
+router.use('/summary', apiWeeklySummaryRoutes);
 
 // Catch-all for sunknown API routes
 router.use(apiControllers.apiNotFound);
