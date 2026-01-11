@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
  * Sleep Entries Schema
  * References the User ID to correlate data owner.
  */
-const sleepEntriesSchema = new mongoose.Schema(
+const sleepEntrySchema = new mongoose.Schema(
   {
     // Reference User
     userId: {
@@ -51,5 +51,5 @@ const sleepEntriesSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("SleepEntry", sleepEntriesSchema);
+module.exports = mongoose.model("SleepEntry", sleepEntrySchema);
 

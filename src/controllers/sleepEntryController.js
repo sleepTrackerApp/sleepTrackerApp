@@ -2,18 +2,20 @@
  * Sleep Entries Controller
  *
  */
-const { sleepEntriesService } = require("../services")
+const { sleepEntryService } = require("../services")
 
 async function getSleepEntries(req, res, next) {
   try {
-    const user = res.locals.userRecords 
-    
+
+    const user = res.locals.userRecord;
+
     const limit = parseInt(req.query.limit) || 50;
 
-    const entries = await sleepEntriesService.getAllSleepEntries(user);
+    const page = parseInt(req.query.page) || 1;
+
+    const entries = await sleepEntryService.getSleepEntries(user, page, limit);
     res.status(200).json({
       success: true,
-      count: entries?.length ?? 0,
       data: entries,
       
     });

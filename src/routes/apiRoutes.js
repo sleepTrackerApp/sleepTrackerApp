@@ -2,19 +2,19 @@
  * Routes for the REST API namespace.
  */
 const express = require('express');
-const { apiControllers, insightControllers, sleepEntriesController } = require('../controllers');
-
+const insigntRoutes = require('./apiInsightRoutes');
+const sleepEntryRoutes = require('./apiSleepEntryRoutes');
+const { apiControllers } = require('../controllers');
 const router = express.Router();
 
 // Base welcome endpoint
 router.get('/', apiControllers.apiWelcome);
-router.get('/insights', insightControllers.getInsights);
 
-// Sleep Entry API
-router.route("/sleep-entries")
-    .get(sleepEntriesController.getSleepEntries);
+// API Namespaces
+router.use('/insights', insigntRoutes);
+router.use('/sleep-entries', sleepEntryRoutes);
 
-// Catch-all for unknown API routes
+// Catch-all for sunknown API routes
 router.use(apiControllers.apiNotFound);
 router.use(apiControllers.apiError);
 
