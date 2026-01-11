@@ -1,15 +1,10 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "public/**"
-    }
-  },
-  "rewrites": [
-    { "source": "/css/(.*)", "destination": "/css/$1" },
-    { "source": "/js/(.*)", "destination": "/js/$1" },
-    { "source": "/img/(.*)", "destination": "/img/$1" },
-    { "source": "/favicon.ico", "destination": "/favicon.ico" },
-    { "source": "/(.*)", "destination": "/api" }
+  "builds": [
+    { "src": "api/index.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/api" }
   ]
 }

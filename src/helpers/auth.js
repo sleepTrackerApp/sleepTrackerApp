@@ -7,18 +7,6 @@ const { appConfig } = require('./settings');
 const userService = require('../services/userService');
 
 /**
- * Resolve the base URL for the application, appending port if necessary.
- * @returns {string} - The resolved base URL.
- */
-function resolveBaseUrl() {
-  const url = new URL(appConfig.BASE_URL);
-  if (!url.port && (url.hostname === 'localhost' || url.hostname === '127.0.0.1')) {
-    url.port = appConfig.PORT.toString();
-  }
-  return url.toString().replace(/\/+$/, '');
-}
-
-/**
  * Extract a human-friendly display name for the authenticated user.
  * @param user {object} - The authenticated user object.
  * @returns {*|null} - The display name or null if not available.
@@ -113,7 +101,7 @@ function buildAuthConfig() {
     authRequired: false,
     auth0Logout: true,
     issuerBaseURL: appConfig.AUTH0.ISSUER_BASE_URL,
-    baseURL: resolveBaseUrl(),
+    baseURL: appConfig.BASE_URL,
     clientID: appConfig.AUTH0.CLIENT_ID,
     clientSecret: appConfig.AUTH0.CLIENT_SECRET,
     secret: appConfig.AUTH0.SECRET,

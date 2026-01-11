@@ -8,11 +8,12 @@ require('dotenv').config();
  * Retrieves an environment variable from process.env, with optional default.
  * @param name - Name of the environment variable
  * @param defaultValue - Default value if the variable is not set
+ * @param failQuietly - If true, does not throw an error when variable is missing
  * @returns {string} The environment variable value
  */
-function getEnv(name, defaultValue) {
+function getEnv(name, defaultValue, failQuietly = false) {
     const value = process.env[name] || defaultValue;
-    if (!value) throw new Error(`Environment variable "${name}" is required.`);
+    if (!value && !failQuietly) throw new Error(`Environment variable "${name}" is required.`);
     return value;
 }
 
@@ -21,10 +22,11 @@ function getEnv(name, defaultValue) {
  * Uses getEnv to retrieve the value and parseInt to convert it.
  * @param name - Name of the environment variable
  * @param defaultValue - Default value if the variable is not set
+ * @param failQuietly - If true, does not throw an error when variable is missing
  * @returns {number} The integer value of the environment variable
  */
-function getEnvInt(name, defaultValue) {
-    const v = parseInt(getEnv(name, defaultValue));
+function getEnvInt(name, defaultValue, failQuietly = false) {
+    const v = parseInt(getEnv(name, defaultValue, failQuietly));
     if (Number.isNaN(v)) throw new Error(`Environment variable "${name}" must be an integer.`);
     return v;
 }
@@ -34,14 +36,58 @@ function getEnvInt(name, defaultValue) {
  * Accepts 'true', 'false', '1', '0' (case insensitive).
  * @param name - Name of the environment variable
  * @param defaultValue - Default value if the variable is not set
+ * @param failQuietly - If true, does not throw an error when variable is missing
  * @returns {boolean} The boolean value of the environment variable
  */
-function getEnvBool(name, defaultValue) {
-    const v = getEnv(name, defaultValue).toLowerCase();
+function getEnvBool(name, defaultValue, failQuietly = false) {
+    const v = getEnv(name, defaultValue, failQuietly).toLowerCase();
     if (v === 'true' || v === '1') return true;
     if (v === 'false' || v === '0') return false;
     throw new Error(`Environment variable "${name}" must be a boolean value.`);
 }
+
+/**
+ * Constructs the localhost URL based on the PORT environment variable if it sets.
+  * @returns {string} The localhost URL with port
+ */
+function getLocalhostUrl() {
+    const port = getEnvInt('PORT', 3000, true);
+    return `http://localhost:${port}`;
+}
+
+/**
+ * Infers the base URL of the application based on environment variables.
+ * Considers Vercel deployment variables or defaults to localhost.
+ * @returns {string|string}
+ */
+function inferBaseUrl() {
+    // Check if running on Vercel
+    const isVercel = getEnvBool('VERCEL', 'false', true);
+    const vercelEnv = getEnv('VERCEL_ENV', '', true);
+
+    // If not on Vercel, default to localhost:port (from env or 3000)
+    if (!isVercel) return getLocalhostUrl();
+
+    // Read hosts and fail quietly if missing
+    const vercelUrlHost = getEnv('VERCEL_URL', '', true);
+    const vercelProdHost = getEnv('VERCEL_PROJECT_PRODUCTION_URL', '', true);
+
+    // Choose host depending on environment
+    const host =
+        vercelEnv === 'production'
+            ? (vercelProdHost || vercelUrlHost)
+            : vercelUrlHost;
+
+    // If no host found, default to localhost
+    if (!host) return getLocalhostUrl();
+
+    // Return the full URL with https
+    return `https://${host}`;
+}
+
+const inferredUrl = inferBaseUrl();
+
+console.log(`Inferred BASE_URL as: ${inferredUrl}`); // For debugging purposes
 
 /** Application configuration object.
  * Builds up the configuration from environment variables with defaults,
@@ -60,13 +106,14 @@ function getEnvBool(name, defaultValue) {
  *   }>
  * }>}
  */
+
 const appConfig = Object.freeze({
+    // Base host used for constructing absolute links
+    BASE_URL: getEnv('BASE_URL', inferredUrl),
     // Defines the port the application will listen on
     PORT: getEnvInt('PORT', 3000),
     // Defines the MongoDB connection URI
     MONGODB_URI: getEnv('MONGODB_URI', 'mongodb://localhost:27017/alive-sleep-tracker'),
-    // Base host used for constructing absolute links
-    BASE_URL: getEnv('BASE_URL', 'http://localhost'),
     // Current application environment (development, test, production)
     NODE_ENV: getEnv('NODE_ENV', 'development'),
     // Symmetric encryption key used for hashing/encrypting sensitive data

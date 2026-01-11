@@ -3,6 +3,7 @@
  */
 module.exports = {
   User: require('./User'),
-  sleepLog: require('./sleepLog'),
+  SleepEntry: require('./SleepEntry'),
+  Summary: require('./Summary'),
 };
 

@@ -389,7 +389,7 @@ Create a `.env` file in the project root (or use system environment variables) w
 | Variable                | Example                                         | Description                                            |
 |-------------------------|-------------------------------------------------|--------------------------------------------------------|
 | `PORT`                  | `3000`                                          | Application port                                       |
-| `BASE_URL`              | `http://localhost`                              | Application base URL                                   |
+| `BASE_URL`              | `http://localhost:3000`                         | Application base URL                                   |
 | `MONGODB_URI`           | `mongodb://localhost:27017/alive-sleep-tracker` | MongoDB connection string                              |
 | `NODE_ENV`              | `development`                                   | Node environment (`development`, `test`, `production`) |
 | `ENCRYPTION_KEY`        | `development-only-secret-key`                   | Secret used to hash Auth0 identifiers                  |

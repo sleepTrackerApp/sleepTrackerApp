@@ -9,12 +9,16 @@ const { createAuthMiddleware, userSyncMiddleware } = require('./helpers/auth');
 const routes = require('./routes');
 const { render404, render500 } = require('./controllers/errorControllers');
 
+
 /**
  * Application factory to create and configure the Express app
  * @returns {import('express').Express}
  */
 function createApp() {
   const app = express();
+
+  // Serve static files
+  app.use(express.static(path.join(__dirname, '..', 'public')));
 
   /* ---------------- Middleware ---------------- */
 
@@ -30,9 +34,6 @@ function createApp() {
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
 
-
-  // Serve static files
-  app.use(express.static(path.join(__dirname, '..', 'public')));
 
   /* ---------------- Routes ---------------- */
 
