@@ -173,7 +173,6 @@ const renderInsightDetail = async (req, res, next) => {
 
 module.exports = {
   getInsights,
-feature/insights-page
   renderInsights,
   renderInsightDetail,
 };
