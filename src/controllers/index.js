@@ -1,19 +1,22 @@
 /**
  * Aggregates and exposes controller modules for easy importing.
  */
-const homeControllers = require('./homeControllers');
 const apiControllers = require('./apiControllers');
-const dashboardControllers = require('./dashboardControllers');
+const insightControllers = require('./insightControllers');
+const sleepEntryController = require('./sleepEntryController');
+const weeklySummaryController = require('./weeklySummaryController');
 const authControllers = require('./authControllers');
 const errorControllers = require('./errorControllers');
-const insightControllers= require('./insightControllers');
+const homeControllers = require('./homeControllers');
+const dashboardControllers = require('./dashboardControllers');
 
 module.exports = {
-  homeControllers,
   apiControllers,
-  dashboardControllers,
+  insightControllers,
+  sleepEntryController,
+  weeklySummaryController,
   authControllers,
   errorControllers,
-  insightControllers,
+  homeControllers,
+  dashboardControllers,
 };
-

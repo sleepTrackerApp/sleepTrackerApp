@@ -5,5 +5,8 @@
 module.exports = {
   userService: require('./userService'),
   contentfulService: require('./contentfulService'),
+  sleepEntryService: require('./sleepEntryService'),
+  weeklySummaryService: require('./weeklySummaryService'),
 };
 
+          

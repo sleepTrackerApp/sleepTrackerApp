@@ -422,3 +422,23 @@ Create a `.env` file in the project root (or use system environment variables) w
 - Sensitive configuration values should never be committed to GitHub
 - Feature branches and pull requests must be used to ensure code quality and review
 - Commit messages should follow a consistent, descriptive style
+
+# Linting/Formatting Rules
+   To ensure the ALIVE application remains consistent with our [Base UI Style Guide], we use automated linting and formatting. This keeps our code clean, prevents bugs, and ensures our design tokens—like the Primary Brand Color (#2B3990) and Midnight Background (#121212) are used correctly.
+
+# The Tools
+- ESLint (eslint.config.js): Acts as our "Logic Guard." It catches errors, unused variables, and suspicious code patterns before they reach production.
+
+- Prettier (.prettierrc.json): Acts as our "Style Guard." It automatically handles code indentation and layout to match our 2-space standard, making the code as organized as our UI spacing scale (4px to 40px).
+
+# How to Use
+Before submitting your code, please run the following commands:
+
+- npm run format: Automatically fixes code styling (indentation, quotes, etc.).
+
+- npm run lint: Scans for logic errors and style guide violations.
+
+- npm run lint:fix: Automatically fixes any basic logic issues found by the linter.
+
+# Recommended VS Code Setup
+For the best experience, install the ESLint and Prettier extensions. We recommend enabling "Format on Save" in your settings so that your code snaps to the ALIVE style guide automatically every time you save your work.
