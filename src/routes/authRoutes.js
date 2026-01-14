@@ -1,13 +1,14 @@
 /**
- * Routes for the Sleep Entry API namespace.
+ * Auth-related routes for login and logout redirects.
  */
+
 const express = require('express');
-const { sleepEntryController } = require('../controllers');
-const { requireAuthAPI } = require('../helpers/auth');
+const { authControllers } = require('../controllers');
 
 const router = express.Router();
 
-// Sleep Entry API
-router.get('/', requireAuthAPI, sleepEntryController.getSleepEntries);
+router.get('/login', authControllers.login);
+router.get('/logout', authControllers.logout);
 
 module.exports = router;
+
