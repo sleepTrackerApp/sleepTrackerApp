@@ -177,5 +177,4 @@ module.exports = {
   renderInsightDetail,
 };
 
-};
 
