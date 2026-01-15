@@ -66,9 +66,6 @@ async function userSyncMiddleware(req, res, next) {
  * Build Auth0 configuration object for express-openid-connect.
  */
 function buildAuthConfig() {
-  // Debug log to verify correct .env loading
-  console.log("DEBUG AUTH0 CONFIG:", appConfig.AUTH0);
-
   return {
     authRequired: false,
     auth0Logout: true,
