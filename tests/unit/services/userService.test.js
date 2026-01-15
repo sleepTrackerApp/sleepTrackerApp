@@ -15,9 +15,9 @@ describe('User service', () => {
 
   it('hashes authId and upserts user', async () => {
     const hashValueStub = sandbox.stub().returns('hash123');
-    const execStub = sandbox.stub().resolves({ authIdHash: 'hash123' });
+    const mockUser = { authIdHash: 'hash123', _id: 'user123' };
     const UserStub = {
-      findOneAndUpdate: sandbox.stub().returns({ exec: execStub }),
+      findOneAndUpdate: sandbox.stub().resolves(mockUser),
     };
 
     const userService = proxyquire('../../../src/services/userService', {
@@ -29,6 +29,14 @@ describe('User service', () => {
 
     expect(hashValueStub.calledOnceWithExactly('auth0|user')).to.be.true;
     expect(UserStub.findOneAndUpdate.calledOnce).to.be.true;
-    expect(result).to.deep.equal({ authIdHash: 'hash123' });
+    expect(UserStub.findOneAndUpdate.calledWith(
+      { authIdHash: 'hash123' },
+      {
+        $setOnInsert: { authIdHash: 'hash123' },
+        $set: { lastLoginAt: sinon.match.date },
+      },
+      { new: true, upsert: true }
+    )).to.be.true;
+    expect(result).to.deep.equal(mockUser);
   });
 });

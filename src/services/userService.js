@@ -1,6 +1,5 @@
 /**
  * Service layer responsible for interacting with the User model.
- * Controllers should use these helpers instead of accessing models directly.
  */
 
 const { User } = require('../models');
@@ -27,7 +26,7 @@ async function getOrCreateUser(authId, { loginAt = new Date() } = {}) {
       $set: { lastLoginAt: loginAt },
     },
     { new: true, upsert: true }
-  ).exec();
+  );
 }
 
 /**
@@ -41,7 +40,7 @@ async function findUserByAuthId(authId) {
   }
 
   const authIdHash = hashValue(authId);
-  return User.findOne({ authIdHash }).exec();
+  return User.findOne({ authIdHash });
 }
 
 module.exports = {
