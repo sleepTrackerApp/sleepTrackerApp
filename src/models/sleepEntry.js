@@ -19,30 +19,30 @@ const sleepEntrySchema = new mongoose.Schema(
       required: true,
     },
 
-    // Total hours slept
-    hours: {
+    // Total minutes slept
+    duration: {
       type: Number,
       required: true,
       min: 0,
-      max: 24,
+      max: 1440,
     },
       
     // When the user went to sleep
     startTime: {
       type: Date,
-      required: true,
+      required: false,
     },
 
     // When the user woke up
     endTime: {
       type: Date,
-      required: true,
+      required: false,
     },
     // Sleep quality Rating
     rating: {
       type: Number,
-      min: 1,
-      max: 5,
+      min: 0,
+      max: 10,
       default: null,
     },
   },
@@ -50,6 +50,9 @@ const sleepEntrySchema = new mongoose.Schema(
     timestamps: true,  
   }
 );
+
+// Compound unique index: userId and entryDate must be unique together
+sleepEntrySchema.index({ userId: 1, entryDate: 1 }, { unique: true });
 
 module.exports = mongoose.model("SleepEntry", sleepEntrySchema);
 
