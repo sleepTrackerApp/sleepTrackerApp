@@ -7,40 +7,44 @@
     <title><%= resolvedTitle ? `${resolvedTitle} | ` : '' %>Alive Sleep Tracker</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="/css/styles.css" />
+    <link rel="stylesheet" href="/css/header.css" />
   </head>
+
   <body class="grey lighten-5">
-    <nav class="top-nav">
-      <div class="nav-shell">
-        <div class="nav-left">
-          <a href="/" class="nav-brand">
-            <img src="/img/logo.svg" alt="Alive logo" class="brand-logo" />
-            <span class="brand-text">ALiVE</span>
-          </a>
-        </div>
+    <div class="navbar-fixed">
+        <nav class="z-depth-0 top-nav">
+            <div class="nav-shell">
+                
+                <div class="nav-left">
+                    <a href="/" class="nav-brand">
+                        <img src="/img/logo/logo-horizontal.svg" alt="Alive logo" class="brand-logo" />
+                    </a>
+                </div>
 
-        <a href="#" data-target="mobile-nav" class="sidenav-trigger nav-mobile-toggle hide-on-med-and-up" aria-label="Open navigation">
-          <i class="material-icons">menu</i>
-        </a>
+                <a href="#" data-target="mobile-nav" class="sidenav-trigger black-text hide-on-med-and-up">
+                    <i class="material-icons">menu</i>
+                </a>
 
-        <div class="nav-center hide-on-small-and-down">
-          <div class="nav-pill">
-            <ul class="nav-menu">
-              <%- include('./navMenu') %>
-            </ul>
-          </div>
-        </div>
+                <div class="nav-center hide-on-small-and-down">
+                    <div class="nav-pill">
+                        <ul class="nav-menu">
+                            <%- include('./navMenu') %>
+                        </ul>
+                    </div>
+                </div>
 
-        <div class="nav-right hide-on-small-and-down">
-          <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-            <a href="/dashboard" class="nav-signin">Dashboard</a>
-            <a href="/auth/logout" class="nav-signout">Sign Out</a>
-          <% } else { %>
-            <a href="/auth/login" class="nav-signin">Sign In</a>
-          <% } %>
-        </div>
-      </div>
-    </nav>
+                <div class="nav-right hide-on-small-and-down">
+                    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                        <a href="/dashboard" class="nav-signin black">Dashboard</a>
+                        <a href="/auth/logout" class="nav-signout-link grey-text">Sign Out</a>
+                    <% } else { %>
+                        <a href="/auth/login" class="nav-signin black">Sign In</a>
+                    <% } %>
+                </div>
+                
+            </div>
+        </nav>
+    </div>
 
     <ul class="sidenav" id="mobile-nav">
       <%- include('./navMenu') %>

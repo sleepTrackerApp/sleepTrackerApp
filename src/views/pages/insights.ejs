@@ -1,34 +1,45 @@
 <%- include('../components/header') %>
+<link rel="stylesheet" href="/css/insights.css" />
 
 <main class="insights-page">
   <section class="insights-top">
     <div class="insights-shell">
       <div class="mini-label">Insights</div>
-      <h1 class="hero-heading">Latest Articles</h1>
-
+      <h1 class="hero-heading text-primary">Latest Articles</h1>
+  
       <div class="latest-row">
         <article class="latest-card">
           <div class="latest-card-inner">
             <h2 class="feature-title"><%= featured.title %></h2>
             <p class="feature-date"><%= featured.date || '' %></p>
             <p class="feature-excerpt"><%= featured.excerpt || '' %></p>
+            
             <div class="feature-meta">
               <% if (featured.readTime) { %>
-                <span><%= featured.readTime %></span>
+                <span class="meta-item">
+                  <i class="material-icons tiny">access_time</i>
+                  <%= featured.readTime %>
+                </span>
               <% } %>
               <% if (featured.tags && featured.tags.length) { %>
-                <span class="dot">•</span>
-                <span class="tags"><%= featured.tags.join(', ') %></span>
+                <span class="meta-item">
+                  <i class="material-icons tiny">bookmark_border</i>
+                  <%= featured.tags.join(', ') %>
+                </span>
               <% } %>
             </div>
+  
             <div class="feature-actions">
-              <a class="feature-cta" href="/insights/<%= featured.slug %>">Read Now</a>
+              <a class="btn-large pill-btn black waves-effect waves-light" href="/insights/<%= featured.slug %>">
+                Read Now!
+                <i class="material-icons right">call_made</i>
+              </a>
             </div>
           </div>
         </article>
-
+  
         <div class="latest-hero">
-          <img src="<%= featured.image || 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=80' %>" alt="<%= featured.title %>">
+          <img src="<%= featured.image %>" alt="<%= featured.title %>">
         </div>
       </div>
     </div>
@@ -37,27 +48,28 @@
   <section class="insights-grid">
     <div class="insights-shell">
       <div class="grid-head">
-        <h2>Explore More Insights</h2>
+        <h2 class="text-primary">Explore More Insights</h2>
       </div>
+  
       <div class="grid-cards">
         <% more.forEach(function(article){ %>
           <article class="insight-card">
-            <div class="card-image-wrap">
-              <img src="<%= article.image || 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=900&q=80' %>" alt="<%= article.title %>">
-            </div>
-            <div class="card-body">
-              <p class="card-date"><%= article.date || '' %></p>
-              <h3 class="card-title"><a href="/insights/<%= article.slug %>"><%= article.title %></a></h3>
-              <p class="card-excerpt"><%= article.excerpt || '' %></p>
-            </div>
+            <a href="/insights/<%= article.slug %>" class="card-link-wrapper">
+              <div class="card-image-wrap">
+                <img src="<%= article.image %>" alt="<%= article.title %>">
+              </div>
+              <div class="card-body">
+                <p class="card-date"><%= article.date || '' %></p>
+                <h3 class="card-title"><%= article.title %></h3>
+                <p class="card-excerpt"><%= article.excerpt || '' %></p>
+              </div>
+            </a>
           </article>
         <% }) %>
       </div>
-      <div class="grid-footer">
-        <a class="feature-cta ghost" href="#">View More</a>
-      </div>
     </div>
   </section>
+
 </main>
 
 <%- include('../components/footer') %>

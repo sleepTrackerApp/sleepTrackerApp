@@ -1,18 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { insightControllers } = require('../controllers');
+const { homeControllers, insightControllers } = require('../controllers');
 
 /* ===============================
    HOME
    =============================== */
 
-router.get('/', (req, res) => {
-  res.render('pages/home', {
-    title: 'Wake Up Truly Alive',
-    activeMenu: 'home',
-  });
-});
-
+   router.get('/', homeControllers.renderHome);
+   
 /* ===============================
    STATIC PAGES
    =============================== */

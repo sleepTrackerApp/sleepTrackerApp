@@ -28,7 +28,7 @@ const getArticles = async () => {
         tags: item.fields.tags,
         excerpt: item.fields.excerpt,
         image: imageUrl,
-        body: item.fields.bodyContent
+        bodyContent: item.fields.bodyContent
       };
     });
 
