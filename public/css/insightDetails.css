@@ -1,0 +1,100 @@
+/* --- INSIGHT DETAIL (READING VIEW) ---  */
+.container {
+  margin-top: 50px;
+  margin-bottom: 100px;
+}
+
+.breadcrumb-nav {
+  background: transparent !important;
+  box-shadow: none !important;
+  height: auto !important;
+  line-height: normal !important;
+  margin-bottom: 50px;
+}
+
+.breadcrumb-nav .breadcrumb {
+  font-size: 15px;
+  color: #000;
+}
+
+.breadcrumb-nav .breadcrumb:before { color: black !important; }
+
+/* Typography Scale */
+.detail-title {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 25px 0 15px;
+  color: #000;
+}
+
+.meta-row { font-size: 15px; margin-bottom: 10px;}
+
+.material-icons { color: #1DB0FF; margin-left: 30px; }
+
+/* The Blue Divider Block */
+.hero-divider-block {
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+}
+
+.rounded-img { border-radius: 15px; }
+
+.hero-quote {
+  position: relative;
+}
+
+.large-quote {
+  position: absolute;
+  left: 0;
+  font-size: 4rem !important;
+  opacity: 0.6;
+}
+
+.excerpt-text {
+  font-size: 20px;
+  line-height: 1.5;
+  margin-left: 30px;
+  font-style: italic;
+}
+
+/* Rich Text Body Content */
+.detail-body {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+.detail-body h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 3rem;
+  color: #000;
+}
+
+.detail-body p { margin-bottom: 18px; }
+
+.detail-body ul {
+  padding-left: 20px;
+  list-style-type: disc;
+  margin-bottom: 1.5rem;
+}
+
+.cta-text {
+  font-size: 15px;
+  font-style: italic;
+}
+
+.cta-text .blue-text {
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+  /* Responsive Overrides  */
+  @media (max-width: 900px) {
+    .hero-block {
+      grid-template-columns: 1fr;
+    }
+    .hero-quote {
+      order: -1;
+    }
+  }

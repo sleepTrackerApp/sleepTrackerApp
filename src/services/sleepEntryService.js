@@ -2,6 +2,7 @@
  * Service layer responsbile for interacting with Sleep Entries model.
  */
 const { SleepEntry } = require("../models")
+const { exportCSV } = require("../helpers")
 
 /**
  * Parse a date string and normalize to midnight.
@@ -241,11 +242,24 @@ async function deleteSleepEntryByDate(userId, entryDate) {
     return SleepEntry.findOneAndDelete({ userId, entryDate: normalizedDate });
 }
 
+/**
+ * Export sleep data by year as a CSV document download.
+ *
+ *
+**/
+async function exportSleepEntry(userId) {
+        
+}
+
+
+
+
 module.exports = {
     getSleepEntries,
     getSleepEntryByDate,
     getOrCreateSleepEntry,
     deleteSleepEntryByDate,
+    exportSleepEntry,
 };
 
 

@@ -1,59 +1,62 @@
 <%- include('../components/header') %>
+<link rel="stylesheet" href="/css/insightDetails.css">
 
 <main class="insight-detail-page">
-  <div class="insight-shell">
-    <nav class="crumbs">
-      <a href="/">Home</a>
-      <span>/</span>
-      <a href="/insights">Insights</a>
-      <span>/</span>
-      <span><%= article.title %></span>
+  <div class="container">
+    <nav class="breadcrumb-nav">
+      <div class="nav-wrapper">
+        <div class="col s12">
+          <a href="/insights" class="breadcrumb">Insights</a>
+          <a href="#!" class="breadcrumb active"><%= article.title %></a>
+        </div>
+      </div>
     </nav>
-
-    <header class="detail-header">
+  
+    <div class="header-section">
       <div class="pill-row">
-        <% if (article.tags && article.tags.length) { %>
-          <% article.tags.forEach(function(tag){ %>
-            <span class="pill"><%= tag %></span>
-          <% }) %>
-        <% } %>
+        <% article.tags.forEach(function(tag){ %>
+          <span class="chip blue-text uppercase-bold"><%= tag %></span>
+        <% }) %>
       </div>
       <h1 class="detail-title"><%= article.title %></h1>
-      <div class="meta-row">
-        <span><%= article.author || 'Alive Sleep Team' %></span>
-        <span class="dot">•</span>
-        <span><%= article.date || '' %></span>
-        <% if (article.readTime) { %>
-          <span class="dot">•</span>
-          <span><%= article.readTime %></span>
-        <% } %>
+      <div class="meta-row valign-wrapper">
+        <span class="author-name valign-wrapper"><i class="material-icons tiny left">account_circle</i><strong><%= article.author %></strong></span>
+        <span class="date-text valign-wrapper"><i class="material-icons tiny left">date_range</i><%= article.date %></span>
+        <span class="read-time valign-wrapper"><i class="material-icons tiny left">schedule</i><%= article.readTime %></span>
       </div>
-    </header>
+    </div>
+  
+    <div class="row hero-divider-block">
+      <div class="col s12 m7">
+        <div class="hero-image-wrap">
+          <img src="<%= article.image %>" alt="<%= article.title %>" class="responsive-img rounded-img z-depth-1">
+        </div>
+      </div>
+      <div class="col s12 m5">
+        <div class="hero-quote"> 
+          <i class="material-icons medium">format_quote</i>
+          <p class="excerpt-text"><%= article.excerpt %></p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col s12">
+        <article class="detail-body">
+          <%- article.bodyContent %>
+        </article>
+      </div>
+    </div>
 
-    <section class="hero-block">
-      <div class="hero-image">
-        <img src="<%= article.image || fallbackImage %>" alt="<%= article.title %>">
-      </div>
-      <div class="hero-quote">
-        <p>
-          <%= article.excerpt || 'Recent findings indicate that 40% of people worldwide experience poor sleep, leading to weakened immune function.' %>
+    <div class="row mt-4">
+      <div class="col s12 right-align">
+        <p class="cta-text">
+          <a href="/auth/login" class="blue-text">Sign in</a> to check your sleep need today! <br>
+          Don't have an account? <a href="/auth/register" class="blue-text">Create</a> now! <br>
+          Read more insightful articles at <a href="/insights" class="blue-text">Insights</a>
         </p>
       </div>
-    </section>
-
-    <article class="detail-body">
-      <%- article.body || '<p>Content coming soon.</p>' %>
-    </article>
-
-    <section class="tip-card">
-      <h3>3 Steps to Find Your Optimal Number</h3>
-      <ol>
-        <li><strong>The Vacation Test:</strong> During a week off, go to bed when tired and wake up naturally without an alarm. After 3-4 days, average your sleep duration.</li>
-        <li><strong>Track Consistency:</strong> Use the Alive Sleep Tracker App to monitor your "Deep Sleep" percentage, not just total time.</li>
-        <li><strong>Respect the Window:</strong> Try to go to sleep and wake up at the same time every day, even on weekends, to regulate your circadian rhythm.</li>
-      </ol>
-      <p class="tip-foot">Stop obsessing over the number "8." Instead, focus on consistency and quality.</p>
-    </section>
+    </div>
   </div>
 </main>
 

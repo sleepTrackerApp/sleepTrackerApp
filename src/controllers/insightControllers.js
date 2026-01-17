@@ -1,4 +1,5 @@
 const { contentfulService } = require('../services');
+const { documentToHtmlString } = require('@contentful/rich-text-html-renderer');
 
 const getInsights = async (req, res, next) => {
   try {
@@ -153,12 +154,13 @@ const renderInsightDetail = async (req, res, next) => {
     const { slug } = req.params;
     const articles = await contentfulService.getArticles();
     const list = Array.isArray(articles) && articles.length ? articles : fallbackArticles;
+    
     const article = list.find((a) => a.slug === slug) || list[0];
-    const fallbackImage = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=80';
 
-    if (!article) {
-      return res.redirect('/insights');
+    if (article && article.bodyContent) {
+      article.bodyContent = documentToHtmlString(article.bodyContent);
     }
+    const fallbackImage = 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=80';
 
     return res.render('pages/insightDetail', {
       title: article.title,

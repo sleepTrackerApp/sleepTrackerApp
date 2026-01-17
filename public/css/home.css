@@ -1,0 +1,366 @@
+:root {
+    --primary-blue: #1DB0FF;
+    --light-blue: #BEE3F7;
+    --pale-blue: #DBF0FC;
+    --pale-yellow: #FFFAE2;
+    --white: #FFFFFF;
+    --black: #000000;
+}
+
+/* --- GLOBAL HELPERS --- */
+body {
+    font-family: 'Quicksand', sans-serif;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Force every section to be EXACTLY the height of the screen */
+section {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background-size: cover !important;
+  background-position: center center !important;
+}
+
+.logo-text {
+  height: 70px;
+  width: auto;
+  margin-bottom: 10px;
+}
+
+/* Materialize Overrides */
+.text-primary { color: var(--primary-blue) !important; }
+.bg-light-blue { background-color: var(--light-blue) !important; }
+.bg-pale-yellow { background-color: var(--pale-yellow) !important; }
+
+/* Button Styles */
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 100px;
+  font-weight: 700;
+  text-decoration: none;
+  height: 48px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pill-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.pill-btn.black {
+  background-color: #000 !important;
+  border-radius: 50px;
+  text-transform: none;
+  font-weight: 600;
+  padding: 0 30px;
+}
+
+.hero-cta-block {
+    position: absolute;
+    bottom: 10%;
+    right: 5%;
+    text-align: right;
+}
+
+.hero-note {
+    font-style: italic;
+    font-size: 22px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* --- SECTION 1: HERO --- */
+.hero-section {
+    background: url('/img/home/Home-S1-BG.png') no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-top: -80px; 
+    padding-top: 80px; 
+}
+
+.hero-section .container {
+  width: 90vw !important;
+  max-width: 100% !important;
+  margin: 0 auto;
+}
+
+.hero-title {
+    font-weight: 800;
+    font-size: 70px;
+    line-height: 1.1;
+}
+
+.hero-sub {
+    font-size: 22px;
+    font-weight: 400;
+    margin-top: 20px;
+    line-height: 1.5;
+}
+
+/* --- SECTION 2: HOW IT WORKS --- */
+.home-works {
+  background: white;
+}
+
+.home-works .home-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.works-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; 
+  gap: 25px;
+}
+
+.works-photo {
+  grid-row: span 2;
+  position: relative;
+  border-radius: 30px;
+  overflow: hidden;
+  height: 100%;
+}
+
+.works-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.works-photo-text {
+  position: absolute;
+  bottom: 25px;
+  left: 20px;
+  right: 20px;
+  padding: 25px;
+}
+
+.works-photo-text h3 {
+  font-weight: 550;
+}
+
+.work-card {
+  border-radius: 30px;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+}
+
+.blue-tint { background-color: #BEE3F7; }
+.light-blue-tint { background-color: #DBF0FC; }
+.yellow-tint { background-color: #FFFAE2; }
+.empty-card { background: transparent; justify-content: space-between; padding: 0 30px; }
+
+/* The Icon Circle */
+.card-icon-circle {
+  width: 50px;
+  height: 50px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.card-icon-circle i { color: #1DB0FF; font-size: 30px; }
+
+/* Card Typography */
+.work-card h4 { font-weight: 800; font-size: 1.6rem; margin: 25px 0 10px; }
+.work-card p { line-height: 1.5; color: #000000; margin-top: 10px; font-size: 18px;}
+.blue-text-large { color: #1DB0FF; font-weight: 550; font-size: 40px; line-height: 1.3; }
+
+/* --- SECTION 3: HOME INSIGHTS --- */
+.home-insights {
+  padding: 100px 0;
+  background: #DBF0FC;
+}
+
+.home-insights .home-shell {
+  width: 90vw;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.insights-head {
+  text-align: center;
+  margin-bottom: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.insights-title h2 {
+  font-size: 40px;
+  font-weight: 550;
+  margin: 0;
+}
+
+.insights-title p {
+  font-size: 22px;
+}
+
+/* Expansion Hover Logic  */
+.reveal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  gap: 30px;
+  transition: grid-template-columns 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal-grid:has(.reveal-card:first-child:hover) {
+  grid-template-columns: 1.25fr 0.75fr;
+}
+
+.reveal-grid:has(.reveal-card:last-child:hover) {
+  grid-template-columns: 0.75fr 1.25fr;
+}
+
+.reveal-card {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 30px;
+}
+
+.reveal-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.reveal-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.reveal-body {
+  padding: 30px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.reveal-date {
+  font-size: 0.9rem;
+  color: #1DB0FF;
+  font-weight: 700;
+}
+
+.reveal-card h3 {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.reveal-card p {
+  margin: 0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.card-link-wrapper {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Maintain hover effects on the wrapper */
+.reveal-card:hover .card-link-wrapper {
+  color: inherit;
+}
+
+/* --- SECTION 4: BRAND MISSION --- */
+.home-brand {
+  min-height: 60vh !important; 
+  padding: 130px 0;
+  background: white;
+}
+
+.home-brand .home-shell {
+  width: 90vw;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.brand-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+}
+
+.brand-content {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: 0;
+}
+
+.brand-logo-word {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.brand-tag {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.brand-desc {
+  font-size: 32px;
+  line-height: 1.4;
+  color: #b0d4f1;
+  max-width: 600px;
+}
+
+.brand-desc .font-bold {
+  font-weight: 800;
+}
+
+.brand-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 18px;
+  text-align: left;
+  margin-bottom: 30px;
+}
+
+.brand-meta strong {
+  font-weight: 800 !important;
+}
+
+.deakin-logo {
+  height: 50px;
+  width: auto;
+}

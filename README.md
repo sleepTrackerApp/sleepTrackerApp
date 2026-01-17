@@ -9,7 +9,7 @@ The Alive Sleep Tracker App is a Node.js and Express-based web application that 
 - [Project Structure](#project-structure)
 - [Application Architecture](#application-architecture)
 - [Templates](#templates)
-- [Mongo Database Integration](#mongo-database-integration)
+- [Mongodb Database Integration](#mongodb-database-integration)
 - [Secure Environment Variable Management](#secure-environment-variable-management)
 - [Error Handling](#error-handling)
 - [Testing](#testing)
@@ -17,7 +17,7 @@ The Alive Sleep Tracker App is a Node.js and Express-based web application that 
 - [Auth0 Integration](#auth0-integration)
 - [Environment Variables](#environment-variables)
 - [How to Run](#how-to-run)
-- [Version Control Practices](#verison-control-practices)
+- [Version Control Practices](#version-control-practices)
 
 
 

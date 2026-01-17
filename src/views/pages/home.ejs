@@ -1,135 +1,124 @@
 <%- include('../components/header') %>
+<link rel="stylesheet" href="/css/home.css">
 
 <main class="home-page">
 
   <!-- Hero Section -->
-  <section class="home-hero hero-simple">
-    <div class="home-shell hero-row">
-      <div class="hero-glow hero-glow-a"></div>
-      <div class="hero-glow hero-glow-b"></div>
-
-      <div class="hero-copy-block">
-        <h1 class="hero-title">Wake Up Truly <span class="hero-alive">ALiVE</span><span class="visually-hidden">Wake Up Truly Alive</span></h1>
-        <p class="hero-sub">
-          Treasure every day as an opportunity! Track your sleep, understand your rhythm,
-          and live your best life with evidence-based guidance.
-        </p>
+  <section class="hero-section">
+    <div class="container">
+      
+      <div class="row">
+        <div class="col s12 l12">
+          <h1 class="hero-title">Wake Up Truly <img src="/img/logo/logo-text-alt.svg" alt="Logo Text" class="logo-text"></h1>
+          <p class="hero-sub">
+              Treasure every day as an opportunity! Track your sleep, understand<br> 
+              your rhythm, and live your best life with evidence-based guidance.
+          </p>
+        </div>
       </div>
-
-      <div class="hero-cta-block">
-        <div class="hero-note">How well did you sleep last night?</div>
-        <a class="pill-btn pill-dark pill-cta" href="/dashboard">
-          Track My Sleep Now
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M6 18L18 6M9 6h9v9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </a>
+  
+      <div class="hero-cta-block hide-on-small-only">
+          <span class="hero-note">How well did you sleep last night?</span>
+          <a href="/dashboard" class="btn-large pill-btn black waves-effect waves-light">
+              Track My Sleep Now 
+              <i class="material-icons right">call_made</i>
+          </a>
       </div>
+  
     </div>
   </section>
 
   <!-- How Alive Works -->
   <section class="home-works">
     <div class="home-shell works-grid">
-
+  
       <div class="works-photo">
-        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80" alt="Person stretching at window">
+        <img src="/img/home/Home-S2-1.jpg" alt="Person stretching">
         <div class="works-photo-text">
-          <h3>How <span class="hero-alive">ALiVE</span> Works?</h3>
+          <h3>How<br><span class="text-primary">ALiVE</span><br>Works?</h3>
           <p>We combine simple tracking with evidence-based advice to help you protect your health and energy.</p>
         </div>
       </div>
-
-      <div class="works-cards">
-        <div class="work-card blue">
-          <div class="card-icon">🌙</div>
-          <h4>Log Your Rest</h4>
-          <p>Simply input your sleep hours daily. A small habit for a big impact.</p>
-        </div>
-
-        <div class="work-card blue">
-          <div class="card-icon">📈</div>
-          <h4>See Your Progress</h4>
-          <p>Visualise your sleep patterns over time to improve bedtime decisions.</p>
-        </div>
-
-        <div class="work-card yellow">
-          <div class="card-icon">💙</div>
-          <h4>Get Better</h4>
-          <p>Receive personalised, science-backed advice to improve your sleep hygiene.</p>
-        </div>
-
-        <div class="work-card white">
-          <div class="card-icon">🌜</div>
-          <h4>Understanding your sleep shouldn't be complicated.</h4>
-
-          <a class="pill-btn pill-dark pill-small" href="/insights">
-            Why Sleep Matters?
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M6 18L18 6M9 6h9v9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </a>
-        </div>
-
+  
+      <div class="work-card blue-tint">
+        <div class="card-icon-circle"><i class="material-icons">brightness_3</i></div>
+        <h4>Log Your Rest</h4>
+        <p>Simply input your sleep hours daily. A small habit for a big impact.</p>
       </div>
+  
+      <div class="work-card light-blue-tint">
+        <div class="card-icon-circle"><i class="material-icons">trending_up</i></div>
+        <h4>See Your Progress</h4>
+        <p>Visualise your sleep patterns over time with interactive time-series graphs.</p>
+      </div>
+  
+      <div class="work-card yellow-tint">
+        <div class="card-icon-circle"><i class="material-icons">favorite_border</i></div>
+        <h4>Get Better</h4>
+        <p>Receive personalised, science-backed advice to improve your sleep hygiene.</p>
+      </div>
+  
+      <div class="work-card empty-card">
+        <h3 class="blue-text-large">Understanding<br>your sleep<br>shouldn't be<br>complicated.</h3>
+        <a href="/insights" class="btn-large pill-btn black waves-effect waves-light">
+            Why Sleep Matters? 
+            <i class="material-icons right">call_made</i>
+        </a>
+      </div>
+  
     </div>
   </section>
 
   <!-- Insights -->
   <section class="home-insights">
     <div class="home-shell insights-head">
-
-      <a class="pill-btn pill-dark pill-small" href="/insights">
+      <a href="/insights" class="btn-large pill-btn black waves-effect waves-light">
         Our Insights
-        <svg viewBox="0 0 24 24" fill="none">
-          <path d="M6 18L18 6M9 6h9v9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
+        <i class="material-icons right">call_made</i>
       </a>
-
+  
       <div class="insights-title">
-        <h2>Latest Reveals</h2>
+        <h2 class="text-primary">Latest Reveals</h2>
         <p>Read the latest articles on how quality rest fuels a longer, happier life.</p>
       </div>
     </div>
-
+  
     <div class="home-shell reveal-grid">
-
-      <article class="reveal-card">
-        <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=900&q=80" alt="Sleeping person">
-        <div class="reveal-body">
-          <span class="reveal-date">December 18, 2025</span>
-          <h3>How Much Sleep Do You Really Need?</h3>
-          <p>40% of people experience poor sleep, leading to weakened immune function. Learn how much you should really sleep.</p>
-        </div>
-      </article>
-
-      <article class="reveal-card">
-        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=900&q=80" alt="Person in bed">
-        <div class="reveal-body">
-          <span class="reveal-date">November 25, 2025</span>
-          <h3>The Truth About Insomnia</h3>
-          <p>Nearly 29% of people suffer insomnia. Understand the causes and how to improve sleep quality.</p>
-        </div>
-      </article>
-
+      <% articles.forEach(function(article) { %>
+        <article class="reveal-card">
+          <a href="/insights/<%= article.slug %>" class="card-link-wrapper">
+            <img src="<%= article.image %>" alt="<%= article.title %>">
+            <div class="reveal-body">
+              <span class="reveal-date"><%= article.date %></span>
+              <h3><%= article.title %></h3>
+              <p><%= article.excerpt %></p>
+            </div>
+          </a>
+        </article>
+      <% }) %>
     </div>
   </section>
 
   <!-- Brand Mission -->
   <section class="home-brand">
-    <div class="home-shell brand-inner">
-      <div class="brand-accent"></div>
-      <div class="brand-text">
+    <div class="home-shell brand-grid">
+      <div class="brand-meta">
+        <img src="/img/deakin-logo.png" alt="Deakin Logo" class="deakin-logo">
+        <span>Proudly developed by students at <br><strong>Deakin University</strong></span>
+      </div>  
+
+      <div class="brand-content">
         <div class="brand-logo-word">
-          ALiVE
+          <img src="/img/logo/logo-text-alt.svg" alt="Logo Text" class="logo-text">
           <span class="brand-tag">More Than Just a Tracker!</span>
         </div>
-        <p>
-          We built <strong>Alive</strong> to help you understand your rest so you can treasure every single day.
+        
+        <p class="brand-desc">
+          We built <span class="text-primary font-bold">ALiVE</span> because we believe 
+          <span class="text-primary font-bold">waking up</span> is a life chance. 
+          Understand your rest so you can treasure every day and 
+          <span class="text-primary font-bold">live it to the fullest.</span>
         </p>
-        <div class="brand-meta">
-          Proudly developed by students at Deakin University
-        </div>
       </div>
     </div>
   </section>
