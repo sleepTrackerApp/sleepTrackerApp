@@ -13,7 +13,9 @@ function renderDashboard(req, res) {
   // Render the dashboard page for authenticated users
   return res.render('pages/dashboard', {
     title: 'My Sleep Data',
-    activeMenu: 'dashboard'
+    activeMenu: 'log',
+    isDashboard: true,
+    user: req.oidc.user
   });
 }
 
