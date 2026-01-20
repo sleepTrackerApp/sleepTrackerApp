@@ -140,6 +140,7 @@ const renderInsights = async (req, res, next) => {
     return res.render('pages/insights', {
       title: 'Insights',
       activeMenu: 'insights',
+      isDashboard: false, // Force landing page navigation
       featured,
       articles: list,
       more,
@@ -165,6 +166,7 @@ const renderInsightDetail = async (req, res, next) => {
     return res.render('pages/insightDetail', {
       title: article.title,
       activeMenu: 'insights',
+      isDashboard: false, // Force landing page navigation
       article,
       fallbackImage,
     });

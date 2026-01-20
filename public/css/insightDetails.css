@@ -31,7 +31,6 @@
 
 .material-icons { color: #1DB0FF; margin-left: 30px; }
 
-/* The Blue Divider Block */
 .hero-divider-block {
   margin-bottom: 25px;
   display: flex;
@@ -89,12 +88,12 @@
   font-weight: 700;
 }
 
-  /* Responsive Overrides  */
-  @media (max-width: 900px) {
-    .hero-block {
-      grid-template-columns: 1fr;
-    }
-    .hero-quote {
-      order: -1;
-    }
+/* Responsive Overrides  */
+@media (max-width: 900px) {
+  .hero-block {
+    grid-template-columns: 1fr;
   }
+  .hero-quote {
+    order: -1;
+  }
+}

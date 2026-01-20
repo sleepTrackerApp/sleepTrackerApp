@@ -35,7 +35,20 @@
 
                 <div class="nav-right hide-on-small-and-down">
                     <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-                        <a href="/dashboard" class="nav-signin black">Dashboard</a>
+                        <span class="user-name-label grey-text text-darken-4">
+                            <%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %>
+                        </span>
+                        
+                        <a href="#!" class="btn-floating btn-small blue lighten-4 z-depth-0 notification-bell">
+                            <i class="material-icons blue-text">notifications_none</i>
+                        </a>
+                
+                        <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
+                            <a href="/" class="nav-signin black">Main Site</a>
+                        <% } else { %>
+                            <a href="/dashboard" class="nav-signin black">Dashboard</a>
+                        <% } %>
+                        
                         <a href="/auth/logout" class="nav-signout-link grey-text">Sign Out</a>
                     <% } else { %>
                         <a href="/auth/login" class="nav-signin black">Sign In</a>

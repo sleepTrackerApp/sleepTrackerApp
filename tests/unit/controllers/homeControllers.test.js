@@ -25,6 +25,7 @@ describe('Home controller tests', () => {
       res.render.calledOnceWithExactly('pages/home', {
         title: 'Wake Up Truly Alive',
         activeMenu: 'home',
+        isDashboard: false,
         articles: [
           { title: 'Article 1', slug: 'a1', image: 'img1.jpg', excerpt: '...' },
           { title: 'Article 2', slug: 'a2', image: 'img2.jpg', excerpt: '...' }
