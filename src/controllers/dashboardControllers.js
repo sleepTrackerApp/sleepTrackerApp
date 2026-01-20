@@ -15,7 +15,7 @@ function renderDashboard(req, res) {
     title: 'My Sleep Data',
     activeMenu: 'log',
     isDashboard: true,
-    user: req.oidc.user
+    user: req.oidc?.user || { name: 'User' }
   });
 }
 
