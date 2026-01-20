@@ -14,19 +14,7 @@ function renderDashboard(req, res) {
   return res.render('pages/dashboard', {
     title: 'My Sleep Data',
     activeMenu: 'log',
-  });
-}
-
-/**
- * Schedules page handler.
- * @param req - Express request object
- * @param res - Express response object
- * @returns {*} - Renders schedules page
- */
-function renderSchedules(req, res) {
-  return res.render('pages/schedules', {
-    title: 'My Sleep Schedules',
-    activeMenu: 'schedules'
+    isDashboard: true,
   });
 }
 

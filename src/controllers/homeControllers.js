@@ -39,7 +39,8 @@ const renderHome = async (req, res, next) => {
     res.render('pages/home', {
       title: 'Wake Up Truly Alive',
       activeMenu: 'home',
-      articles: list,
+      isDashboard: false, // Force landing page navigation
+      articles: list, // This provides the variable home.ejs is looking for 
     });
   } catch (error) {
     // Pass the error to the global error handler 

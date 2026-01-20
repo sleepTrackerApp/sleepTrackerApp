@@ -119,169 +119,62 @@ nav.top-nav ul li.active {
 }
 
 .top-nav .nav-signin {
-    background-color: #000;
-    color: #fff;
-    border-radius: 100px;
-    height: 48px;
-    line-height: 48px;
-    padding: 0 30px;
-    font-weight: 700;
-    display: inline-block;
+  background-color: #000;
+  color: #fff;
+  border-radius: 100px;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 30px;
+  font-weight: 700;
+  display: inline-block;
 }
 
 /* --- Dashboard Header Extensions --- */
 
+.user-name-label {
+  font-weight: 700;
+  margin-right: 12px;
+}
+
+.notification-bell {
+  margin-right: 20px;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+}
+
+.notification-bell i {
+  margin: 0 !important;
+  line-height: 32px !important;
+  height: 32px !important;
+  width: 32px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* For the "Main Site" button variant */
 .nav-signin.black {
-    background-color: #000 !important;
-    color: #fff !important;
-    border-radius: 100px;
-    height: 48px;
-    line-height: 48px;
-    padding: 0 30px;
-    font-weight: 700;
-    display: inline-block;
-    border: none;
+  background-color: #000 !important;
+  color: #fff !important;
+  border-radius: 100px;
+  height: 48px;
+  line-height: 48px;
+  padding: 0 30px;
+  font-weight: 700;
+  display: inline-block;
+  border: none;
 }
 
 .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-/* Profile button + dropdown */
-.header-profile-wrap {
-    position: relative;
-}
-
-.header-profile-btn {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: none;
-    background-color: #bee3f7;
-    color: #0d47a1;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-    transition: background-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.header-profile-btn:hover {
-    background-color: #90caf9;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
-}
-
-/* Override Materialize nav i { height: 56px; line-height: 56px } */
-.header-profile-btn i,
-.header-profile-btn i.material-icons {
-    display: block;
-    font-size: 28px;
-    height: auto;
-    line-height: 1;
-}
-
-.header-profile-dropdown {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    min-width: 260px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    padding: 4px 0;
-    z-index: 1100;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-6px);
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
-}
-
-.header-profile-dropdown.is-open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown-section {
-    padding: 0;
-}
-
-.dropdown-section + .dropdown-section {
-    border-top: 1px solid #e0e0e0;
-}
-
-.dropdown-welcome {
-    padding: 10px 16px 8px;
-}
-
-.dropdown-welcome-link {
-    font-weight: 700;
-    color: #000;
-    text-decoration: none;
-    font-size: 15px;
-}
-
-.dropdown-welcome-link:hover {
-    text-decoration: underline;
-}
-
-.dropdown-messages {
-    padding: 6px 16px 8px;
-}
-
-.dropdown-messages-text {
-    color: #616161;
-    padding-top: 1em;
-    padding-bottom: 1em;
-    display: block;
-}
-
-.dropdown-links {
-    padding: 2px 0;
-}
-
-.dropdown-section {
-    line-height: normal;
-    height: auto;
-    color: #000;
-}
-
-.dropdown-link {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 16px;
-    color: #212121;
-    text-decoration: none;
-    font-size: 14px;
-    height: auto;
-    line-height: normal;
-    transition: background-color 0.15s ease;
-}
-
-.dropdown-link:hover {
-    background-color: #f5f5f5;
-}
-
-.dropdown-link .material-icons,
-.header-profile-dropdown i.material-icons {
-    display: inline-block;
-    font-size: 20px;
-    height: auto;
-    line-height: 1;
-    color: #616161;
-}
-
-.dropdown-footer {
-    padding: 2px 0;
-}
-
-.dropdown-footer .dropdown-signout {
-    font-weight: 600;
-    color: #616161;
+.nav-signout-link {
+  font-weight: 600;
+  font-size: 14px;
+  margin-left: 10px;
 }

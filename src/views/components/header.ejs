@@ -29,6 +29,37 @@
                 <a href="/" class="nav-brand">
                     <img src="/img/logo/logo-horizontal.svg" alt="Alive logo" class="brand-logo"/>
                 </a>
+
+                <div class="nav-center hide-on-small-and-down">
+                    <div class="nav-pill">
+                        <ul class="nav-menu">
+                            <%- include('./navMenu') %>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="nav-right hide-on-small-and-down">
+                    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                        <span class="user-name-label grey-text text-darken-4">
+                            <%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %>
+                        </span>
+                        
+                        <a href="#!" class="btn-floating btn-small blue lighten-4 z-depth-0 notification-bell">
+                            <i class="material-icons blue-text">notifications_none</i>
+                        </a>
+                
+                        <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
+                            <a href="/" class="nav-signin black">Main Site</a>
+                        <% } else { %>
+                            <a href="/dashboard" class="nav-signin black">Dashboard</a>
+                        <% } %>
+                        
+                        <a href="/auth/logout" class="nav-signout-link grey-text">Sign Out</a>
+                    <% } else { %>
+                        <a href="/auth/login" class="nav-signin black">Sign In</a>
+                    <% } %>
+                </div>
+                
             </div>
 
             <a href="#" data-target="mobile-nav" class="sidenav-trigger black-text header-mobile-trigger" aria-label="Open menu">
