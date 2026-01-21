@@ -266,6 +266,34 @@
 <script>
   const API_BASE = '/api/schedules';
 
+  // Initialize form with current time and today's day
+  function initializeScheduleForm() {
+    const now = new Date();
+    const hour = String(now.getHours()).padStart(2, '0');
+    const minute = String(now.getMinutes()).padStart(2, '0');
+    const todayDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+    // Set current time
+    document.getElementById('bedtimeHour').value = hour;
+    document.getElementById('bedtimeMinute').value = minute;
+
+    // Select today's day
+    const dayCheckboxes = document.querySelectorAll('input[name="daysOfWeek"]');
+    dayCheckboxes.forEach((checkbox, index) => {
+      if (index === todayDay) {
+        checkbox.checked = true;
+      }
+    });
+
+    console.log(`[Schedule Form] Initialized with time ${hour}:${minute} and day ${todayDay}`);
+  }
+
+  // Call initialization on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeScheduleForm();
+    loadSchedules();
+  });
+
   // Toggle between bedtime and custom-cron form
   document.getElementById('scheduleType').addEventListener('change', (e) => {
     const isBedtime = e.target.value === 'bedtime';
@@ -447,9 +475,6 @@
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3000);
   }
-
-  // Load schedules on page load
-  document.addEventListener('DOMContentLoaded', loadSchedules);
 </script>
 
 <%- include('../components/footer') %>

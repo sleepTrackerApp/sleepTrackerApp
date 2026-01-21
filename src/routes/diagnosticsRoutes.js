@@ -101,4 +101,47 @@ router.get('/socket/:socketId', (req, res) => {
   }
 });
 
+/**
+ * POST /diagnostics/test-notification
+ * GET /diagnostics/test-notification
+ * Sends a test bedtime notification to all connected users
+ */
+router.post('/test-notification', sendTestNotification);
+router.get('/test-notification', sendTestNotification);
+
+function sendTestNotification(req, res) {
+  try {
+    const io = req.app.get('io');
+
+    if (!io) {
+      return res.status(503).json({
+        status: 'error',
+        message: 'Socket.IO instance not available',
+      });
+    }
+
+    // Send test notification to all connected clients
+    io.emit('schedule:notification', {
+      type: 'bedtime',
+      title: 'Test Bedtime Reminder',
+      message: 'This is a test notification to verify the notification system is working!',
+      scheduleName: 'Test Schedule',
+      timestamp: new Date(),
+    });
+
+    console.log('[Diagnostics] Test notification sent to all clients');
+
+    return res.json({
+      status: 'success',
+      message: 'Test notification sent to all connected users',
+    });
+  } catch (error) {
+    console.error('Error sending test notification:', error);
+    return res.status(500).json({
+      status: 'error',
+      message: error.message,
+    });
+  }
+}
+
 module.exports = router;
