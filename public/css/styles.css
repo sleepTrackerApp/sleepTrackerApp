@@ -1980,19 +1980,9 @@ body {
   accent-color: #0a223d;
 }
 
-.checkbox-group input[type="checkbox"]:checked {
+.checkbox-group input[type="checkbox"]:checked + span,
+.checkbox-group label input[type="checkbox"]:checked {
   background-color: #0a223d;
-}
-
-.checkbox-group label:has(input[type="checkbox"]:checked) {
-  background: #0a223d;
-  color: #fff;
-  border-color: #0a223d;
-  box-shadow: 0 4px 12px rgba(10, 34, 61, 0.2);
-}
-
-.checkbox-group label:has(input[type="checkbox"]:checked) input[type="checkbox"] {
-  accent-color: #fff;
 }
 
 @media (max-width: 900px) {

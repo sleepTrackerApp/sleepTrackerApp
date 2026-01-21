@@ -282,10 +282,35 @@
     dayCheckboxes.forEach((checkbox, index) => {
       if (index === todayDay) {
         checkbox.checked = true;
+        // Update styling
+        updateCheckboxLabel(checkbox);
       }
     });
 
+    // Add event listeners to all checkboxes to update styling
+    dayCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener('change', () => {
+        updateCheckboxLabel(checkbox);
+      });
+    });
+
     console.log(`[Schedule Form] Initialized with time ${hour}:${minute} and day ${todayDay}`);
+  }
+
+  // Update label styling based on checkbox state
+  function updateCheckboxLabel(checkbox) {
+    const label = checkbox.closest('label');
+    if (checkbox.checked) {
+      label.style.background = '#0a223d';
+      label.style.color = '#fff';
+      label.style.borderColor = '#0a223d';
+      label.style.boxShadow = '0 4px 12px rgba(10, 34, 61, 0.2)';
+    } else {
+      label.style.background = '#f7fbff';
+      label.style.color = '#000';
+      label.style.borderColor = '#d8e7ff';
+      label.style.boxShadow = 'none';
+    }
   }
 
   // Call initialization on page load
