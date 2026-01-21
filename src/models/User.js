@@ -12,6 +12,12 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
         },
+        // Optional test username for Socket.IO testing
+        testUsername: {
+            type: String,
+            required: false,
+            sparse: true,
+        },
         // Timestamp of the last login
         lastLoginAt: {
             type: Date,

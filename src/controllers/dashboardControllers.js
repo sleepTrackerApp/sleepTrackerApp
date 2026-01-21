@@ -18,7 +18,21 @@ function renderDashboard(req, res) {
   });
 }
 
+/**
+ * Schedules page handler.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @returns {*} - Renders schedules page
+ */
+function renderSchedules(req, res) {
+  return res.render('pages/schedules', {
+    title: 'My Sleep Schedules',
+    activeMenu: 'schedules'
+  });
+}
+
 module.exports = {
   renderDashboard,
+  renderSchedules,
 };
 

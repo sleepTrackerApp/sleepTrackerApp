@@ -9,6 +9,8 @@ const homeRoutes = require('./homeRoutes');
 const apiRoutes = require('./apiRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const authRoutes = require('./authRoutes');
+const diagnosticsRoutes = require('./diagnosticsRoutes');
+const messageRoutes = require('./messageRoutes');
 
 // Create a new router instance
 const router = express.Router();
@@ -18,6 +20,8 @@ router.use('/', homeRoutes);
 router.use('/api', apiRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/auth', authRoutes);
+router.use('/messages', messageRoutes);
+router.use('/diagnostics', diagnosticsRoutes);
 
 module.exports = router;
 

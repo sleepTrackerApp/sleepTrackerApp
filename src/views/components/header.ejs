@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/header.css" />
+    <script src="/socket.io/socket.io.js"></script>
   </head>
 
   <body class="grey lighten-5">
@@ -39,7 +40,7 @@
                             <%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %>
                         </span>
                         
-                        <a href="#!" class="btn-floating btn-small blue lighten-4 z-depth-0 notification-bell">
+                        <a href="/dashboard/schedules" class="btn-floating btn-small blue lighten-4 z-depth-0 notification-bell" title="View Schedules">
                             <i class="material-icons blue-text">notifications_none</i>
                         </a>
                 

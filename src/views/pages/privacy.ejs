@@ -1,23 +1,57 @@
 <%- include('../components/header') %>
 
-<main class="container" style="min-height: 60vh;">
-  <h1>Privacy Policy</h1>
+<main class="container" style="min-height: 70vh;">
+  <section class="policy-hero card-panel" style="margin-top: 20px; background: linear-gradient(120deg, #0d47a1, #42a5f5); color: #fff; border-radius: 12px; box-shadow: 0 12px 32px rgba(13,71,161,0.18);">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <i class="material-icons" style="font-size: 42px;">shield</i>
+      <div>
+        <h1 style="margin: 0; font-size: 28px; font-weight: 700;">Privacy Policy</h1>
+        <p style="margin: 6px 0 0; opacity: 0.9;">We protect your data so you can focus on better sleep.</p>
+      </div>
+    </div>
+  </section>
 
-  <p>
-    Alive is committed to protecting your privacy and personal data.
-  </p>
+  <section class="policy-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 18px;">
+    <article class="card-panel" style="border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.06);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <i class="material-icons" style="color: #0d47a1;">lock</i>
+        <h2 style="margin: 0; font-size: 18px;">Information We Collect</h2>
+      </div>
+      <ul style="margin: 4px 0 0 18px; line-height: 1.5; color: #455a64;">
+        <li>Account details (name, email)</li>
+        <li>Sleep logs and schedules you add</li>
+        <li>Usage analytics to improve the app</li>
+      </ul>
+    </article>
 
-  <h2>Information We Collect</h2>
-  <ul>
-    <li>Account information</li>
-    <li>Sleep tracking data</li>
-    <li>Usage analytics</li>
-  </ul>
+    <article class="card-panel" style="border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.06);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <i class="material-icons" style="color: #0d47a1;">verified_user</i>
+        <h2 style="margin: 0; font-size: 18px;">How We Protect It</h2>
+      </div>
+      <p style="margin: 4px 0 0; color: #455a64;">We apply encryption in transit, role-based access, and least-privilege for systems that touch your data.</p>
+    </article>
 
-  <h2>Data Protection</h2>
-  <p>
-    Appropriate security measures are implemented to protect user data.
-  </p>
+    <article class="card-panel" style="border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.06);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <i class="material-icons" style="color: #0d47a1;">delete_sweep</i>
+        <h2 style="margin: 0; font-size: 18px;">Your Choices</h2>
+      </div>
+      <ul style="margin: 4px 0 0 18px; line-height: 1.5; color: #455a64;">
+        <li>Download or delete your data on request</li>
+        <li>Control marketing and notification preferences</li>
+        <li>Contact support for privacy questions</li>
+      </ul>
+    </article>
+
+    <article class="card-panel" style="border-radius: 10px; box-shadow: 0 8px 20px rgba(0,0,0,0.06);">
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+        <i class="material-icons" style="color: #0d47a1;">public</i>
+        <h2 style="margin: 0; font-size: 18px;">Third Parties</h2>
+      </div>
+      <p style="margin: 4px 0 0; color: #455a64;">We use trusted vendors (e.g., hosting, analytics) under strict data protection agreements. We do not sell your data.</p>
+    </article>
+  </section>
 </main>
 
 <%- include('../components/footer') %>

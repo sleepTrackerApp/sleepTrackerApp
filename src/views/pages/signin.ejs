@@ -9,21 +9,8 @@
       <h1 class="signin-title">Sign In</h1>
 
       <form class="signin-form" action="/auth/login" method="get">
-        <label class="signin-label" for="email">Email Address</label>
-        <input class="signin-input" id="email" type="email" name="email" placeholder="" autocomplete="email" required>
-
-        <label class="signin-label" for="password">Password</label>
-        <div class="signin-password">
-          <input class="signin-input" id="password" type="password" name="password" placeholder="" autocomplete="current-password" required>
-          <span class="eye-icon" aria-hidden="true">👁</span>
-        </div>
-
-        <div class="signin-row">
-          <label class="remember"><input type="checkbox" name="remember"> Remember Me?</label>
-          <a class="signin-link" href="#">Forgot Your Password?</a>
-        </div>
-
-        <button class="signin-submit" type="submit">Sign In</button>
+        <p class="signin-info">Click below to sign in with your Auth0 account</p>
+        <button class="signin-submit" type="submit">Sign In with Auth0</button>
       </form>
 
       <p class="signin-foot">Have not had an account? <a class="signin-link" href="#">Register</a> now!</p>

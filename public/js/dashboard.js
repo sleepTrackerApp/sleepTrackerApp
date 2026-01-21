@@ -1,5 +1,99 @@
 document.addEventListener('DOMContentLoaded', function() {
     
+    // Initialize Socket.IO for notifications
+    const socket = io();
+    
+    // Listen for bedtime notifications
+    socket.on('schedule:notification', function(notification) {
+        if (notification.type === 'bedtime') {
+            showBedtimeNotification(notification);
+        }
+    });
+
+    function showBedtimeNotification(notification) {
+        // Create notification element
+        const notifDiv = document.createElement('div');
+        notifDiv.className = 'bedtime-notification';
+        notifDiv.innerHTML = `
+            <div class="notif-content">
+                <h4>${notification.title}</h4>
+                <p>${notification.message}</p>
+                <small>${new Date(notification.timestamp).toLocaleTimeString()}</small>
+            </div>
+            <button class="notif-close" onclick="this.parentElement.remove()">×</button>
+        `;
+        
+        // Add CSS styles
+        notifDiv.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            max-width: 400px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        `;
+        
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(450px);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            .bedtime-notification {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .notif-content {
+                flex: 1;
+            }
+            .notif-close {
+                background: none;
+                border: none;
+                color: white;
+                font-size: 24px;
+                cursor: pointer;
+                padding: 0;
+                margin-left: 15px;
+                opacity: 0.8;
+                transition: opacity 0.2s;
+            }
+            .notif-close:hover {
+                opacity: 1;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        document.body.appendChild(notifDiv);
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (notifDiv.parentElement) {
+                notifDiv.remove();
+            }
+        }, 10000);
+
+        // Browser notification if permission granted
+        if ('Notification' in window && Notification.permission === 'granted') {
+            new Notification(notification.title, {
+                body: notification.message,
+                icon: '/img/logo/icon.png',
+            });
+        }
+    }
+    
     // 1. Sleep Log: Toggle between Time and Duration
     const toggleButtons = document.querySelectorAll('.js-log-toggle');
     const viewDuration = document.getElementById('view-duration');
