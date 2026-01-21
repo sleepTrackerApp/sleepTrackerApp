@@ -36,15 +36,7 @@ function initializeSocketIO(server) {
   io.locals = { userSockets, socketUsers };
 
   // Simple support bot reply generator
-  function buildBotReply(message) {
-    if (!message || typeof message !== 'string') return 'Thanks for reaching out! How can I assist?';
-    const lower = message.toLowerCase();
-    if (lower.includes('hello') || lower.includes('hi')) return 'Hi there! How can I help you today?';
-    if (lower.includes('sleep')) return 'Tip: Try a consistent bedtime and reduce screen time 30 minutes before sleep.';
-    if (lower.includes('schedule')) return 'You can adjust your schedule from the Dashboard > Schedules page.';
-    if (lower.includes('help')) return 'Sure—describe the issue and I’ll guide you.';
-    return 'Got it! I will pass this on. Meanwhile, you can check the Insights and Dashboard for more details.';
-  }
+  
 
   // Socket connection handler
   io.on('connection', (socket) => {
