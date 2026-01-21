@@ -55,20 +55,15 @@ function registerJob(schedule) {
 function sendBedtimeNotification(schedule) {
   if (!ioInstance) return;
 
-  const userId = String(schedule.userId);
-  const userSocketId = ioInstance.locals?.userSockets?.get(userId);
-
-  if (userSocketId) {
-    // Send notification to specific user
-    ioInstance.to(userSocketId).emit('schedule:notification', {
-      type: 'bedtime',
-      title: 'Bedtime Reminder',
-      message: `It's time for bed! ${schedule.name}`,
-      scheduleName: schedule.name,
-      timestamp: new Date(),
-    });
-    console.log(`[Scheduler] Sent bedtime notification to user ${userId}`);
-  }
+  // Broadcast to all connected clients
+  ioInstance.emit('schedule:notification', {
+    type: 'bedtime',
+    title: 'Bedtime Reminder',
+    message: `It's time for bed! ${schedule.name}`,
+    scheduleName: schedule.name,
+    timestamp: new Date(),
+  });
+  console.log(`[Scheduler] Sent bedtime notification for schedule: ${schedule.name}`);
 }
 
 function unregisterJob(scheduleId) {
