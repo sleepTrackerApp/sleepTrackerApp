@@ -91,6 +91,23 @@ function buildAuthConfig() {
  * Auth0 middleware factory.
  */
 function createAuthMiddleware() {
+  // Check if Auth0 is configured
+  const { AUTH0 } = appConfig;
+  
+  if (!AUTH0.ISSUER_BASE_URL || !AUTH0.CLIENT_ID || !AUTH0.CLIENT_SECRET) {
+    console.log('[Auth] Auth0 disabled - using bypass middleware');
+    // Return a no-op middleware if Auth0 is not configured
+    return (req, res, next) => {
+      res.locals.isAuthenticated = false;
+      res.locals.user = null;
+      res.locals.displayName = null;
+      res.locals.userProfile = null;
+      res.locals.userRecord = null;
+      res.locals.isFirstLogin = false;
+      next();
+    };
+  }
+  
   return auth(buildAuthConfig());
 }
 

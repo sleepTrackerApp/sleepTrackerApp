@@ -41,6 +41,12 @@ function isValidRedirectPath(path) {
  * @param res - Express response object
  */
 function login(req, res) {
+  // If Auth0 is not configured, just redirect to dashboard
+  if (!res.oidc) {
+    console.log('[Auth] Auth0 disabled - redirecting to dashboard');
+    return res.redirect('/dashboard');
+  }
+  
   const requestedReturnTo = req.query.returnTo;
   const returnTo = isValidRedirectPath(requestedReturnTo)
     ? requestedReturnTo
