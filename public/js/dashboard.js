@@ -1,20 +1,28 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Initialize Socket.IO for notifications
-    const socket = io();
+    // Use the global socket from header or create if needed
+    let socket = window.socket || io();
+    window.socket = socket; // Store globally for other scripts
     
-    console.log('[Dashboard] Socket.IO initialized:', socket);
+    console.log('[Dashboard] Using Socket.IO:', socket);
+    console.log('[Dashboard] Socket connected?', socket.connected);
     
     // Listen for bedtime notifications
     socket.on('schedule:notification', function(notification) {
         console.log('[Dashboard] Received notification:', notification);
+        console.log('[Dashboard] Notification type:', notification.type);
+        console.log('[Dashboard] Is bedtime?', notification.type === 'bedtime');
+        
         if (notification.type === 'bedtime') {
+            console.log('[Dashboard] Calling showBedtimeNotification...');
             showBedtimeNotification(notification);
+        } else {
+            console.log('[Dashboard] Notification type is not bedtime, skipping...');
         }
     });
     
     socket.on('connect', function() {
-        console.log('[Dashboard] Socket connected successfully');
+        console.log('[Dashboard] Socket connected successfully, ID:', socket.id);
     });
     
     socket.on('disconnect', function() {
@@ -23,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showBedtimeNotification(notification) {
         console.log('[Notification] Creating notification element...');
+        console.log('[Notification] Notification data:', notification);
         
         // Create notification element
         const notifDiv = document.createElement('div');
