@@ -9,6 +9,92 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="/css/header.css" />
     <script src="/socket.io/socket.io.js"></script>
+    <script>
+      // Initialize Socket.IO connection immediately
+      console.log('[Init] Socket.IO script loading...');
+      const socket = io();
+      window.socket = socket; // Store globally
+      console.log('[Init] Socket.IO client created:', socket);
+      
+      socket.on('connect', () => {
+        console.log('[Init] Socket connected with ID:', socket.id);
+      });
+      
+      socket.on('disconnect', () => {
+        console.log('[Init] Socket disconnected');
+      });
+      
+      // Global notification listener - this will work on any page
+      socket.on('schedule:notification', (data) => {
+        console.log('[Init] Received notification:', data);
+        
+        // Show the notification popup immediately
+        if (data.type === 'bedtime') {
+          showNotificationPopup(data);
+        }
+      });
+
+      // Function to show notification popup
+      function showNotificationPopup(notification) {
+        console.log('[Popup] Creating notification UI...');
+        
+        // Create notification element
+        const notifDiv = document.createElement('div');
+        notifDiv.className = 'bedtime-notification';
+        
+        notifDiv.innerHTML = `
+          <div class="notif-content">
+            <h4>${notification.title || 'Bedtime Reminder'}</h4>
+            <p>${notification.message || 'Time for bed!'}</p>
+            <small>${new Date(notification.timestamp).toLocaleTimeString()}</small>
+          </div>
+          <button class="notif-close" onclick="this.parentElement.remove()" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:0;margin-left:15px;">×</button>
+        `;
+        
+        // Apply inline styles
+        notifDiv.style.position = 'fixed';
+        notifDiv.style.top = '80px';
+        notifDiv.style.right = '20px';
+        notifDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        notifDiv.style.color = 'white';
+        notifDiv.style.padding = '20px';
+        notifDiv.style.borderRadius = '8px';
+        notifDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+        notifDiv.style.maxWidth = '400px';
+        notifDiv.style.zIndex = '9999';
+        notifDiv.style.display = 'flex';
+        notifDiv.style.alignItems = 'center';
+        notifDiv.style.justifyContent = 'space-between';
+        notifDiv.style.animation = 'slideIn 0.3s ease-out';
+        
+        // Add animation styles
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes slideIn {
+            from {
+              transform: translateX(450px);
+              opacity: 0;
+            }
+            to {
+              transform: translateX(0);
+              opacity: 1;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+        
+        // Add to page
+        document.body.appendChild(notifDiv);
+        console.log('[Popup] Notification added to page');
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+          if (notifDiv.parentElement) {
+            notifDiv.remove();
+          }
+        }, 10000);
+      }
+    </script>
   </head>
 
   <body class="grey lighten-5">

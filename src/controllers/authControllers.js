@@ -61,34 +61,27 @@ async function emailPasswordLogin(req, res) {
 
     // Basic validation
     if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password required' });
+      return res.status(400).render('pages/signin', { error: 'Email and password required' });
     }
 
     // For now, accept any email/password combo (simple authentication)
-    // TODO: Implement proper password hashing and verification
     if (email && password.length >= 3) {
-      // Create or fetch user
-      const user = await userService.getOrCreateUser({
+      // Store in session
+      if (!req.session) req.session = {};
+      req.session.userId = email;
+      req.session.user = {
         email,
         name: email.split('@')[0],
-      });
-
-      // Set user session (express-openid-connect doesn't require this for password auth)
-      req.session = req.session || {};
-      req.session.userId = user._id;
-      req.session.user = {
-        email: user.email,
-        name: user.name,
-        sub: user._id,
       };
 
+      console.log('[Auth] User logged in:', email);
       return res.redirect('/dashboard');
     }
 
-    return res.status(401).json({ error: 'Invalid credentials' });
+    return res.status(401).render('pages/signin', { error: 'Invalid credentials' });
   } catch (error) {
     console.error('[Auth] Email/password login error:', error);
-    return res.status(500).json({ error: 'Login failed' });
+    return res.status(500).render('pages/signin', { error: 'Login failed: ' + error.message });
   }
 }
 
