@@ -7,6 +7,5 @@ module.exports = {
   Summary: require('./Summary'),
   Schedule: require('./Schedule'),
   Message: require('./Message'),
-  Goal: require('./Goal'),
 };
 

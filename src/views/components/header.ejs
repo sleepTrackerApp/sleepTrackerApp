@@ -6,19 +6,9 @@
     <% const resolvedTitle = typeof title === 'undefined' || title === null ? '' : title; %>
     <title><%= resolvedTitle ? `${resolvedTitle} | ` : '' %>Alive Sleep Tracker</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
-    <link rel="stylesheet" href="/css/base.css"/>
-    <link rel="stylesheet" href="/css/header.css"/>
-    <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
-        <link rel="stylesheet" href="/css/dashboard.css"/>
-    <% } %>
-    <% if (typeof isProfileSection !== 'undefined' && isProfileSection) { %>
-        <link rel="stylesheet" href="/css/profile.css"/>
-    <% } %>
-    <% if (typeof isProfileSchedules !== 'undefined' && isProfileSchedules) { %>
-        <link rel="stylesheet" href="/css/dashboard.css"/>
-    <% } %>
-</head>
+    <link rel="stylesheet" href="/css/header.css" />
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
 
 <body class="white">
 <div class="navbar-fixed">
@@ -44,7 +34,7 @@
                             <%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %>
                         </span>
                         
-                        <a href="#!" class="btn-floating btn-small blue lighten-4 z-depth-0 notification-bell">
+                        <a href="/dashboard/schedules" class="btn-floating btn-small blue lighten-4 z-depth-0 notification-bell" title="View Schedules">
                             <i class="material-icons blue-text">notifications_none</i>
                         </a>
                 

@@ -11,7 +11,6 @@ const dashboardRoutes = require('./dashboardRoutes');
 const authRoutes = require('./authRoutes');
 const diagnosticsRoutes = require('./diagnosticsRoutes');
 const messageRoutes = require('./messageRoutes');
-const profileRoutes = require('./profileRoutes');
 
 // Create a new router instance
 const router = express.Router();
@@ -22,7 +21,6 @@ router.use('/api', apiRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/auth', authRoutes);
 router.use('/messages', messageRoutes);
-router.use('/profile', profileRoutes);
 router.use('/diagnostics', diagnosticsRoutes);
 
 module.exports = router;

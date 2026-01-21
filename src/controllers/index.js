@@ -10,7 +10,7 @@ const errorControllers = require('./errorControllers');
 const homeControllers = require('./homeControllers');
 const dashboardControllers = require('./dashboardControllers');
 const scheduleController = require('./scheduleController');
-const goalController = require('./goalController');
+const { apiSendMessage } = require('./messageApiController');
 
 module.exports = {
   apiControllers,
@@ -22,5 +22,5 @@ module.exports = {
   homeControllers,
   dashboardControllers,
   scheduleController,
-  goalController,
+  apiSendMessage,
 };

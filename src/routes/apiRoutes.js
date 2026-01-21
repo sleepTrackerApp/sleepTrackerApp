@@ -6,9 +6,7 @@ const insigntRoutes = require('./apiInsightRoutes');
 const sleepEntryRoutes = require('./apiSleepEntryRoutes');
 const apiWeeklySummaryRoutes = require('./apiWeeklySummaryRoutes');
 const apiScheduleRoutes = require('./apiScheduleRoutes');
-const apiGoalRoutes = require('./apiGoalRoutes');
-const apiMessageRoutes = require('./apiMessageRoutes');
-const { apiControllers } = require('../controllers');
+const { apiControllers, apiSendMessage } = require('../controllers');
 const router = express.Router();
 
 // Base welcome endpoint
@@ -19,8 +17,9 @@ router.use('/insights', insigntRoutes);
 router.use('/sleep-entries', sleepEntryRoutes);
 router.use('/summary', apiWeeklySummaryRoutes);
 router.use('/schedules', apiScheduleRoutes);
-router.use('/goal', apiGoalRoutes);
-router.use('/messages', apiMessageRoutes);
+
+// Real-time message trigger
+router.post('/messages/send', apiSendMessage);
 
 // Catch-all for unknown API routes
 router.use(apiControllers.apiNotFound);

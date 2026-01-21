@@ -1,12 +1,25 @@
-/**
- * Page route: messages UI moved to /profile/support. Redirect legacy /messages.
- * API endpoints remain under /api/messages (apiMessageRoutes).
- */
 const express = require('express');
+const { renderMessages, getConversation, getUnreadCount } = require('../controllers/messageController');
+const { requireAuthRoute } = require('../helpers/auth');
 
 const router = express.Router();
 
-/** GET /messages — redirect to Support Chat in profile */
-router.get('/', (req, res) => res.redirect(302, '/profile/support'));
+/**
+ * GET /messages
+ * Render messages page
+ */
+router.get('/', requireAuthRoute, renderMessages);
+
+/**
+ * GET /messages/unread
+ * Get unread message count
+ */
+router.get('/unread', requireAuthRoute, getUnreadCount);
+
+/**
+ * GET /messages/:otherUserId
+ * Get conversation with specific user
+ */
+router.get('/:otherUserId', requireAuthRoute, getConversation);
 
 module.exports = router;

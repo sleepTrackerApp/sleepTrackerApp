@@ -8,8 +8,6 @@ module.exports = {
   sleepEntryService: require('./sleepEntryService'),
   weeklySummaryService: require('./weeklySummaryService'),
   scheduleService: require('./scheduleService'),
-  goalService: require('./goalService'),
-  messageService: require('./messageService'),
 };
 
           
