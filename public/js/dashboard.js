@@ -3,14 +3,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize Socket.IO for notifications
     const socket = io();
     
+    console.log('[Dashboard] Socket.IO initialized:', socket);
+    
     // Listen for bedtime notifications
     socket.on('schedule:notification', function(notification) {
+        console.log('[Dashboard] Received notification:', notification);
         if (notification.type === 'bedtime') {
             showBedtimeNotification(notification);
         }
     });
+    
+    socket.on('connect', function() {
+        console.log('[Dashboard] Socket connected successfully');
+    });
+    
+    socket.on('disconnect', function() {
+        console.log('[Dashboard] Socket disconnected');
+    });
 
     function showBedtimeNotification(notification) {
+        console.log('[Notification] Creating notification element...');
+        
         // Create notification element
         const notifDiv = document.createElement('div');
         notifDiv.className = 'bedtime-notification';
@@ -77,6 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.head.appendChild(style);
         
         document.body.appendChild(notifDiv);
+        console.log('[Notification] Notification added to DOM');
         
         // Auto-remove after 10 seconds
         setTimeout(() => {
