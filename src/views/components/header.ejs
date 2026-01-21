@@ -34,6 +34,71 @@
         }
       });
 
+      // Global variable to track if notification is beeping
+      let isBeeping = false;
+      let beeperInterval = null;
+      
+      // Function to play notification sound
+      function playNotificationSound() {
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          playBeep(audioContext);
+        } catch (e) {
+          console.log('[Sound] Audio context error:', e.message);
+        }
+      }
+      
+      // Function to actually play the beep sound
+      function playBeep(audioContext) {
+        try {
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          
+          // Set frequency and duration for a pleasant beep
+          oscillator.frequency.value = 800; // Hz
+          oscillator.type = 'sine';
+          
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+          console.log('[Sound] Beep played');
+        } catch (e) {
+          console.log('[Sound] Error playing beep:', e.message);
+        }
+      }
+      
+      // Function to start continuous beeping
+      function startContinuousBeep() {
+        if (isBeeping) return;
+        isBeeping = true;
+        console.log('[Sound] Starting continuous beep');
+        
+        // Play beep immediately
+        playNotificationSound();
+        
+        // Play beep every 1 second
+        beeperInterval = setInterval(() => {
+          if (isBeeping) {
+            playNotificationSound();
+          }
+        }, 1000);
+      }
+      
+      // Function to stop continuous beeping
+      function stopContinuousBeep() {
+        isBeeping = false;
+        if (beeperInterval) {
+          clearInterval(beeperInterval);
+          beeperInterval = null;
+        }
+        console.log('[Sound] Stopped continuous beep');
+      }
+
       // Function to show notification popup
       function showNotificationPopup(notification) {
         console.log('[Popup] Creating notification UI...');
@@ -48,7 +113,10 @@
             <p>${notification.message || 'Time for bed!'}</p>
             <small>${new Date(notification.timestamp).toLocaleTimeString()}</small>
           </div>
-          <button class="notif-close" onclick="this.parentElement.remove()" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:0;margin-left:15px;">×</button>
+          <div class="notif-buttons" style="display:flex;gap:10px;margin-left:15px;">
+            <button class="notif-stop" style="background:#ff4757;border:none;color:white;padding:8px 15px;border-radius:4px;cursor:pointer;font-weight:bold;">STOP</button>
+            <button class="notif-close" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:0;margin-left:5px;">×</button>
+          </div>
         `;
         
         // Apply inline styles
@@ -60,7 +128,7 @@
         notifDiv.style.padding = '20px';
         notifDiv.style.borderRadius = '8px';
         notifDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-        notifDiv.style.maxWidth = '400px';
+        notifDiv.style.maxWidth = '450px';
         notifDiv.style.zIndex = '9999';
         notifDiv.style.display = 'flex';
         notifDiv.style.alignItems = 'center';
@@ -80,6 +148,9 @@
               opacity: 1;
             }
           }
+          .notif-stop:hover {
+            background: #ff6b7a !important;
+          }
         `;
         document.head.appendChild(style);
         
@@ -87,12 +158,31 @@
         document.body.appendChild(notifDiv);
         console.log('[Popup] Notification added to page');
         
-        // Auto-remove after 10 seconds
+        // Start continuous beeping immediately
+        startContinuousBeep();
+        
+        // Stop button functionality
+        const stopBtn = notifDiv.querySelector('.notif-stop');
+        stopBtn.addEventListener('click', () => {
+          console.log('[Popup] Stopped notification');
+          stopContinuousBeep();
+          notifDiv.remove();
+        });
+        
+        // Close button functionality
+        const closeBtn = notifDiv.querySelector('.notif-close');
+        closeBtn.addEventListener('click', () => {
+          stopContinuousBeep();
+          notifDiv.remove();
+        });
+        
+        // Auto-remove after 60 seconds (if user doesn't stop it)
         setTimeout(() => {
           if (notifDiv.parentElement) {
+            stopContinuousBeep();
             notifDiv.remove();
           }
-        }, 10000);
+        }, 60000);
       }
     </script>
   </head>
