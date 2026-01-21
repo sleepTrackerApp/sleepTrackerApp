@@ -9,6 +9,7 @@ const { connectDb } = require('./helpers/db');
 const { appConfig } = require('./helpers/settings');
 const { startScheduler, setSocketIO } = require('./helpers/scheduler');
 const { Message, User } = require('./models');
+const socketService = require('./services/socketService');
 
 const { PORT, MONGODB_URI } = appConfig;
 
@@ -208,6 +209,9 @@ function initializeSocketIO(server) {
       console.log(`Client disconnected: ${socket.id}`);
     });
   });
+
+  // Initialize Socket service for notifications
+  socketService.initializeSocket(io);
 
   return io;
 }

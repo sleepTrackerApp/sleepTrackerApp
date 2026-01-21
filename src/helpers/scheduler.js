@@ -4,9 +4,10 @@
  */
 const cron = require('node-cron');
 const { Schedule } = require('../models');
+const socketService = require('../services/socketService');
 
 const jobs = new Map(); // key: scheduleId -> cron task
-let ioInstance = null; // Socket.IO instance
+let ioInstance = null; // Socket.IO instance (kept for backwards compatibility)
 
 /**
  * Set the Socket.IO instance for sending notifications
@@ -50,13 +51,10 @@ function registerJob(schedule) {
 }
 
 /**
- * Send bedtime notification to user via Socket.IO
+ * Send bedtime notification to all users via Socket.IO service
  */
 function sendBedtimeNotification(schedule) {
-  if (!ioInstance) return;
-
-  // Broadcast to all connected clients
-  ioInstance.emit('schedule:notification', {
+  socketService.broadcastNotification({
     type: 'bedtime',
     title: 'Bedtime Reminder',
     message: `It's time for bed! ${schedule.name}`,
