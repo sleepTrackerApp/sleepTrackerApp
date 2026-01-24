@@ -216,6 +216,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     //Confirm and Save Logic
+    const loadPersistentHistory = () => {
+        const historyBody = document.getElementById('sleep-history-body');
+        if (!historyBody) return;
+
+        const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
+        historyBody.innerHTML = savedData.map(entry =>
+            `<tr><td>${entry.date}</td><td>${entry.duration}</td><td>${entry.quality}</td></tr>`
+        ).join('');
+    };
+
+    loadPersistentHistory();
+
     const confirmBtn = document.querySelector('.preview-card .main-action-btn');
 
     if (confirmBtn) {
@@ -223,43 +235,49 @@ document.addEventListener('DOMContentLoaded', function () {
             const displayArea = document.getElementById('saved-sleep-display');
             const textElement = document.getElementById('final-log-text');
             const totalPillValue = document.querySelector('.total-pill').innerText;
-
             const dateInput = document.getElementById('sleep-date');
+            const qualityLabel = document.getElementById('preview-quality');
+            const qualityValue = qualityLabel ? qualityLabel.innerText : "-";
+
             let displayDate = "Last Night";
 
             if (dateInput && dateInput.value) {
                 const dateObj = new Date(dateInput.value);
                 displayDate = dateObj.toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                    year: 'numeric'
+                    month: 'short', day: 'numeric', year: 'numeric'
                 });
             }
 
-            //Display the success message
+            //Validation to prevent data submission before previewing.
+            if (totalPillValue === "-" || totalPillValue.startsWith("0 hrs 00")) {
+                M.toast({ html: 'Please "View Summary" first!', classes: 'rounded orange' });
+                return;
+            }
+
+            //Validation to prevent duplicate data.
+            const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
+            if (savedData.some(entry => entry.date === displayDate)) {
+                M.toast({ html: `Entry for ${displayDate} already exists!`, classes: 'rounded red' });
+                return;
+            }
+
+            const newEntry = { date: displayDate, duration: totalPillValue, quality: qualityValue };
+            savedData.unshift(newEntry);
+            //if (savedData.length > 10) savedData.pop();
+            localStorage.setItem('sleepHistory', JSON.stringify(savedData));
+
+            loadPersistentHistory();
+
+            // Latest Logged Entry
             if (displayArea && textElement) {
-                const totalPillValue = document.querySelector('.total-pill').innerText;
-
-                if (totalPillValue === "-" || totalPillValue.startsWith("0 hrs 00")) {
-                    M.toast({
-                        html: 'Please "View Summary" to calculate sleep before saving!',
-                        classes: 'rounded orange'
-                    });
-                    return;
-                }
-
                 displayArea.style.display = 'block';
-
-                // Show the dynamic date and total sleep duration
-                textElement.innerHTML = `<strong>Success:</strong> Sleep data logged for the night of ${displayDate}. Total duration: ${totalPillValue}.`;
-
+                textElement.innerHTML = `<strong>Success:</strong> Sleep data logged for ${displayDate}.`;
                 displayArea.classList.add('pulse');
                 setTimeout(() => displayArea.classList.remove('pulse'), 2000);
 
-                // 4. Reset Preview UI
+                // Reset UI
                 document.querySelector('.total-pill').innerText = "-";
                 const timeWindow = document.getElementById('preview-time-window');
-                const qualityLabel = document.getElementById('preview-quality');
                 if (timeWindow) timeWindow.innerText = "-";
                 if (qualityLabel) qualityLabel.innerText = "-";
 
@@ -275,5 +293,26 @@ document.addEventListener('DOMContentLoaded', function () {
         yesterday.setDate(yesterday.getDate() - 1);
         // Format to YYYY-MM-DD for the input value
         dateInput.value = yesterday.toISOString().split('T')[0];
+    }
+
+    function addToHistory(date, duration, quality) {
+        const historyBody = document.getElementById('sleep-history-body');
+        if (!historyBody) return;
+
+        // Create a new row with your data
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${date}</td>
+        <td>${duration}</td>
+        <td>${quality}</td>
+    `;
+
+        // Add it to the top of the table
+        historyBody.insertBefore(row, historyBody.firstChild);
+
+        // Limit to 10: If we have 11 rows, remove the oldest one at the bottom
+        if (historyBody.rows.length > 10) {
+            historyBody.deleteRow(10);
+        }
     }
 });
