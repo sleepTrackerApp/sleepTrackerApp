@@ -1,7 +1,7 @@
 /**
  * Service layer responsible for Goal model functions.
  */
-const { Goal } = require('../models');
+const { Goal, SleepEntry } = require('../models');
 
 /**
  * Normalize a date to midnight (start of day).
@@ -21,10 +21,13 @@ function normalizeDate(date) {
 
 /**
  * Set or update a goal for a user.
- * Always sets the goal for today's date. If a goal already exists for today, it will be updated.
+ * Always targets today's date. If a goal already exists for today, it will be updated.
+ * If the new goal value is the same as the current active goal, no new record is created
+ * and the existing goal (with its original setDate) is returned.
+ * Valid range is 6 hours to 12h 55m (360–775 minutes).
  * @param {string} userId - ID of the user object
  * @param {number} value - goal value in minutes (sleep duration)
- * @returns {Promise<import('mongoose').Document>} - the goal document
+ * @returns {Promise<{goalValue: number, setDate: Date|null}>} - the active goal value and date
  * @throws {Error} - if validation fails
  */
 async function setGoal(userId, value) {
@@ -34,22 +37,42 @@ async function setGoal(userId, value) {
     if (value === undefined || value === null) {
         throw new Error('Goal value is required');
     }
-    if (typeof value !== 'number' || value < 0 || value > 1440) {
-        throw new Error('Goal value must be a number between 0 and 1440 minutes');
+    // 6h–12h55m range in minutes
+    if (typeof value !== 'number' || value < 360 || value > 775) {
+        throw new Error('Goal value must be a number between 360 (6 hours) and 775 (12 hours 55 minutes) minutes');
     }
 
-    // Always use today's date
-    const goalDate = normalizeDate(new Date());
+    // Normalize today's date (used for creating/updating today's goal)
+    const today = normalizeDate(new Date());
 
-    // Use findOneAndUpdate with upsert to create or update
-    return Goal.findOneAndUpdate(
-        { userId, setDate: goalDate },
+    // Find the current active goal (most recent on or before today)
+    const currentGoalDoc = await Goal.findOne({
+        userId,
+        setDate: { $lte: today },
+    }).sort({ setDate: -1 }).limit(1);
+
+    // If the new value matches the current goal, do not create a new record
+    if (currentGoalDoc && currentGoalDoc.goalValue === value) {
+        return {
+            goalValue: currentGoalDoc.goalValue,
+            setDate: currentGoalDoc.setDate,
+        };
+    }
+
+    // Otherwise, set or update today's goal
+    const goalDoc = await Goal.findOneAndUpdate(
+        { userId, setDate: today },
         {
-            $setOnInsert: { userId, setDate: goalDate },
+            $setOnInsert: { userId, setDate: today },
             $set: { goalValue: value },
         },
         { new: true, upsert: true }
     );
+
+    return {
+        goalValue: goalDoc.goalValue,
+        setDate: goalDoc.setDate,
+    };
 }
 
 /**
@@ -59,7 +82,7 @@ async function setGoal(userId, value) {
  * If date is not provided, uses the current date (effectively getting the current goal).
  * @param {string} userId - ID of the user object
  * @param {Date|string} [date] - date to get the goal for (optional, defaults to today)
- * @returns {Promise<{goalValue: number, setDate: Date|null}>} - goal object with goalValue and setDate
+ * @returns {Promise<{goalValue: number, setDate: Date|null, duration: number|null, goalMet: boolean|null}>} - goal object with goalValue, setDate, duration and goalMet
  * @throws {Error} - if date is invalid
  */
 async function getGoal(userId, date = null) {
@@ -69,24 +92,46 @@ async function getGoal(userId, date = null) {
 
     // Use current date if not provided
     const targetDate = date ? normalizeDate(date) : normalizeDate(new Date());
-    
-    // Get the most recent goal on or before this date
-    const goal = await Goal.findOne({
+
+    // Fetch goal and any sleep entry for this date in parallel
+    const goalQuery = Goal.findOne({
         userId,
         setDate: { $lte: targetDate }
     }).sort({ setDate: -1 }).limit(1);
 
-    // Return default goal if none found
+    const sleepEntryQuery = SleepEntry.findOne({
+        userId,
+        entryDate: targetDate,
+    });
+
+    const [goal, sleepEntry] = await Promise.all([goalQuery, sleepEntryQuery]);
+
+    const duration = sleepEntry && typeof sleepEntry.duration === 'number'
+        ? sleepEntry.duration
+        : null;
+
+    // Default response when no goal is found
     if (!goal) {
         return {
             goalValue: 0,
-            setDate: null
+            setDate: null,
+            duration,
+            // No goal and/or sleep entry - cannot determine if goal was met
+            goalMet: null,
         };
+    }
+
+    let goalMet = null;
+    if (duration !== null) {
+        // true if user slept at least as long as the goal, false otherwise
+        goalMet = duration >= goal.goalValue;
     }
 
     return {
         goalValue: goal.goalValue,
-        setDate: goal.setDate
+        setDate: goal.setDate,
+        duration,
+        goalMet,
     };
 }
 
@@ -97,7 +142,7 @@ async function getGoal(userId, date = null) {
  * @param {string} userId - ID of the user object
  * @param {Date|string} startDate - start date of the range (inclusive)
  * @param {Date|string} endDate - end date of the range (inclusive)
- * @returns {Promise<Array<{date: Date, goal: number|null}>>} - array of date-goal pairs, sorted by date
+ * @returns {Promise<Array<{date: Date, goal: number|null, duration: number|null, goalMet: boolean|null}>>} - array of date-goal pairs, sorted by date
  * @throws {Error} - if dates are invalid or startDate > endDate
  */
 async function getGoalsInRange(userId, startDate, endDate) {
@@ -124,21 +169,52 @@ async function getGoalsInRange(userId, startDate, endDate) {
         },
     }).sort({ setDate: -1 }); // Sort descending to get most recent first
 
+    // Get all sleep entries in the range so we can check if goals were met
+    const sleepEntries = await SleepEntry.find({
+        userId,
+        entryDate: {
+            $gte: normalizedStart,
+            $lte: normalizedEnd,
+        },
+    }).sort({ entryDate: 1 });
+
+    // Map entryDate (midnight) to sleep entry for quick lookup
+    const sleepEntryByDate = new Map();
+    for (const entry of sleepEntries) {
+        if (entry.entryDate instanceof Date) {
+            sleepEntryByDate.set(entry.entryDate.getTime(), entry);
+        }
+    }
+
     // Generate all dates in the range
     const result = [];
     const currentDate = new Date(normalizedStart);
-    
+
     while (currentDate <= normalizedEnd) {
         const dateCopy = new Date(currentDate);
-        
+
         // Find the most recent goal on or before this date
         const activeGoal = goals.find(goal => goal.setDate <= dateCopy);
-        
+        const goalValue = activeGoal ? activeGoal.goalValue : null;
+
+        const key = dateCopy.getTime();
+        const entry = sleepEntryByDate.get(key);
+        const duration = entry && typeof entry.duration === 'number'
+            ? entry.duration
+            : null;
+
+        let goalMet = null;
+        if (goalValue !== null && duration !== null) {
+            goalMet = duration >= goalValue;
+        }
+
         result.push({
             date: new Date(dateCopy),
-            goal: activeGoal ? activeGoal.goalValue : null,
+            goal: goalValue,
+            duration,
+            goalMet,
         });
-        
+
         // Move to next day
         currentDate.setDate(currentDate.getDate() + 1);
     }

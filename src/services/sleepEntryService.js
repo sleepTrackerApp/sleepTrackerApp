@@ -5,19 +5,42 @@ const { SleepEntry } = require("../models")
 
 /**
  * Parse a date string and normalize to midnight.
+ * - Plain dates (YYYY-MM-DD) are treated as LOCAL dates.
+ * - Full ISO date-times (with time component) use the built-in parser.
  * @param dateString - date string to parse
  * @param normalize - whether to normalize to midnight (default: true)
  * @returns {Date} - parsed Date object
  * @throws {Error} - if dateString is invalid
  */
-function parseDate(dateString, normalize=false) {
-    const date = new Date(dateString);
+function parseDate(dateString, normalize = false) {
+    let date;
+
+    if (dateString instanceof Date) {
+        date = new Date(dateString.getTime());
+    } else if (typeof dateString === 'string') {
+        // Detect plain date (YYYY-MM-DD) and parse as local time
+        const plainDateMatch = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dateString);
+        if (plainDateMatch) {
+            const year = parseInt(plainDateMatch[1], 10);
+            const month = parseInt(plainDateMatch[2], 10) - 1; // JS months are 0-based
+            const day = parseInt(plainDateMatch[3], 10);
+            date = new Date(year, month, day);
+        } else {
+            // Fallback to native parsing for full date-times
+            date = new Date(dateString);
+        }
+    } else {
+        date = new Date(dateString);
+    }
+
     if (isNaN(date.getTime())) {
         throw new Error('Invalid date format');
     }
+
     if (normalize) {
         date.setHours(0, 0, 0, 0);
     }
+
     return date;
 }
 
@@ -88,19 +111,42 @@ function prepareSleepEntryData(entryData) {
         try {
             endDate = parseDate(endTime);
         } catch (err) {
-            throw new Error('Snd time must be a valid date');
+            throw new Error('End time must be a valid date');
         }
 
-        // Verify the entryDate matches the date portion of startTime
-        if (startDate.getFullYear() !== entryDate.getFullYear() ||
-            startDate.getMonth() !== entryDate.getMonth() ||
-            startDate.getDate() !== entryDate.getDate()) {
-            throw new Error('Start date must match entry date');
+        // Allow start date to be either the entry date or the following day
+        const sameDay =
+            startDate.getFullYear() === entryDate.getFullYear() &&
+            startDate.getMonth() === entryDate.getMonth() &&
+            startDate.getDate() === entryDate.getDate();
+
+        const nextDayCandidate = new Date(entryDate);
+        nextDayCandidate.setDate(nextDayCandidate.getDate() + 1);
+
+        const isNextDay =
+            startDate.getFullYear() === nextDayCandidate.getFullYear() &&
+            startDate.getMonth() === nextDayCandidate.getMonth() &&
+            startDate.getDate() === nextDayCandidate.getDate();
+
+        if (!sameDay && !isNextDay) {
+            // Debug logging to understand mismatches during seeding/testing
+            console.error('[SleepEntry] Start date mismatch', {
+                rawEntryTime: entryTime,
+                rawStartTime: startTime,
+                parsedEntryDate: entryDate.toISOString(),
+                parsedStartDate: startDate.toISOString(),
+                nextDayCandidate: nextDayCandidate.toISOString(),
+            });
+            throw new Error(
+                `Start date must match entry date or the following day ` +
+                `(entryDate=${entryDate.toISOString()}, startDate=${startDate.toISOString()}, ` +
+                `rawEntryTime=${entryTime}, rawStartTime=${startTime})`
+            );
         }
 
-        // Verify startDate < endDate
-        if (startDate >= endDate) {
-            throw new Error('Start time must be earlier than end time');
+        // Verify endDate is not before startDate
+        if (endDate < startDate) {
+            throw new Error('End time must be the same as or later than start time');
         }
 
         // Verify endTime is not more than 24 hours after startTime

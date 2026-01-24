@@ -704,12 +704,6 @@ body {
   min-height: 360px;
 }
 
-.goal-value {
-  font-size: 20px;
-  font-weight: 800;
-  margin: 4px 0;
-}
-
 .status.ok {
   color: #1f9d56;
   font-weight: 700;

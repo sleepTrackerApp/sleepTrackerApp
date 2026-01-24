@@ -57,6 +57,10 @@ nav.top-nav {
     margin-top: 0;
 }
 
+.goal-history-card .card-head h3 {
+    font-size: 22px !important;
+}
+
 .preview-card {
     background-color: #BEE3F7 !important;
     border: none;
@@ -66,6 +70,10 @@ nav.top-nav {
     flex: 1;
     display: flex;
     flex-direction: column;
+}
+
+.card-footer {
+    margin-top: 10px;
 }
 
 /* --- Toggle Style & Width --- */
@@ -263,4 +271,205 @@ input[type=range]::-ms-thumb {
     font-size: 0.75rem;
     white-space: nowrap;
     font-weight: 700;
+}
+
+/* --- Goals Section --- */
+.goal-settings-card {
+    background-color: #F7FCFF;
+    /* Reduce bottom margin so the history card sits closer,
+       roughly matching the horizontal gutter between columns */
+    margin-bottom: 24px;
+}
+
+.goal-progress-card {
+    background-color: #BEE3F7;
+    border: none;
+}
+
+.goal-history-card {
+    background-color: #BEE3F7;
+    border: none;
+}
+
+.goal-history-month {
+    font-weight: 600;
+    text-align: left;
+    font-size: 1.1rem;
+}
+
+.goal-history-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    /* Slightly tighter spacing to reduce overall height */
+    gap: 4px 4px;
+}
+
+.goal-history-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.goal-history-cell--placeholder .goal-history-icon,
+.goal-history-cell--placeholder .goal-history-day {
+    visibility: hidden;
+}
+
+.goal-history-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    box-sizing: border-box;
+}
+
+.goal-history-icon--met {
+    background-color: #E7F9EE;
+    border: 2px solid #16A34A;
+    color: #16A34A;
+}
+
+.goal-history-icon--missed {
+    background-color: #FEE2E2;
+    border: 2px solid #DC2626;
+    color: #DC2626;
+}
+
+.goal-history-icon--empty {
+    background-color: #E5E7EB;
+    border: 2px solid #9CA3AF;
+    color: transparent;
+}
+
+.goal-history-day {
+    margin-top: 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.goal-progress-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 16px;
+}
+
+.goal-progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 999px;
+    padding: 10px 18px;
+    margin-top: 10px;
+}
+
+.goal-progress-label {
+    font-weight: 700;
+}
+
+.goal-progress-value {
+    font-weight: 700;
+}
+
+.goal-progress-tag {
+    margin-left: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.goal-progress-summary {
+    margin-top: 16px;
+    font-style: italic;
+}
+
+.goal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    text-align: center;
+    color: #546e7a;
+}
+
+.goal-spinner {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 3px solid rgba(255, 255, 255, 0.7);
+    border-top-color: #1DB0FF;
+    animation: goal-spin 0.8s linear infinite;
+    margin-bottom: 12px;
+}
+
+@keyframes goal-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.goal-form {
+    border-radius: 0;
+    border: none;
+    background-color: transparent;
+}
+
+.goal-summary-line {
+    margin-top: 10px;
+    margin-bottom: 4px;
+}
+
+.goal-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.goal-label {
+    font-weight: 700;
+    width: 130px;
+}
+
+.goal-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1DB0FF;
+}
+
+.goal-date {
+    font-weight: bold;
+}
+
+.goal-change-btn {
+    text-transform: none;
+    font-weight: 700;
+}
+
+.goal-error {
+    margin-top: 8px;
+}
+
+.goal-cancel-link {
+    font-weight: 600;
+    color: #374151;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Align the cancel link to the right within the goal form footer */
+.goal-settings-card .card-footer {
+    display: flex;
+    align-items: center;
+}
+
+.goal-settings-card .goal-cancel-link {
+    margin-left: auto;
 }
