@@ -120,10 +120,10 @@ const appConfig = Object.freeze({
     ENCRYPTION_KEY: getEnv('ENCRYPTION_KEY', 'development-only-secret-key'),
     // Auth0 configuration
     AUTH0: Object.freeze({
-        ISSUER_BASE_URL: getEnv('AUTH0_ISSUER_BASE_URL', 'https://dev-example.us.auth0.com'),
-        CLIENT_ID: getEnv('AUTH0_CLIENT_ID', 'replace-with-auth0-client-id'),
-        CLIENT_SECRET: getEnv('AUTH0_CLIENT_SECRET', 'replace-with-auth0-client-secret'),
-        SECRET: getEnv('AUTH0_SECRET', 'replace-with-auth0-session-secret'),
+        ISSUER_BASE_URL: getEnv('AUTH0_ISSUER_BASE_URL', '', true),
+        CLIENT_ID: getEnv('AUTH0_CLIENT_ID', '', true),
+        CLIENT_SECRET: getEnv('AUTH0_CLIENT_SECRET', '', true),
+        SECRET: getEnv('AUTH0_SECRET', '', true),
     }),
 });
 

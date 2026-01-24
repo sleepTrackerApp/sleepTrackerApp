@@ -41,8 +41,8 @@ function isValidRedirectPath(path) {
 function login(req, res) {
   const requestedReturnTo = req.query.returnTo;
   const returnTo = isValidRedirectPath(requestedReturnTo)
-    ? requestedReturnTo
-    : '/dashboard'; // Safe default
+      ? requestedReturnTo
+      : '/dashboard'; // Safe default
 
   res.oidc.login({ returnTo });
 }

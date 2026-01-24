@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Messaging Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .section h2 {
+            color: #333;
+            font-size: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input, textarea, select {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status.connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .messages-container {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .message.sent {
+            background: #e3f2fd;
+            border-left: 3px solid #2196f3;
+            margin-left: 20px;
+        }
+
+        .message.received {
+            background: #f3e5f5;
+            border-left: 3px solid #9c27b0;
+            margin-right: 20px;
+        }
+
+        .message.system {
+            background: #fff3e0;
+            border-left: 3px solid #ff9800;
+            text-align: center;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .message.error {
+            background: #ffebee;
+            border-left: 3px solid #f44336;
+            color: #c62828;
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .message-content {
+            color: #333;
+            word-break: break-word;
+        }
+
+        .socket-stats {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            color: #333;
+            font-family: monospace;
+            font-weight: 600;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 13px;
+            color: #2e7d32;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left Column: Controls -->
+        <div class="section">
+            <h2>Socket.IO Controls</h2>
+
+            <!-- Connection Status -->
+            <div class="status disconnected" id="status">
+                ● Disconnected
+            </div>
+
+            <!-- User Registration -->
+            <div class="form-group">
+                <label for="userId">Your User ID</label>
+                <input 
+                    type="text" 
+                    id="userId" 
+                    placeholder="e.g., user123" 
+                    value="testUser123"
+                >
+                <button id="registerBtn" onclick="registerUser()">Register & Connect</button>
+            </div>
+
+            <!-- Send Message -->
+            <div style="margin-top: 20px;">
+                <h3 style="color: #333; font-size: 16px; margin-bottom: 10px;">Send Message</h3>
+                
+                <div class="form-group">
+                    <label for="recipientId">Recipient User ID</label>
+                    <input 
+                        type="text" 
+                        id="recipientId" 
+                        placeholder="e.g., someOtherUser"
+                        value="someOtherUser"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="messageContent">Message</label>
+                    <textarea 
+                        id="messageContent" 
+                        placeholder="Type your message..."
+                    >Hello from Socket.IO UI test!</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="messageType">Message Type</label>
+                    <select id="messageType">
+                        <option value="text">Text</option>
+                        <option value="notification">Notification</option>
+                        <option value="system">System</option>
+                    </select>
+                </div>
+
+                <button id="sendBtn" onclick="sendMessage()" disabled>Send Message</button>
+            </div>
+
+            <!-- Socket Stats -->
+            <div style="margin-top: 20px;">
+                <h3 style="color: #333; font-size: 16px; margin-bottom: 10px;">Socket Info</h3>
+                <div class="socket-stats">
+                    <div class="stat-row">
+                        <span class="stat-label">Socket ID:</span>
+                        <span class="stat-value" id="socketId">Not connected</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">User ID:</span>
+                        <span class="stat-value" id="connectedUserId">-</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Messages Sent:</span>
+                        <span class="stat-value" id="messagesSent">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Messages Received:</span>
+                        <span class="stat-value" id="messagesReceived">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 How to test:</strong><br>
+                1. Open this page in 2 browser tabs<br>
+                2. Register with different User IDs<br>
+                3. Send a message from one tab<br>
+                4. See it appear in the other tab
+            </div>
+        </div>
+
+        <!-- Right Column: Messages -->
+        <div class="section">
+            <h2>Messages & Events</h2>
+            <div class="messages-container" id="messagesContainer">
+                <div class="message system">
+                    Ready to connect...
+                </div>
+            </div>
+            <button onclick="clearMessages()" style="width: 100%;">Clear Messages</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script>
+        let socket = null;
+        let messagesSent = 0;
+        let messagesReceived = 0;
+
+        function addMessage(content, type = 'system', timestamp = new Date()) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            
+            const timeStr = timestamp.toLocaleTimeString();
+            
+            messageDiv.innerHTML = `
+                <div class="message-content">${content}</div>
+                <div class="message-time">${timeStr}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function clearMessages() {
+            document.getElementById('messagesContainer').innerHTML = '';
+        }
+
+        function registerUser() {
+            const userId = document.getElementById('userId').value.trim();
+            
+            if (!userId) {
+                addMessage('❌ Please enter a User ID', 'error');
+                return;
+            }
+
+            if (socket && socket.connected) {
+                socket.disconnect();
+            }
+
+            // Create new connection
+            socket = io();
+
+            socket.on('connect', () => {
+                addMessage(`✅ Connected! Socket ID: ${socket.id}`, 'system');
+                document.getElementById('status').className = 'status connected';
+                document.getElementById('status').textContent = `● Connected (${socket.id})`;
+                document.getElementById('socketId').textContent = socket.id;
+                document.getElementById('sendBtn').disabled = false;
+                
+                // Register user
+                socket.emit('user:register', userId);
+                addMessage(`📝 Registered as: ${userId}`, 'system');
+                document.getElementById('connectedUserId').textContent = userId;
+            });
+
+            socket.on('message:receive', (data) => {
+                messagesReceived++;
+                document.getElementById('messagesReceived').textContent = messagesReceived;
+                addMessage(`📨 From ${data.senderId}: ${data.content}`, 'received', new Date(data.createdAt));
+            });
+
+            socket.on('message:sent', (data) => {
+                messagesSent++;
+                document.getElementById('messagesSent').textContent = messagesSent;
+                addMessage(`📤 Message sent (ID: ${data._id})`, 'sent', new Date(data.timestamp));
+            });
+
+            socket.on('message:error', (data) => {
+                addMessage(`❌ Message Error: ${data.error}`, 'error');
+            });
+
+            socket.on('message:read', (data) => {
+                addMessage(`✓✓ Message read at ${new Date(data.readAt).toLocaleTimeString()}`, 'system');
+            });
+
+            socket.on('disconnect', () => {
+                addMessage('🔌 Disconnected', 'system');
+                document.getElementById('status').className = 'status disconnected';
+                document.getElementById('status').textContent = '● Disconnected';
+                document.getElementById('socketId').textContent = 'Not connected';
+                document.getElementById('connectedUserId').textContent = '-';
+                document.getElementById('sendBtn').disabled = true;
+            });
+
+            socket.on('connect_error', (error) => {
+                addMessage(`❌ Connection Error: ${error.message}`, 'error');
+            });
+
+            socket.on('error', (error) => {
+                addMessage(`❌ Socket Error: ${error}`, 'error');
+            });
+        }
+
+        function sendMessage() {
+            const recipientId = document.getElementById('recipientId').value.trim();
+            const content = document.getElementById('messageContent').value.trim();
+            const messageType = document.getElementById('messageType').value;
+
+            if (!socket || !socket.connected) {
+                addMessage('❌ Not connected! Register first.', 'error');
+                return;
+            }
+
+            if (!recipientId) {
+                addMessage('❌ Please enter a Recipient ID', 'error');
+                return;
+            }
+
+            if (!content) {
+                addMessage('❌ Please enter a message', 'error');
+                return;
+            }
+
+            socket.emit('message:send', {
+                content,
+                recipientId,
+                messageType
+            });
+
+            document.getElementById('messageContent').value = '';
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('messageContent').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initial message
+        addMessage('🚀 Socket.IO Messaging Test Interface Ready!', 'system');
+        addMessage('Enter your User ID and click "Register & Connect" to begin.', 'system');
+    </script>
+</body>
+</html>

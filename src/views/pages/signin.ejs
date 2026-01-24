@@ -8,21 +8,9 @@
       <p class="signin-welcome">Welcome back!</p>
       <h1 class="signin-title">Sign In</h1>
 
-      <form class="signin-form" action="/auth/login" method="get">
-        <label class="signin-label" for="email">Email Address</label>
-        <input class="signin-input" id="email" type="email" name="email" placeholder="" autocomplete="email" required>
-
-        <label class="signin-label" for="password">Password</label>
-        <div class="signin-password">
-          <input class="signin-input" id="password" type="password" name="password" placeholder="" autocomplete="current-password" required>
-          <span class="eye-icon" aria-hidden="true">👁</span>
-        </div>
-
-        <div class="signin-row">
-          <label class="remember"><input type="checkbox" name="remember"> Remember Me?</label>
-          <a class="signin-link" href="#">Forgot Your Password?</a>
-        </div>
-
+      <form class="signin-form" action="/auth/login" method="post">
+        <input type="email" class="signin-input" placeholder="Email" name="email" required>
+        <input type="password" class="signin-input" placeholder="Password" name="password" required>
         <button class="signin-submit" type="submit">Sign In</button>
       </form>
 

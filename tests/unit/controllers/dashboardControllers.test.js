@@ -23,7 +23,8 @@ describe('Dashboard controller tests', () => {
     expect(
       res.render.calledOnceWithExactly('pages/dashboard', {
         title: 'My Sleep Data',
-        activeMenu: 'dashboard',
+        activeMenu: 'log',
+        isDashboard: true,
       })
     ).to.be.true;
   });
