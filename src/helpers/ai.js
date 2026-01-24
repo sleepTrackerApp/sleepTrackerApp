@@ -1,7 +1,7 @@
 const { OpenAI } = require('openai');
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: process.env.OPENAI_API_KEY || 'openai-api-key',
 });
 
 /**
@@ -66,7 +66,7 @@ const generateSleepInsight = async (userGoalMins, sleepLogs, periodType = 'weekl
 
     try {
         const response = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4.1-mini",
             messages: [
                 { 
                     role: "system", 
@@ -87,4 +87,4 @@ const generateSleepInsight = async (userGoalMins, sleepLogs, periodType = 'weekl
     }
 };
 
-module.exports = { generateSleepInsight };
+module.exports = { generateSleepInsight, _buildPrompt };
