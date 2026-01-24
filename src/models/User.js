@@ -18,6 +18,17 @@ const userSchema = new mongoose.Schema(
             required: false,
             sparse: true,
         },
+        // Goal restricted to 7-9 hours
+        sleepGoal: {
+            type: Number,
+            default: 480, // 8 hours
+            min: 420,     
+            max: 540,     
+        },
+        goalLastUpdated: {
+            type: Date,
+            default: Date.now,
+        },
         // Timestamp of the last login
         lastLoginAt: {
             type: Date,
