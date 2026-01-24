@@ -29,22 +29,16 @@ describe('Goal Service', () => {
             const GoalStub = {
                 findOne: sandbox.stub().returns(mockQuery),
             };
-            const SleepEntryStub = {
-                findOne: sandbox.stub().resolves({ duration: 480 }),
-            };
 
             const goalService = proxyquire('../../../src/services/goalService', {
-                '../models': { Goal: GoalStub, SleepEntry: SleepEntryStub },
+                '../models': { Goal: GoalStub },
             });
 
             const result = await goalService.getGoal(mockUserId);
 
             expect(GoalStub.findOne.calledOnce).to.be.true;
-            expect(SleepEntryStub.findOne.calledOnce).to.be.true;
             expect(result.goalValue).to.equal(480);
             expect(result.setDate).to.deep.equal(mockGoal.setDate);
-            expect(result.duration).to.equal(480);
-            expect(result.goalMet).to.equal(true);
         });
 
         it('should get goal for a specific date', async () => {
@@ -61,22 +55,16 @@ describe('Goal Service', () => {
             const GoalStub = {
                 findOne: sandbox.stub().returns(mockQuery),
             };
-            const SleepEntryStub = {
-                findOne: sandbox.stub().resolves({ duration: 300 }), // below goal
-            };
 
             const goalService = proxyquire('../../../src/services/goalService', {
-                '../models': { Goal: GoalStub, SleepEntry: SleepEntryStub },
+                '../models': { Goal: GoalStub },
             });
 
             const result = await goalService.getGoal(mockUserId, '2024-01-15');
 
             expect(GoalStub.findOne.calledOnce).to.be.true;
-            expect(SleepEntryStub.findOne.calledOnce).to.be.true;
             expect(result.goalValue).to.equal(480);
             expect(result.setDate).to.deep.equal(mockGoal.setDate);
-            expect(result.duration).to.equal(300);
-            expect(result.goalMet).to.equal(false);
         });
 
         it('should return an empty goal when no goal found', async () => {
@@ -87,67 +75,48 @@ describe('Goal Service', () => {
             const GoalStub = {
                 findOne: sandbox.stub().returns(mockQuery),
             };
-            const SleepEntryStub = {
-                findOne: sandbox.stub().resolves(null),
-            };
 
             const goalService = proxyquire('../../../src/services/goalService', {
-                '../models': { Goal: GoalStub, SleepEntry: SleepEntryStub },
+                '../models': { Goal: GoalStub },
             });
 
             const result = await goalService.getGoal(mockUserId, '2024-01-15');
 
             expect(GoalStub.findOne.calledOnce).to.be.true;
-            expect(SleepEntryStub.findOne.calledOnce).to.be.true;
             expect(result.goalValue).to.equal(0);
             expect(result.setDate).to.be.null;
-            expect(result.duration).to.be.null;
-            expect(result.goalMet).to.be.null;
         });
     });
 
     describe('setGoal', () => {
         it('should set goal with correct value', async () => {
-            const mockGoalDoc = {
+            const mockGoal = {
                 _id: 'goal1',
                 userId: mockUserId,
                 goalValue: 480,
                 setDate: new Date(),
             };
             const GoalStub = {
-                findOne: sandbox.stub().returns({
-                    sort: sandbox.stub().returnsThis(),
-                    limit: sandbox.stub().resolves(null), // no existing goal
-                }),
-                findOneAndUpdate: sandbox.stub().resolves(mockGoalDoc),
-            };
-            const SleepEntryStub = {
-                findOne: sandbox.stub(), // not used by setGoal
+                findOneAndUpdate: sandbox.stub().resolves(mockGoal),
             };
 
             const goalService = proxyquire('../../../src/services/goalService', {
-                '../models': { Goal: GoalStub, SleepEntry: SleepEntryStub },
+                '../models': { Goal: GoalStub },
             });
 
             const result = await goalService.setGoal(mockUserId, 480);
 
-            expect(GoalStub.findOne.calledOnce).to.be.true;
             expect(GoalStub.findOneAndUpdate.calledOnce).to.be.true;
-            expect(result.goalValue).to.equal(480);
-            expect(result.setDate).to.deep.equal(mockGoalDoc.setDate);
+            expect(result).to.deep.equal(mockGoal);
         });
 
         it('should throw error if value is missing', async () => {
             const GoalStub = {
-                findOne: sandbox.stub(),
                 findOneAndUpdate: sandbox.stub(),
-            };
-            const SleepEntryStub = {
-                findOne: sandbox.stub(),
             };
 
             const goalService = proxyquire('../../../src/services/goalService', {
-                '../models': { Goal: GoalStub, SleepEntry: SleepEntryStub },
+                '../models': { Goal: GoalStub },
             });
 
             try {
@@ -158,24 +127,20 @@ describe('Goal Service', () => {
             }
         });
 
-        it('should throw error if value exceeds max allowed duration', async () => {
+        it('should throw error if value exceeds 1440 minutes', async () => {
             const GoalStub = {
-                findOne: sandbox.stub(),
                 findOneAndUpdate: sandbox.stub(),
-            };
-            const SleepEntryStub = {
-                findOne: sandbox.stub(),
             };
 
             const goalService = proxyquire('../../../src/services/goalService', {
-                '../models': { Goal: GoalStub, SleepEntry: SleepEntryStub },
+                '../models': { Goal: GoalStub },
             });
 
             try {
-                await goalService.setGoal(mockUserId, 800); // > 775 minutes
+                await goalService.setGoal(mockUserId, 1500);
                 expect.fail('Should have thrown an error');
             } catch (error) {
-                expect(error.message).to.include('Goal value must be a number between 360 (6 hours) and 775 (12 hours 55 minutes) minutes');
+                expect(error.message).to.include('Goal value must be a number between 0 and 1440 minutes');
             }
         });
     });

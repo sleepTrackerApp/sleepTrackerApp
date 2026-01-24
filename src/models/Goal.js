@@ -16,12 +16,11 @@ const goalSchema = new mongoose.Schema(
         },
 
         // Goal value: sleep duration in minutes
-        // Goal must be between 6 hours (360 min) and 12h 55m (775 min)
         goalValue: {
             type: Number,
             required: true,
-            min: 360,
-            max: 775,
+            min: 0,
+            max: 1440, // Maximum 24 hours in minutes
         },
 
         // Date when the goal was set (normalized to start of day for uniqueness)
