@@ -106,7 +106,7 @@ async function setGoal(req, res, next) {
  * - monthly average sleep duration and label
  * - projected success percentage
  * - a summary message
- * GET /api/goal/progress/month
+ * GET /api/goal/progress
  */
 async function getGoalProgressMonth(req, res, next) {
     try {

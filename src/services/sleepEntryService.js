@@ -129,14 +129,6 @@ function prepareSleepEntryData(entryData) {
             startDate.getDate() === nextDayCandidate.getDate();
 
         if (!sameDay && !isNextDay) {
-            // Debug logging to understand mismatches during seeding/testing
-            console.error('[SleepEntry] Start date mismatch', {
-                rawEntryTime: entryTime,
-                rawStartTime: startTime,
-                parsedEntryDate: entryDate.toISOString(),
-                parsedStartDate: startDate.toISOString(),
-                nextDayCandidate: nextDayCandidate.toISOString(),
-            });
             throw new Error(
                 `Start date must match entry date or the following day ` +
                 `(entryDate=${entryDate.toISOString()}, startDate=${startDate.toISOString()}, ` +
