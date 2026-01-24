@@ -284,7 +284,7 @@ $(function () {
     }
 
     $.ajax({
-      url: '/api/goal/progress/month',
+      url: '/api/goal/progress',
       method: 'GET',
       dataType: 'json',
     })
