@@ -254,10 +254,10 @@ $(function () {
 
       if (entry && entry.goalMet === true) {
         iconClass = 'goal-history-icon--met';
-        iconHtml = '<i class="material-icons">check</i>';
+        iconHtml = '<i class="fa-solid fa-check"></i>';
       } else if (entry && entry.goalMet === false) {
         iconClass = 'goal-history-icon--missed';
-        iconHtml = '<i class="material-icons">close</i>';
+        iconHtml = '<i class="fa-solid fa-xmark"></i>';
       }
 
       const $cell = $('<div>').addClass('goal-history-cell');
@@ -284,7 +284,7 @@ $(function () {
     }
 
     $.ajax({
-      url: '/api/goal/progress',
+      url: '/api/goal/progress/month',
       method: 'GET',
       dataType: 'json',
     })

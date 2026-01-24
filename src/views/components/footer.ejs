@@ -52,23 +52,17 @@
             <span class="footer-dot">•</span>
             <a href="/terms">Terms</a>
         </div>
-    </div>
-</footer>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script src="/js/scripts.js"></script>
-<% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/socket-notifications.js"></script>
-<% } %>
-<% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="/js/app.js"></script>
-    <script src="/js/dashboard.js"></script>
-    <script src="/js/goal.js"></script>
-<% } %>
-<% if (typeof isMessages !== 'undefined' && isMessages) { %>
-    <script src="/js/messages-page.js"></script>
-<% } %>
-</body>
+      </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/js/scripts.js"></script>
+    <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
+        <script src="/js/app.js"></script>
+    <% } %>
+    <% if (typeof loadDashboardScripts !== 'undefined' && loadDashboardScripts) { %>
+        <script src="/js/dashboard.js"></script>
+        <script src="/js/goal.js"></script>
+    <% } %>
+  </body>
 </html>
