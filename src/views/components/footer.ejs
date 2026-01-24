@@ -61,5 +61,9 @@
     <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
         <script src="/js/app.js"></script>
     <% } %>
+    <% if (typeof loadDashboardScripts !== 'undefined' && loadDashboardScripts) { %>
+        <script src="/js/dashboard.js"></script>
+        <script src="/js/goal.js"></script>
+    <% } %>
   </body>
 </html>

@@ -278,48 +278,129 @@
         </div>
       </section>
 
-      <section class="dash-block goals" id="goals-section">
-        <h2 class="section-title">Your Sleep Goals</h2>
-        <div class="dash-grid two-cols">
-          <div class="dash-card">
-            <div class="card-head">
-              <h3>Monthly Goal Settings</h3>
+      <section class="row dash-block goals" id="goals-section">
+        <!-- Goal Settings / Summary + History -->
+        <div class="col s12 l6 dash-col">
+          <div class="dash-card goal-settings-card">
+            <!-- Loading state -->
+            <div id="goal-loading" class="goal-loading">
+              <div class="goal-spinner"></div>
+              <p>Loading your goal...</p>
             </div>
-            <div class="card-body">
-              <p class="muted">December 2025</p>
-              <p class="goal-value">8 hrs / night</p>
-              <p class="status ok">Active and locked</p>
-              <p class="muted">Set on Dec 1 • Cannot change until Jan 1</p>
-              <div class="divider"></div>
-              <div class="next-goal">
-                <p class="muted">Next Month Goal (Jan 2026)</p>
-                <div class="radio-row">
-                  <label><input type="radio" checked> Continue Current Goal</label>
-                  <label><input type="radio"> Change Goal</label>
-                </div>
-                <div class="chip">8h 30m</div>
+
+            <!-- Goal form -->
+            <div id="goal-form-wrapper" class="card-body goal-form" style="display: none;">
+              <div class="card-head">
+                <h3 class="mb-1">Set New Sleep Goal</h3>
               </div>
-              <div class="card-actions">
-                <a class="btn-primary js-confirm-save" href="#">Confirm and Save</a>
+              <p class="m-0 mb-6">Choose a nightly goal between 6 and 12
+                hours</p>
+
+              <div class="row valign-wrapper mt-1">
+                <div class="col">
+                  <p class="goal-label m-0">Duration</p>
+                </div>
+                <div class="col s8 flex-row-align">
+                  <select id="goal-hours" class="browser-default inline-select">
+                    <% for(let h=6; h<=12; h++) { %>
+                      <option value="<%= h %>">
+                        <%= h.toString().padStart(2, '0' ) %>
+                      </option>
+                    <% } %>
+                  </select>
+                  <span class="unit-label">hours</span>
+
+                  <select id="goal-minutes" class="browser-default inline-select">
+                    <% for(let m=0; m<60; m+=5) { %>
+                      <option value="<%= m %>">
+                        <%= m.toString().padStart(2, '0' ) %>
+                      </option>
+                    <% } %>
+                  </select>
+                  <span class="unit-label">minutes</span>
+                </div>
+              </div>
+
+              <p id="goal-error" class="goal-error red-text" style="display: none;"></p>
+
+              <div class="card-footer">
+                <button id="goal-save-btn" class="btn black white-text main-action-btn z-depth-0">
+                  Save Goal
+                </button>
+                <a href="#!" id="goal-cancel-link" class="goal-cancel-link">Cancel</a>
+              </div>
+            </div>
+
+            <!-- Current goal summary -->
+            <div id="goal-summary-wrapper" class="card-body goal-summary" style="display: none;">
+              <div class="card-head">
+                <h3>Sleep Goal</h3>
+              </div>
+
+              <div class="goal-row">
+                <span class="goal-label">Current Goal:</span>
+                <span id="goal-summary-current" class="goal-value"></span>
+              </div>
+
+              <div class="goal-row">
+                <span class="goal-label">Set on:</span>
+                <span id="goal-summary-date" class="goal-date muted"></span>
+              </div>
+
+              <div class="card-footer">
+                <button id="goal-change-btn" class="btn black white-text main-action-btn z-depth-0 goal-change-btn">
+                  Change Goal
+                </button>
               </div>
             </div>
           </div>
 
-          <div class="dash-card">
+          <!-- Monthly goal history -->
+          <div id="goal-history-card" class="dash-card goal-history-card" style="display: none;">
             <div class="card-head">
-              <h3>December Progress</h3>
+              <h3 id="goal-history-month">Loading...</h3>
             </div>
-            <div class="card-body progress-card">
-              <div class="progress-ring">
-                <div class="ring">26 / 31</div>
-                <p class="muted">Nights</p>
-              </div>
-              <div class="progress-meta">
-                <div class="meta-row"><span>Goal Met This Month</span><strong>72%</strong></div>
-                <div class="meta-row"><span>Monthly Average</span><strong>7h 35m</strong> <small>(needs
-                    improvement)</small></div>
-                <div class="meta-row"><span>Projected Success</span><strong>~70%</strong></div>
-                <p class="note">Keep pushing for that 8-hour streak!</p>
+            <div class="card-body">
+              <div id="goal-history-grid" class="goal-history-grid"></div>
+              <p id="goal-history-empty" class="goal-history-empty muted center-align mt-3" style="display: none;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress / Goal insight -->
+        <div class="col s12 l6 dash-col">
+          <div class="dash-card goal-progress-card" style="display: none;">
+            <div class="card-head">
+              <h3>Your Progress</h3>
+            </div>
+            <div class="card-body">
+              <p id="goal-progress-message" class="muted m-0 mb-4"></p>
+
+              <!-- Goal progress chart & stats -->
+              <div id="goal-progress-empty" class="muted center-align" style="display: none;"></div>
+
+              <div id="goal-progress-content" style="display: none;">
+                <div id="goal-progress-chart"></div>
+
+                <div class="goal-progress-row">
+                  <span class="goal-progress-label">Days Recorded</span>
+                  <span id="goal-progress-recorded" class="goal-progress-value"></span>
+                </div>
+
+                <div class="goal-progress-row">
+                  <span class="goal-progress-label">Monthly Average</span>
+                  <span class="goal-progress-value">
+                    <span id="goal-progress-average"></span>
+                    <span id="goal-progress-average-label" class="goal-progress-tag"></span>
+                  </span>
+                </div>
+
+                <div class="goal-progress-row">
+                  <span class="goal-progress-label">Goal Consistency</span>
+                  <span id="goal-progress-projected" class="goal-progress-value"></span>
+                </div>
+
+                <p id="goal-progress-summary" class="goal-progress-summary center-align muted mt-3"></p>
               </div>
             </div>
           </div>
@@ -328,6 +409,4 @@
     </div>
   </main>
 
-  <%- include('../components/footer') %>
-
-    <script src="/js/dashboard.js"></script>
+  <%- include('../components/footer', { loadDashboardScripts: true }) %>

@@ -30,7 +30,6 @@ describe('Goal Controller', () => {
     describe('getGoal', () => {
         it('should return goal', async () => {
             const mockGoal = {
-                _id: 'goal1',
                 goalValue: 480,
                 setDate: new Date('2024-01-01'),
             };
@@ -51,7 +50,7 @@ describe('Goal Controller', () => {
             })).to.be.true;
         });
 
-        it('should return empty goal when no goal found', async () => {
+        it('should return default goal when no goal found', async () => {
             req.params.date = '2024-01-15';
             sinon.stub(goalService, 'getGoal').resolves({ goalValue: 0, setDate: null });
 
@@ -65,6 +64,48 @@ describe('Goal Controller', () => {
                     setDate: null
                 }
             })).to.be.true;
+        });
+    });
+
+    describe('getGoalProgressMonth', () => {
+        it('should return aggregated monthly progress', async () => {
+            const mockRange = [
+                // Day 1: goal + duration, met
+                { date: new Date('2024-01-01'), goal: 480, duration: 480, goalMet: true },
+                // Day 2: goal + duration, not met
+                { date: new Date('2024-01-02'), goal: 480, duration: 300, goalMet: false },
+                // Day 3: duration only, no goal
+                { date: new Date('2024-01-03'), goal: null, duration: 420, goalMet: null },
+            ];
+
+            const mockGoalToday = {
+                goalValue: 480,
+                setDate: new Date('2023-12-15'),
+                duration: null,
+                goalMet: null,
+            };
+
+            sinon.stub(goalService, 'getGoalsInRange').resolves(mockRange);
+            sinon.stub(goalService, 'getGoal').resolves(mockGoalToday);
+
+            await goalController.getGoalProgressMonth(req, res, next);
+
+            expect(goalService.getGoalsInRange.calledOnce).to.be.true;
+            expect(goalService.getGoal.calledOnce).to.be.true;
+            expect(res.status.calledWith(200)).to.be.true;
+
+            const jsonArg = res.json.firstCall.args[0];
+            expect(jsonArg.success).to.be.true;
+            expect(jsonArg.data.stats.nightsMetGoal).to.equal(1);
+            expect(jsonArg.data.stats.nightsTotalWithGoal).to.equal(2);
+            expect(jsonArg.data.stats.nightsWithData).to.equal(3);
+            expect(jsonArg.data.stats.averageDurationMinutes).to.equal(
+                Math.round((480 + 300 + 420) / 3)
+            );
+            expect(jsonArg.data.stats.projectedSuccessPercent).to.equal(
+                Math.round((1 / 2) * 100)
+            );
+            expect(jsonArg.data.stats.summaryMessage).to.be.a('string');
         });
     });
 
@@ -95,7 +136,7 @@ describe('Goal Controller', () => {
 
         it('should return 400 on validation error', async () => {
             req.body = { value: 1500 };
-            const validationError = new Error('Goal value must be a number between 0 and 1440 minutes');
+            const validationError = new Error('Goal value must be a number between 360 (6 hours) and 775 (12 hours 55 minutes) minutes');
 
             sinon.stub(goalService, 'setGoal').rejects(validationError);
 
@@ -106,7 +147,7 @@ describe('Goal Controller', () => {
                 success: false,
                 error: {
                     code: 'VALIDATION_ERROR',
-                    message: 'Goal value must be a number between 0 and 1440 minutes'
+                    message: 'Goal value must be a number between 360 (6 hours) and 775 (12 hours 55 minutes) minutes'
                 }
             })).to.be.true;
         });
