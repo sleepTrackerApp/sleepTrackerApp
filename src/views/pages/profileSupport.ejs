@@ -1,136 +1,35 @@
 <%- include('../components/header', { title: typeof title !== 'undefined' ? title : 'Support Chat', isProfileSection: true }) %>
 
-<div class="profile-layout">
-  <%- include('../components/profileSidebar', { activeSection: typeof activeSection !== 'undefined' ? activeSection : 'support' }) %>
-  <main class="profile-main">
-    <div class="support-chat-page">
-      <div class="messages-container">
-        <div class="chat-area">
-          <div class="chat-header">
-            <h5>Support Chat</h5>
-          </div>
-          <div class="messages-area" id="messagesArea" aria-live="polite"></div>
-          <div class="input-area">
-            <input
-              type="text"
-              id="messageInput"
-              placeholder="Type a message..."
-              aria-label="Message input"
-              autocomplete="off"
-            >
-            <button type="button" id="sendMessageBtn">Send</button>
-          </div>
+<main class="main--with-chat">
+    <div class="dash-shell">
+        <div class="profile-layout profile-layout--with-chat">
+            <%- include('../components/profileSidebar', { activeSection: typeof activeSection !== 'undefined' ? activeSection : 'support' }) %>
+            <div class="profile-main profile-main--chat">
+                <div class="support-chat-page">
+                    <div class="messages-container">
+                        <div class="chat-area">
+                            <div class="chat-header">
+                                <h5>Support Chat</h5>
+                            </div>
+                            <div class="messages-area">
+                                <div class="messages-inner" id="messagesArea" aria-live="polite"></div>
+                            </div>
+                            <div class="input-area">
+                                <input
+                                        type="text"
+                                        id="messageInput"
+                                        placeholder="Type a message..."
+                                        aria-label="Message input"
+                                        autocomplete="off"
+                                >
+                                <button type="button" id="sendMessageBtn">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </main>
-</div>
+</main>
 
-<style>
-  .support-chat-page .messages-container {
-    display: flex;
-    flex-direction: column;
-    min-height: calc(100vh - 280px);
-    background: #f5f5f5;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  }
-  .support-chat-page .chat-area {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: white;
-  }
-  .support-chat-page .chat-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid #e0e0e0;
-    background: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-  }
-  .support-chat-page .chat-header h5 {
-    margin: 0;
-    color: #333;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-  .support-chat-page .messages-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    min-height: 200px;
-  }
-  .support-chat-page .message {
-    margin-bottom: 12px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    max-width: 70%;
-    word-wrap: break-word;
-  }
-  .support-chat-page .message.sent {
-    align-self: flex-end;
-    background: #2196f3;
-    color: white;
-    margin-left: auto;
-    border-bottom-right-radius: 4px;
-  }
-  .support-chat-page .message.received {
-    align-self: flex-start;
-    background: #e3f2fd;
-    color: #1565c0;
-    margin-right: auto;
-    border-bottom-left-radius: 4px;
-  }
-  .support-chat-page .message-time {
-    font-size: 11px;
-    margin-top: 3px;
-    opacity: 0.7;
-  }
-  .support-chat-page .input-area {
-    padding: 16px 20px;
-    border-top: 1px solid #e0e0e0;
-    display: flex;
-    gap: 12px;
-    background: #fafafa;
-  }
-  .support-chat-page .input-area input {
-    flex: 1;
-    padding: 12px 14px;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 14px;
-  }
-  .support-chat-page .input-area input:focus {
-    outline: none;
-    border-color: #2196f3;
-    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
-  }
-  .support-chat-page .input-area button {
-    padding: 12px 20px;
-    background: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-  }
-  .support-chat-page .input-area button:hover {
-    background: #1976d2;
-  }
-  .support-chat-page .messages-loading,
-  .support-chat-page .messages-empty {
-    color: #757575;
-    text-align: center;
-    padding: 2rem;
-  }
-  @media (max-width: 768px) {
-    .support-chat-page .message {
-      max-width: 90%;
-    }
-  }
-</style>
-
-<%- include('../components/footer', { isMessages: typeof isMessages !== 'undefined' ? isMessages : true }) %>
+<%- include('../components/footer', { isMessages: true }) %>

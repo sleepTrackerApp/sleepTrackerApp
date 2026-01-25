@@ -12,6 +12,9 @@ const router = express.Router();
 // Query params: page, limit, startDate, endDate (ISO date strings, optional)
 router.get('/', requireAuthAPI, sleepEntryController.getSleepEntries);
 
+// GET /api/sleep-entries/export - Get and export all sleep entries
+router.get('/export', requireAuthAPI, sleepEntryController.exportAllSleepEntries)
+
 // GET /api/sleep-entries/:date - Get a single sleep entry by date
 router.get('/:date', requireAuthAPI, sleepEntryController.getSleepEntryByDate);
 

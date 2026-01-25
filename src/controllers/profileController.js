@@ -12,16 +12,17 @@ function renderProfileSupport(req, res) {
   res.render('pages/profileSupport', {
     title: 'Support Chat',
     activeSection: 'support',
+    isSupportChat: true,
     isMessages: true,
   });
 }
 
 /**
- * Schedules page (profile section).
+ * Sleep Schedules page (profile section).
  */
 function renderProfileSchedules(req, res) {
   res.render('pages/profileSchedules', {
-    title: 'Schedules',
+    title: 'My Sleep Schedules',
     activeSection: 'schedules',
   });
 }

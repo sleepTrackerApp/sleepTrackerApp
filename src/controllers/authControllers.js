@@ -41,10 +41,30 @@ function isValidRedirectPath(path) {
 function login(req, res) {
   const requestedReturnTo = req.query.returnTo;
   const returnTo = isValidRedirectPath(requestedReturnTo)
-      ? requestedReturnTo
-      : '/dashboard'; // Safe default
+    ? requestedReturnTo
+    : '/dashboard';
 
   res.oidc.login({ returnTo });
+}
+
+/**
+ * Initiate Auth0 signup/registration flow.
+ * Uses screen_hint=signup so Auth0 shows the sign-up form.
+ * @param req - Express request object
+ * @param res - Express response object
+ */
+function register(req, res) {
+  const requestedReturnTo = req.query.returnTo;
+  const returnTo = isValidRedirectPath(requestedReturnTo)
+    ? requestedReturnTo
+    : '/dashboard';
+
+  res.oidc.login({
+    returnTo,
+    authorizationParams: {
+      screen_hint: 'signup',
+    },
+  });
 }
 
 /**
@@ -58,6 +78,7 @@ function logout(req, res) {
 
 module.exports = {
   login,
+  register,
   logout,
 };
 
