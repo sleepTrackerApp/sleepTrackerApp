@@ -249,7 +249,7 @@ async function getSleepEntryByDate(userId, entryDate) {
  */
 
 async function getAllSleepEntries(userId) {
-    return sleepEntry.find().lean()
+    return SleepEntry.find({ userId }).lean()
 }
 
 /**
@@ -288,16 +288,11 @@ async function deleteSleepEntryByDate(userId, entryDate) {
     return SleepEntry.findOneAndDelete({ userId, entryDate: normalizedDate });
 }
 
-
-
-
-
 module.exports = {
     getSleepEntries,
     getSleepEntryByDate,
     getOrCreateSleepEntry,
     deleteSleepEntryByDate,
-    exportSleepEntry,
     getAllSleepEntries,
 };
 

@@ -1,23 +1,21 @@
-import { Parser } from "@json2csv/plainjs";
+const { Parser } = require("@json2csv/plainjs")
 
 function exportCSV(entry) {
    if(!Array.isArray(entry) || entry.length == 0) {
        return "NULL Entries";
    } 
 
-    const export = new Parser({
+    const parser = new Parser({
         quote: '"',
         delimter: ',',
         widthBOM: true
     });
 
-    return export.parse(entry)
+    return parser.parse(entry)
 }
 
 
-module.exports = {
-    exportCSV,
-};
+module.exports = { exportCSV };
 
 
 
