@@ -244,8 +244,17 @@ async function getSleepEntryByDate(userId, entryDate) {
 }
 
 /**
+ * Export all sleep data for CSV export document download.
+ * @parm userId - ID of the user object
+ */
+
+async function getAllSleepEntries(userId) {
+    return sleepEntry.find().lean()
+}
+
+/**
  * Get or create a sleep entry for a user by date.
- * @param {string} userId - ID of the user object
+ * @param {string} userId - ID of the user objectsleep
  * @param {Date} entryData - data for the sleep entry if creating new
  * @returns {Promise<import('mongoose').Document>} - existing or newly created sleep entry object
  * @throws {Error} - if validation fails
@@ -279,11 +288,17 @@ async function deleteSleepEntryByDate(userId, entryDate) {
     return SleepEntry.findOneAndDelete({ userId, entryDate: normalizedDate });
 }
 
+
+
+
+
 module.exports = {
     getSleepEntries,
     getSleepEntryByDate,
     getOrCreateSleepEntry,
     deleteSleepEntryByDate,
+    exportSleepEntry,
+    getAllSleepEntries,
 };
 
 
