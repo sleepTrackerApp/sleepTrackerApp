@@ -14,7 +14,6 @@ function renderDashboard(req, res) {
   return res.render('pages/dashboard', {
     title: 'My Sleep Data',
     activeMenu: 'log',
-    isDashboard: true,
   });
 }
 

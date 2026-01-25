@@ -1,0 +1,14 @@
+<%- include('../components/header', { title: typeof title !== 'undefined' ? title : 'Profile', isProfileSection: true }) %>
+
+<div class="profile-layout">
+  <%- include('../components/profileSidebar', { activeSection: typeof activeSection !== 'undefined' ? activeSection : 'profile' }) %>
+  <main class="profile-main">
+    <h4>Profile</h4>
+    <p class="grey-text text-darken-2">
+      Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>.
+      This page is under construction.
+    </p>
+  </main>
+</div>
+
+<%- include('../components/footer') %>

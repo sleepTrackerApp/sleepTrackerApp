@@ -1,69 +1,13 @@
-const { Message, User } = require('../models');
+const messageService = require('../services/messageService');
+const { getReply } = require('../helpers/chatBot');
 
 /**
- * Render messages page
+ * GET /messages — render messages page. Uses requireAuthRoute. Does not pass user
+ * so res.locals.user (Auth0 profile with .name) is used by the header; same as dashboard.
  */
 async function renderMessages(req, res) {
   try {
-    const userIdHash = req.oidc?.user?.sub;
-    console.log('Messages route accessed. User sub:', userIdHash);
-    
-    if (!userIdHash) {
-      console.log('No user found, redirecting to login');
-      return res.redirect('/auth/login');
-    }
-
-    // Get user from database
-    let user = await User.findOne({ authIdHash: userIdHash });
-    if (!user) {
-      // Create user if doesn't exist
-      console.log('Creating new user for:', userIdHash);
-      user = await User.create({
-        authIdHash: userIdHash,
-      });
-    }
-
-    console.log('User found/created:', user._id);
-
-    // Get all messages for this user (sent or received)
-    const messages = await Message.find({
-      $or: [
-        { senderId: user._id },
-        { recipientId: user._id }
-      ]
-    })
-        .populate('senderId', 'testUsername')
-        .populate('recipientId', 'testUsername')
-        .sort({ createdAt: -1 })
-        .limit(100);
-
-    // Get unique conversations
-    const conversationMap = new Map();
-    messages.forEach(msg => {
-      const otherUserId = msg.senderId._id.toString() === user._id.toString()
-          ? msg.recipientId._id.toString()
-          : msg.senderId._id.toString();
-
-      if (!conversationMap.has(otherUserId)) {
-        conversationMap.set(otherUserId, {
-          userId: otherUserId,
-          username: msg.senderId._id.toString() === user._id.toString()
-              ? msg.recipientId.testUsername
-              : msg.senderId.testUsername,
-          lastMessage: msg.content,
-          lastMessageTime: msg.createdAt,
-          unread: msg.recipientId._id.toString() === user._id.toString() && !msg.isRead
-        });
-      }
-    });
-
-    const conversations = Array.from(conversationMap.values());
-
-    res.render('pages/messages', {
-      user,
-      conversations,
-      messages
-    });
+    res.render('pages/messages', { title: 'Messages' });
   } catch (error) {
     console.error('Error rendering messages:', error);
     res.status(500).send('Error loading messages: ' + error.message);
@@ -71,84 +15,103 @@ async function renderMessages(req, res) {
 }
 
 /**
- * Get messages with a specific user
+ * GET /api/messages/list — paginated list of all messages (query: page, pageSize).
+ * Uses requireAuthAPI + res.locals.userRecord.
  */
-async function getConversation(req, res) {
+async function getMessageList(req, res) {
   try {
-    const userIdHash = req.oidc?.user?.sub;
-    const { otherUserId } = req.params;
-
-    if (!userIdHash) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    let user = await User.findOne({ authIdHash: userIdHash });
-    if (!user) {
-      user = await User.create({
-        authIdHash: userIdHash,
-      });
-    }
-
-    // Get conversation messages
-    const messages = await Message.find({
-      $or: [
-        { senderId: user._id, recipientId: otherUserId },
-        { senderId: otherUserId, recipientId: user._id }
-      ]
-    })
-        .populate('senderId', 'testUsername')
-        .populate('recipientId', 'testUsername')
-        .sort({ createdAt: 1 });
-
-    // Mark messages as read
-    await Message.updateMany(
-        {
-          senderId: otherUserId,
-          recipientId: user._id,
-          isRead: false
-        },
-        {
-          isRead: true,
-          readAt: new Date()
-        }
-    );
-
-    res.json({
-      success: true,
-      messages
+    const userId = res.locals.userRecord._id;
+    const { page, pageSize } = req.query;
+    const { messages, total } = await messageService.getMessageList(userId, {
+      page,
+      pageSize,
     });
+    res.json({ success: true, messages, total });
   } catch (error) {
-    console.error('Error getting conversation:', error);
+    console.error('Error getting message list:', error);
     res.status(500).json({ error: error.message });
   }
 }
 
 /**
- * Get unread message count
+ * GET /api/messages/chat — paginated chat log (query: page, pageSize).
+ */
+async function getChatLog(req, res) {
+  try {
+    const userId = res.locals.userRecord._id;
+    const { page, pageSize } = req.query;
+    const { messages, total } = await messageService.getChatLog(userId, {
+      page,
+      pageSize,
+    });
+    res.json({ success: true, messages, total });
+  } catch (error) {
+    console.error('Error getting chat log:', error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * PATCH /api/messages/:id/read — mark message as read.
+ */
+async function markAsRead(req, res) {
+  try {
+    const userId = res.locals.userRecord._id;
+    const message = await messageService.markAsRead(req.params.id, userId);
+    if (!message) return res.status(404).json({ error: 'Message not found' });
+    res.json({ success: true, message });
+  } catch (error) {
+    console.error('Error marking message as read:', error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * DELETE /api/messages/:id — delete message.
+ */
+async function deleteMessage(req, res) {
+  try {
+    const userId = res.locals.userRecord._id;
+    const deleted = await messageService.deleteMessage(req.params.id, userId);
+    if (!deleted) return res.status(404).json({ error: 'Message not found' });
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting message:', error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * POST /api/messages/chat — save user message (user→bot). Body: { content }.
+ * Saves, triggers bot reply, and emits chat:message + chat:reply via socket.
+ * Client updates the chat only when it receives those socket events.
+ */
+async function postChatMessage(req, res) {
+  try {
+    const userId = res.locals.userRecord._id;
+    const content = (req.body?.content ?? '').trim();
+    if (!content) return res.status(400).json({ error: 'content is required' });
+    console.log('[Chat] POST /api/messages/chat received', { userId: String(userId), content: content.substring(0, 80) });
+    const message = await messageService.saveUserMessage(userId, content);
+    console.log('[Chat] user message saved, socket chat:message emitted', { messageId: message._id });
+    const replyText = getReply(content);
+    const reply = await messageService.sendReply(userId, replyText);
+    console.log('[Chat] bot reply saved, socket chat:reply emitted', { replyId: reply._id });
+    res.status(201).json({ success: true, message, reply });
+  } catch (error) {
+    console.error('Error saving chat message:', error);
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * GET /api/messages/unread — unread count (for polling/UI).
  */
 async function getUnreadCount(req, res) {
   try {
-    const userIdHash = req.oidc?.user?.sub;
-    if (!userIdHash) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    let user = await User.findOne({ authIdHash: userIdHash });
-    if (!user) {
-      user = await User.create({
-        authIdHash: userIdHash,
-      });
-    }
-
-    const unreadCount = await Message.countDocuments({
-      recipientId: user._id,
-      isRead: false
-    });
-
-    res.json({
-      success: true,
-      unreadCount
-    });
+    const userId = res.locals.userRecord._id;
+    const unreadCount = await messageService.getUnreadCount(userId);
+    res.json({ success: true, unreadCount });
   } catch (error) {
     console.error('Error getting unread count:', error);
     res.status(500).json({ error: error.message });
@@ -157,6 +120,10 @@ async function getUnreadCount(req, res) {
 
 module.exports = {
   renderMessages,
-  getConversation,
-  getUnreadCount
+  getMessageList,
+  getChatLog,
+  markAsRead,
+  deleteMessage,
+  postChatMessage,
+  getUnreadCount,
 };

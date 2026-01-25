@@ -24,7 +24,6 @@ describe('Dashboard controller tests', () => {
       res.render.calledOnceWithExactly('pages/dashboard', {
         title: 'My Sleep Data',
         activeMenu: 'log',
-        isDashboard: true,
       })
     ).to.be.true;
   });

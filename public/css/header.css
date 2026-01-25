@@ -1,9 +1,19 @@
-/* 1. Make the fixed container and nav transparent */
-.navbar-fixed, 
+.navbar-fixed {
+    height: 80px;
+    background: transparent;
+}
+
 .navbar-fixed nav.top-nav {
-  background-color: transparent;
-  box-shadow: none;
-  border: none;
+    height: 80px;
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.navbar-fixed nav.top-nav.top-nav--scrolled {
+    background: #ffffff;
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* 2. Remove Materialize's default grey hover/active background on list items */
@@ -25,16 +35,16 @@ nav.top-nav ul li.active {
     height: 80px;
 }
 
-.top-nav .nav-left, 
+.top-nav .nav-left,
 .top-nav .nav-right {
-  flex: 1;
-  display: flex;
-  align-items: center;
+    flex: 1;
+    display: flex;
+    align-items: center;
 }
 
 .top-nav .nav-right {
     justify-content: flex-end;
-  }
+}
 
 .top-nav .nav-brand {
     display: flex;
@@ -44,95 +54,234 @@ nav.top-nav ul li.active {
 }
 
 .top-nav .brand-logo {
-    height: 50px; 
+    height: 50px;
     width: auto;
     display: block;
 }
 
+/* Override Materialize's nav .brand-logo { left: 50%; transform: translateX(-50%); } on small screens */
+@media only screen and (max-width: 992px) {
+    nav.top-nav .brand-logo,
+    .top-nav .nav-brand .brand-logo {
+        position: static;
+        left: auto;
+        transform: none;
+        -webkit-transform: none;
+    }
+}
+
+/* 800px breakpoint: one switch between mobile (hamburger) and desktop (pill + actions) */
+@media (max-width: 799px) {
+    .header-mobile-trigger {
+        display: block !important;
+    }
+
+    .header-desktop-only {
+        display: none !important;
+    }
+}
+
+@media (min-width: 800px) {
+    .header-mobile-trigger {
+        display: none !important;
+    }
+
+    .header-desktop-only {
+        display: flex !important;
+    }
+}
+
 .top-nav .nav-pill {
-  background-color: #bee3f7;
-  border-radius: 100px;
-  height: 50px;
-  padding: 0 5px;
-  display: flex;
-  align-items: center;
+    background-color: #bee3f7;
+    border-radius: 100px;
+    height: 50px;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
 }
 
 .top-nav .nav-link {
-  color: #000;
-  font-weight: 600;
-  padding: 0 30px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 30px;
-  display: inline-block;
-  transition: background-color 0.3s ease;
+    color: #000;
+    font-weight: 600;
+    padding: 0 30px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 30px;
+    display: inline-block;
+    transition: background-color 0.3s ease;
 }
 
 /* Use your white pill only for the active item */
 .top-nav li.active .nav-link {
     background-color: #ffffff !important;
     color: #000 !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .top-nav .nav-signin {
-  background-color: #000;
-  color: #fff;
-  border-radius: 100px;
-  height: 48px;
-  line-height: 48px;
-  padding: 0 30px;
-  font-weight: 700;
-  display: inline-block;
+    background-color: #000;
+    color: #fff;
+    border-radius: 100px;
+    height: 48px;
+    line-height: 48px;
+    padding: 0 30px;
+    font-weight: 700;
+    display: inline-block;
 }
 
 /* --- Dashboard Header Extensions --- */
 
-.user-name-label {
-  font-weight: 700;
-  margin-right: 12px;
-}
-
-.notification-bell {
-  margin-right: 20px;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  vertical-align: middle;
-}
-
-.notification-bell i {
-  margin: 0 !important;
-  line-height: 32px !important;
-  height: 32px !important;
-  width: 32px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 /* For the "Main Site" button variant */
 .nav-signin.black {
-  background-color: #000 !important;
-  color: #fff !important;
-  border-radius: 100px;
-  height: 48px;
-  line-height: 48px;
-  padding: 0 30px;
-  font-weight: 700;
-  display: inline-block;
-  border: none;
+    background-color: #000 !important;
+    color: #fff !important;
+    border-radius: 100px;
+    height: 48px;
+    line-height: 48px;
+    padding: 0 30px;
+    font-weight: 700;
+    display: inline-block;
+    border: none;
 }
 
 .nav-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
 }
 
-.nav-signout-link {
-  font-weight: 600;
-  font-size: 14px;
-  margin-left: 10px;
+/* Profile button + dropdown */
+.header-profile-wrap {
+    position: relative;
+}
+
+.header-profile-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background-color: #bee3f7;
+    color: #0d47a1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.header-profile-btn:hover {
+    background-color: #90caf9;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+}
+
+/* Override Materialize nav i { height: 56px; line-height: 56px } */
+.header-profile-btn i,
+.header-profile-btn i.material-icons {
+    display: block;
+    font-size: 28px;
+    height: auto;
+    line-height: 1;
+}
+
+.header-profile-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 260px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 4px 0;
+    z-index: 1100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.header-profile-dropdown.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-section {
+    padding: 0;
+}
+
+.dropdown-section + .dropdown-section {
+    border-top: 1px solid #e0e0e0;
+}
+
+.dropdown-welcome {
+    padding: 10px 16px 8px;
+}
+
+.dropdown-welcome-link {
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+    font-size: 15px;
+}
+
+.dropdown-welcome-link:hover {
+    text-decoration: underline;
+}
+
+.dropdown-messages {
+    padding: 6px 16px 8px;
+}
+
+.dropdown-messages-text {
+    color: #616161;
+    padding-top: 1em;
+    padding-bottom: 1em;
+    display: block;
+}
+
+.dropdown-links {
+    padding: 2px 0;
+}
+
+.dropdown-section {
+    line-height: normal;
+    height: auto;
+    color: #000;
+}
+
+.dropdown-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    color: #212121;
+    text-decoration: none;
+    font-size: 14px;
+    height: auto;
+    line-height: normal;
+    transition: background-color 0.15s ease;
+}
+
+.dropdown-link:hover {
+    background-color: #f5f5f5;
+}
+
+.dropdown-link .material-icons,
+.header-profile-dropdown i.material-icons {
+    display: inline-block;
+    font-size: 20px;
+    height: auto;
+    line-height: 1;
+    color: #616161;
+}
+
+.dropdown-footer {
+    padding: 2px 0;
+}
+
+.dropdown-footer .dropdown-signout {
+    font-weight: 600;
+    color: #616161;
 }

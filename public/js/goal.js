@@ -254,10 +254,10 @@ $(function () {
 
       if (entry && entry.goalMet === true) {
         iconClass = 'goal-history-icon--met';
-        iconHtml = '<i class="fa-solid fa-check"></i>';
+        iconHtml = '<i class="material-icons">check</i>';
       } else if (entry && entry.goalMet === false) {
         iconClass = 'goal-history-icon--missed';
-        iconHtml = '<i class="fa-solid fa-xmark"></i>';
+        iconHtml = '<i class="material-icons">close</i>';
       }
 
       const $cell = $('<div>').addClass('goal-history-cell');

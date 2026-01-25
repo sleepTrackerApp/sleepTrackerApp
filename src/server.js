@@ -7,9 +7,7 @@ const { Server } = require('socket.io');
 const createApp = require('./app');
 const { connectDb } = require('./helpers/db');
 const { appConfig } = require('./helpers/settings');
-const { startScheduler, setSocketIO } = require('./helpers/scheduler');
-const { Message, User } = require('./models');
-const socketService = require('./services/socketService');
+const { createHttpServer } = require('./helpers/httpServer');
 
 const { PORT, MONGODB_URI } = appConfig;
 
@@ -214,35 +212,14 @@ function initializeSocketIO(server) {
  */
 async function startServer() {
   try {
-    // Connect to MongoDB
     await connectDb(MONGODB_URI);
-
-    // Create Express app first
     const app = createApp();
+    const server = createHttpServer(app);
 
-    // Create HTTP server with Express app
-    const server = http.createServer(app);
-
-    // Initialize Socket.IO
-    const io = initializeSocketIO(server);
-    console.log('Socket.IO initialized successfully');
-
-    // Pass Socket.IO instance to scheduler for notifications
-    setSocketIO(io);
-
-    // Attach io instance to app for diagnostic routes
-    app.set('io', io);
-    app.set('server', server);
-
-    // Start listening on the specified port
     server.listen(PORT, () => {
       console.log(`Alive Sleep Tracker App server listening on http://localhost:${PORT}`);
     });
 
-    // Start scheduler after server is up
-    void startScheduler();
-
-    // Provide a clearer message if the port is already in use
     server.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {
         console.error(`Port ${PORT} is already in use. Set a free PORT in your .env or stop the other process.`);
@@ -251,13 +228,10 @@ async function startServer() {
       throw err;
     });
   } catch (error) {
-    // Handle errors during startup
     console.error('Failed to start server:', error);
     process.exit(1);
   }
 }
 
-
 // Start the server
 void startServer();
-

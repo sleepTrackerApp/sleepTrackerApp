@@ -1,348 +1,98 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <% const resolvedTitle = typeof title === 'undefined' || title === null ? '' : title; %>
     <title><%= resolvedTitle ? `${resolvedTitle} | ` : '' %>Alive Sleep Tracker</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="/css/base.css" />
-    <link rel="stylesheet" href="/css/header.css" />
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script>
-      // Initialize Socket.IO connection immediately
-      console.log('[Init] Socket.IO script loading...');
-      const socket = io();
-      window.socket = socket; // Store globally
-      console.log('[Init] Socket.IO client created:', socket);
-      
-      socket.on('connect', () => {
-        console.log('[Init] Socket connected with ID:', socket.id);
-      });
-      
-      socket.on('disconnect', () => {
-        console.log('[Init] Socket disconnected');
-      });
-      
-      // Global notification listener - this will work on any page
-      socket.on('schedule:notification', (data) => {
-        console.log('[Init] Received notification:', data);
-        
-        // Show the notification popup immediately
-        if (data.type === 'bedtime') {
-          showNotificationPopup(data);
-        }
-      });
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
+    <link rel="stylesheet" href="/css/base.css"/>
+    <link rel="stylesheet" href="/css/header.css"/>
+    <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
+        <link rel="stylesheet" href="/css/dashboard.css"/>
+    <% } %>
+    <% if (typeof isProfileSection !== 'undefined' && isProfileSection) { %>
+        <link rel="stylesheet" href="/css/profile.css"/>
+    <% } %>
+    <% if (typeof isProfileSchedules !== 'undefined' && isProfileSchedules) { %>
+        <link rel="stylesheet" href="/css/dashboard.css"/>
+    <% } %>
+</head>
 
-      // Global variable to track if notification is beeping
-      let isBeeping = false;
-      let beeperInterval = null;
-      let audioContext = null;
-      let activeOscillators = [];  // Track active oscillators
-      
-      // Initialize audio context once
-      function initAudioContext() {
-        if (!audioContext) {
-          try {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            console.log('[Sound] Audio context initialized');
-          } catch (e) {
-            console.log('[Sound] Audio context error:', e.message);
-          }
-        }
-        return audioContext;
-      }
-      
-      // Function to play notification sound
-      function playNotificationSound() {
-        const ctx = initAudioContext();
-        if (!ctx) return;
-        
-        try {
-          const oscillator = ctx.createOscillator();
-          const gainNode = ctx.createGain();
-          
-          oscillator.connect(gainNode);
-          gainNode.connect(ctx.destination);
-          
-          // Set frequency and duration for a pleasant beep
-          oscillator.frequency.value = 800; // Hz
-          oscillator.type = 'sine';
-          
-          gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-          
-          oscillator.start(ctx.currentTime);
-          oscillator.stop(ctx.currentTime + 0.5);
-          
-          // Store both oscillator and gain node so we can fully stop them
-          activeOscillators.push({ osc: oscillator, gain: gainNode });
-          console.log('[Sound] Beep played, active oscillators:', activeOscillators.length);
-        } catch (e) {
-          console.log('[Sound] Error playing beep:', e.message);
-        }
-      }
-      
-      // Function to start continuous beeping
-      function startContinuousBeep() {
-        if (isBeeping) {
-          console.log('[Sound] Already beeping, ignoring duplicate start');
-          return;
-        }
-        isBeeping = true;
-        activeOscillators = [];  // Reset oscillator list
-        console.log('[Sound] Starting continuous beep');
-        
-        // Play beep immediately
-        playNotificationSound();
-        
-        // Play beep every 1 second
-        beeperInterval = setInterval(() => {
-          if (isBeeping) {
-            playNotificationSound();
-          }
-        }, 1000);
-      }
-      
-      // Function to stop continuous beeping
-      function stopContinuousBeep() {
-        console.log('[Sound] === stopContinuousBeep called ===');
-        console.log('[Sound] Before: isBeeping =', isBeeping, 'beeperInterval =', beeperInterval);
-        console.log('[Sound] Active oscillators:', activeOscillators.length);
-        
-        // First, set the flag to false to prevent any new beeps
-        isBeeping = false;
-        console.log('[Sound] Set isBeeping to false');
-        
-        // Stop the interval
-        if (beeperInterval !== null) {
-          console.log('[Sound] Clearing interval ID:', beeperInterval);
-          clearInterval(beeperInterval);
-          beeperInterval = null;
-          console.log('[Sound] Interval cleared and set to null');
-        } else {
-          console.log('[Sound] No interval to clear (beeperInterval is null)');
-        }
-        
-        // Stop all active oscillators immediately and disconnect them
-        if (activeOscillators.length > 0) {
-          console.log('[Sound] Stopping', activeOscillators.length, 'active oscillators');
-          const ctx = audioContext;
-          if (ctx) {
-            activeOscillators.forEach((item, index) => {
-              try {
-                const osc = item.osc || item; // Handle both old and new format
-                const gain = item.gain;
-                
-                // Stop the oscillator
-                try {
-                  osc.stop(ctx.currentTime);
-                } catch (e1) {
-                  // Already stopped, ignore
-                }
-                
-                // Disconnect oscillator
-                try {
-                  osc.disconnect();
-                } catch (e2) {
-                  // Already disconnected, ignore
-                }
-                
-                // Disconnect gain node
-                if (gain) {
-                  try {
-                    gain.disconnect();
-                  } catch (e3) {
-                    // Already disconnected, ignore
-                  }
-                }
-                
-                console.log('[Sound] Stopped and disconnected oscillator', index + 1);
-              } catch (e) {
-                console.log('[Sound] Error stopping oscillator:', e.message);
-              }
-            });
-          }
-          activeOscillators = [];
-          console.log('[Sound] All oscillators stopped');
-        }
-        
-        console.log('[Sound] After: isBeeping =', isBeeping, 'beeperInterval =', beeperInterval);
-        console.log('[Sound] === stopContinuousBeep finished ===');
-      }
+<body class="white">
+<div class="navbar-fixed">
+    <nav class="top-nav" id="top-nav" aria-label="Main navigation">
+        <div class="nav-shell">
 
-      // Function to show notification popup
-      function showNotificationPopup(notification) {
-        console.log('[Popup] Creating notification UI...');
-        
-        // Create notification element
-        const notifDiv = document.createElement('div');
-        notifDiv.className = 'bedtime-notification';
-        
-        notifDiv.innerHTML = `
-          <div class="notif-content">
-            <h4>${notification.title || 'Bedtime Reminder'}</h4>
-            <p>${notification.message || 'Time for bed!'}</p>
-            <small>${new Date(notification.timestamp).toLocaleTimeString()}</small>
-          </div>
-          <div class="notif-buttons" style="display:flex;gap:10px;margin-left:15px;">
-            <button class="notif-stop" style="background:#ff4757;border:none;color:white;padding:8px 15px;border-radius:4px;cursor:pointer;font-weight:bold;">STOP</button>
-            <button class="notif-close" style="background:none;border:none;color:white;font-size:24px;cursor:pointer;padding:0;margin-left:5px;">×</button>
-          </div>
-        `;
-        
-        // Apply inline styles
-        notifDiv.style.position = 'fixed';
-        notifDiv.style.top = '80px';
-        notifDiv.style.right = '20px';
-        notifDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        notifDiv.style.color = 'white';
-        notifDiv.style.padding = '20px';
-        notifDiv.style.borderRadius = '8px';
-        notifDiv.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-        notifDiv.style.maxWidth = '450px';
-        notifDiv.style.zIndex = '9999';
-        notifDiv.style.display = 'flex';
-        notifDiv.style.alignItems = 'center';
-        notifDiv.style.justifyContent = 'space-between';
-        notifDiv.style.animation = 'slideIn 0.3s ease-out';
-        
-        // Add animation styles
-        const style = document.createElement('style');
-        style.textContent = `
-          @keyframes slideIn {
-            from {
-              transform: translateX(450px);
-              opacity: 0;
-            }
-            to {
-              transform: translateX(0);
-              opacity: 1;
-            }
-          }
-          .notif-stop:hover {
-            background: #ff6b7a !important;
-          }
-        `;
-        document.head.appendChild(style);
-        
-        // Add to page FIRST
-        document.body.appendChild(notifDiv);
-        console.log('[Popup] Notification added to page');
-        
-        // Start continuous beeping immediately
-        startContinuousBeep();
-        
-        // NOW attach button listeners (after element is in DOM)
-        const stopBtn = notifDiv.querySelector('.notif-stop');
-        const closeBtn = notifDiv.querySelector('.notif-close');
-        
-        if (stopBtn) {
-          console.log('[Popup] Attaching STOP button listener');
-          stopBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('[Popup] ===== STOP BUTTON CLICKED =====');
-            console.log('[Popup] isBeeping before stop:', isBeeping);
-            console.log('[Popup] beeperInterval before stop:', beeperInterval);
-            
-            stopContinuousBeep();
-            
-            console.log('[Popup] isBeeping after stop:', isBeeping);
-            console.log('[Popup] beeperInterval after stop:', beeperInterval);
-            
-            if (notifDiv && notifDiv.parentElement) {
-              notifDiv.remove();
-              console.log('[Popup] Notification removed from DOM');
-            }
-          });
-        } else {
-          console.error('[Popup] STOP button not found!');
-        }
-        
-        if (closeBtn) {
-          console.log('[Popup] Attaching CLOSE button listener');
-          closeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('[Popup] CLOSE button clicked');
-            stopContinuousBeep();
-            if (notifDiv && notifDiv.parentElement) {
-              notifDiv.remove();
-            }
-          });
-        }
-        
-        // Auto-remove after 60 seconds (if user doesn't stop it)
-        setTimeout(() => {
-          if (notifDiv.parentElement) {
-            stopContinuousBeep();
-            notifDiv.remove();
-          }
-        }, 60000);
-      }
-    </script>
-  </head>
-
-  <body class="grey lighten-5">
-    <div class="navbar-fixed">
-        <nav class="z-depth-0 top-nav">
-            <div class="nav-shell">
-                
-                <div class="nav-left">
-                    <a href="/" class="nav-brand">
-                        <img src="/img/logo/logo-horizontal.svg" alt="Alive logo" class="brand-logo" />
-                    </a>
-                </div>
-
-                <a href="#" data-target="mobile-nav" class="sidenav-trigger black-text hide-on-med-and-up">
-                    <i class="material-icons">menu</i>
+            <div class="nav-left">
+                <a href="/" class="nav-brand">
+                    <img src="/img/logo/logo-horizontal.svg" alt="Alive logo" class="brand-logo"/>
                 </a>
-
-                <div class="nav-center hide-on-small-and-down">
-                    <div class="nav-pill">
-                        <ul class="nav-menu">
-                            <%- include('./navMenu') %>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="nav-right hide-on-small-and-down">
-                    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-                        <span class="user-name-label grey-text text-darken-4">
-                            <%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %>
-                        </span>
-                        
-                        <a href="/dashboard/schedules" class="btn-floating btn-small blue lighten-4 z-depth-0 notification-bell" title="View Schedules">
-                            <i class="material-icons blue-text">notifications_none</i>
-                        </a>
-                
-                        <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
-                            <a href="/" class="nav-signin black">Main Site</a>
-                        <% } else { %>
-                            <a href="/dashboard" class="nav-signin black">Dashboard</a>
-                        <% } %>
-                        
-                        <a href="/auth/logout" class="nav-signout-link grey-text">Sign Out</a>
-                    <% } else { %>
-                        <a href="/auth/login" class="nav-signin black">Sign In</a>
-                    <% } %>
-                </div>
-                
             </div>
-        </nav>
-    </div>
 
-    <ul class="sidenav" id="mobile-nav">
-      <%- include('./navMenu') %>
-      <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+            <a href="#" data-target="mobile-nav" class="sidenav-trigger black-text header-mobile-trigger" aria-label="Open menu">
+                <i class="material-icons">menu</i>
+            </a>
+
+            <div class="nav-center header-desktop-only">
+                <div class="nav-pill">
+                    <ul class="nav-menu">
+                        <%- include('./navMenu') %>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="nav-right header-desktop-only">
+                <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                    <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
+                        <a href="/" class="nav-signin black">Main Site</a>
+                    <% } else { %>
+                        <a href="/dashboard" class="nav-signin black">Dashboard</a>
+                    <% } %>
+
+                    <div class="header-profile-wrap">
+                        <button type="button" class="header-profile-btn" id="header-profile-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+                            <i class="material-icons">person</i>
+                        </button>
+                        <div class="header-profile-dropdown" id="header-profile-dropdown" aria-hidden="true">
+                            <div class="dropdown-section dropdown-welcome">
+                                Welcome,
+                                <a href="/profile" class="dropdown-welcome-link"><%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %></a>
+                            </div>
+                            <div class="dropdown-section dropdown-messages">
+                                <span class="dropdown-messages-text">You have no new messages</span>
+                            </div>
+                            <div class="dropdown-section dropdown-links">
+                                <a href="/profile" class="dropdown-link"><i class="material-icons">person</i> Profile</a>
+                                <a href="/profile/schedules" class="dropdown-link"><i class="material-icons">schedule</i> Schedules</a>
+                                <a href="/profile/support" class="dropdown-link"><i class="material-icons">support_agent</i> Support Chat</a>
+                            </div>
+                            <div class="dropdown-section dropdown-footer">
+                                <a href="/auth/logout" class="dropdown-link dropdown-signout"><i class="material-icons">logout</i> Sign out</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <a href="/auth/login" class="nav-signin black">Sign In</a>
+                <% } %>
+            </div>
+
+        </div>
+    </nav>
+</div>
+
+<ul class="sidenav" id="mobile-nav">
+    <%- include('./navMenu') %>
+    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
         <li><a href="/dashboard">Dashboard</a></li>
+        <li><a href="/profile">Profile</a></li>
+        <li><a href="/profile/schedules">Schedules</a></li>
+        <li><a href="/profile/support">Support Chat</a></li>
         <li><a href="/auth/logout">Sign Out</a></li>
-      <% } else { %>
+    <% } else { %>
         <li><a href="/auth/login">Sign In</a></li>
-      <% } %>
-    </ul>
+    <% } %>
+</ul>
+
 
