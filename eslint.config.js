@@ -6,7 +6,7 @@ export default [
   js.configs.recommended,
   eslintConfigPrettier,
 
-  // ===== Production / app code =====
+  // ===== Server / shared =====
   {
     files: ['**/*.js'],
     languageOptions: {
@@ -24,13 +24,22 @@ export default [
     },
   },
 
-  // ===== Test files (Mocha) =====
+  // ===== Frontend (jQuery) =====
+  {
+    files: ['public/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.jquery,
+      },
+    },
+  },
+
+  // ===== Tests (Mocha) =====
   {
     files: ['test/**/*.js', '**/*.spec.js', '**/*.test.js'],
     languageOptions: {
-      globals: {
-        ...globals.mocha,
-      },
+      globals: globals.mocha,
     },
   },
 ];

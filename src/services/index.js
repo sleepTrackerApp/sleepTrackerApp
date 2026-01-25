@@ -9,6 +9,7 @@ module.exports = {
   weeklySummaryService: require('./weeklySummaryService'),
   scheduleService: require('./scheduleService'),
   goalService: require('./goalService'),
+  messageService: require('./messageService'),
 };
 
           

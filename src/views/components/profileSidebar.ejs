@@ -1,0 +1,25 @@
+<%
+  const active = typeof activeSection === 'undefined' ? 'profile' : activeSection;
+%>
+<nav class="profile-sidebar" aria-label="Profile sections">
+  <ul class="profile-sidebar-list">
+    <li class="profile-sidebar-item <%= active === 'profile' ? 'active' : '' %>">
+      <a href="/profile" class="profile-sidebar-link">
+        <i class="material-icons">person</i>
+        <span>Profile</span>
+      </a>
+    </li>
+    <li class="profile-sidebar-item <%= active === 'schedules' ? 'active' : '' %>">
+      <a href="/profile/schedules" class="profile-sidebar-link">
+        <i class="material-icons">schedule</i>
+        <span>Schedules</span>
+      </a>
+    </li>
+    <li class="profile-sidebar-item <%= active === 'support' ? 'active' : '' %>">
+      <a href="/profile/support" class="profile-sidebar-link">
+        <i class="material-icons">support_agent</i>
+        <span>Support Chat</span>
+      </a>
+    </li>
+  </ul>
+</nav>

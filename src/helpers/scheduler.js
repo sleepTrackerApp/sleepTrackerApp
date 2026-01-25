@@ -4,17 +4,9 @@
  */
 const cron = require('node-cron');
 const { Schedule } = require('../models');
-const socketService = require('../services/socketService');
+const { deliver } = require('./socket');
 
 const jobs = new Map(); // key: scheduleId -> cron task
-let ioInstance = null; // Socket.IO instance (kept for backwards compatibility)
-
-/**
- * Set the Socket.IO instance for sending notifications
- */
-function setSocketIO(io) {
-  ioInstance = io;
-}
 
 async function loadEnabledSchedules() {
   return Schedule.find({ enabled: true });
@@ -29,46 +21,69 @@ function registerJob(schedule) {
     jobs.delete(id);
   }
 
-  const task = cron.schedule(schedule.cron, async () => {
-    try {
-      // Placeholder: perform action based on schedule.type
-      // For now, just log and update lastRunAt
-      console.log(`[Scheduler] Trigger ${schedule.type} '${schedule.name}' for user ${schedule.userId}`);
+  const task = cron.schedule(
+    schedule.cron,
+    async () => {
+      try {
+        // Placeholder: perform action based on schedule.type
+        // For now, just log and update lastRunAt
+        console.log(
+          `[Scheduler] Trigger ${schedule.type} '${schedule.name}' for user ${schedule.userId}`
+        );
 
-      schedule.lastRunAt = new Date();
-      await schedule.save();
+        schedule.lastRunAt = new Date();
+        await schedule.save();
 
-      // Send notification via Socket.IO if available
-      if (ioInstance && schedule.type === 'bedtime') {
-        sendBedtimeNotification(schedule);
+        if (schedule.type === 'bedtime') {
+          sendBedtimeNotification(schedule);
+        }
+      } catch (err) {
+        console.error('Scheduler task failed:', err);
       }
-    } catch (err) {
-      console.error('Scheduler task failed:', err);
-    }
-  }, { scheduled: true });
+    },
+    { scheduled: true }
+  );
 
   jobs.set(id, task);
 }
 
 /**
- * Send bedtime notification to all users via Socket.IO service
+ * Send bedtime notification to the user who owns this schedule (by userId).
  */
 function sendBedtimeNotification(schedule) {
-  socketService.broadcastNotification({
-    type: 'bedtime',
-    title: 'Bedtime Reminder',
-    message: `It's time for bed! ${schedule.name}`,
-    scheduleName: schedule.name,
-    timestamp: new Date(),
-  });
-  console.log(`[Scheduler] Sent bedtime notification for schedule: ${schedule.name}`);
+  const userId = schedule.userId;
+  if (!userId) {
+    console.warn(
+      '[Scheduler] Schedule has no userId, skipping notification:',
+      schedule.name
+    );
+    return;
+  }
+  deliver(
+    userId,
+    {
+      type: 'bedtime',
+      title: 'Bedtime Reminder',
+      message: `It's time for bed! ${schedule.name}`,
+      scheduleName: schedule.name,
+      timestamp: new Date(),
+    },
+    'schedule:notification'
+  );
+  console.log(
+    `[Scheduler] Sent bedtime notification for schedule: ${schedule.name} to user ${userId}`
+  );
 }
 
 function unregisterJob(scheduleId) {
   const id = String(scheduleId);
   const task = jobs.get(id);
   if (task) {
-    try { task.stop(); } catch {}
+    try {
+      task.stop();
+    } catch {
+      /* empty */
+    }
     jobs.delete(id);
     console.log(`[Scheduler] Unregistered job ${id}.`);
   }
@@ -85,4 +100,4 @@ function stopScheduler() {
   jobs.clear();
 }
 
-module.exports = { startScheduler, stopScheduler, registerJob, unregisterJob, setSocketIO };
+module.exports = { startScheduler, stopScheduler, registerJob, unregisterJob };

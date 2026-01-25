@@ -1,0 +1,10 @@
+<%- include('../components/header', { title: typeof title !== 'undefined' ? title : 'Schedules', isProfileSection: true, isProfileSchedules: true }) %>
+
+<div class="profile-layout">
+  <%- include('../components/profileSidebar', { activeSection: typeof activeSection !== 'undefined' ? activeSection : 'schedules' }) %>
+  <main class="profile-main">
+    <%- include('../components/schedulesContent') %>
+  </main>
+</div>
+
+<%- include('../components/footer') %>

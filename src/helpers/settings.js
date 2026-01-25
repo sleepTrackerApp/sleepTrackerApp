@@ -96,6 +96,7 @@ console.log(`Inferred BASE_URL as: ${inferredUrl}`); // For debugging purposes
  *   PORT: number,
  *   MONGODB_URI: string,
  *   BASE_URL: string,
+ *   FRONTEND_URL: string,
  *   NODE_ENV: string,
  *   ENCRYPTION_KEY: string,
  *   AUTH0: Readonly<{
@@ -110,6 +111,8 @@ console.log(`Inferred BASE_URL as: ${inferredUrl}`); // For debugging purposes
 const appConfig = Object.freeze({
     // Base host used for constructing absolute links
     BASE_URL: getEnv('BASE_URL', inferredUrl),
+    // Allowed CORS origin for Socket.IO (e.g. separate frontend URL); use '*' to allow all
+    FRONTEND_URL: getEnv('FRONTEND_URL', '*', true),
     // Defines the port the application will listen on
     PORT: getEnvInt('PORT', 3000),
     // Defines the MongoDB connection URI

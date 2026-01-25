@@ -1,0 +1,125 @@
+/* Profile section layout: sidebar + main content */
+.profile-layout {
+    display: flex;
+    gap: 0;
+    max-width: 1400px;
+    margin: 24px auto 40px;
+    padding: 0 20px;
+    min-height: calc(100vh - 180px);
+}
+
+.profile-sidebar {
+    flex-shrink: 0;
+    width: 240px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    padding: 0;
+    height: fit-content;
+    position: sticky;
+    top: 100px;
+    overflow: hidden;
+    line-height: normal;
+}
+
+.profile-sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.profile-sidebar-item {
+    margin: 0;
+    display: block;
+    float: none;
+}
+
+.profile-sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    color: #424242;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.profile-sidebar-link:hover {
+    background-color: #f5f5f5;
+    color: #000;
+}
+
+.profile-sidebar-link .material-icons {
+    font-size: 22px;
+    color: #757575;
+    line-height: normal;
+    height: 24px;
+}
+
+.profile-sidebar-item.active .profile-sidebar-link {
+    background-color: #bee3f7;
+    color: #0d47a1;
+}
+
+.profile-sidebar-item.active .profile-sidebar-link .material-icons {
+    color: #0d47a1;
+}
+
+.profile-main {
+    flex: 1;
+    min-width: 0;
+    padding-left: 24px;
+}
+
+@media (max-width: 800px) {
+    .profile-layout {
+        flex-direction: column;
+        padding: 16px;
+    }
+
+    .profile-sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .profile-sidebar-link {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .profile-main {
+        padding-left: 0;
+        padding-top: 16px;
+    }
+
+    .profile-sidebar {
+        width: 100%;
+    }
+
+    .profile-sidebar-list {
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: center;
+    }
+
+    .profile-sidebar-item {
+        flex: 1;
+        text-align: center;
+        display: flex;
+        align-items: stretch;
+        justify-content: stretch;
+    }
+
+    .profile-sidebar-link {
+        flex: 1;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}

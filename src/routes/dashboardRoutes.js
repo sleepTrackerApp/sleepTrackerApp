@@ -10,7 +10,4 @@ const router = express.Router();
 
 router.get('/', requireAuthRoute, dashboardControllers.renderDashboard);
 
-router.get('/schedules', requireAuthRoute, dashboardControllers.renderSchedules);
-
 module.exports = router;
-
