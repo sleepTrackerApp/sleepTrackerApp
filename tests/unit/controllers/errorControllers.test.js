@@ -20,6 +20,7 @@ describe('Page error controllers', () => {
     expect(
       res.render.calledOnceWithExactly('pages/errors/404', {
         title: '404 - Page Not Found',
+        isErrorPage: true,
       })
     ).to.be.true;
   });
@@ -41,7 +42,8 @@ describe('Page error controllers', () => {
     expect(res.status.calledOnceWithExactly(500)).to.be.true;
     expect(
       res.render.calledOnceWithExactly('pages/errors/500', {
-        title: '500 - Internal Server Error',
+        title: 'Internal server error',
+        isErrorPage: true,
       })
     ).to.be.true;
   });
@@ -66,6 +68,7 @@ describe('Page error controllers', () => {
     expect(
       res.render.calledOnceWithExactly('pages/errors/500', {
         title: '501 - Not Implemented',
+        isErrorPage: true,
       })
     ).to.be.true;
   });
