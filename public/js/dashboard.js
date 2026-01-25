@@ -231,13 +231,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const confirmBtn = document.querySelector('.preview-card .main-action-btn');
 
     if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
+        confirmBtn.addEventListener('click', async () => {
             const displayArea = document.getElementById('saved-sleep-display');
             const textElement = document.getElementById('final-log-text');
             const totalPillValue = document.querySelector('.total-pill').innerText;
             const dateInput = document.getElementById('sleep-date');
             const qualityLabel = document.getElementById('preview-quality');
             const qualityValue = qualityLabel ? qualityLabel.innerText : "-";
+            const qualityVal = parseInt(document.getElementById('sleep-rate').value);
+            
+            const h = parseInt(document.getElementById('input-hours').value) || 0;
+            const m = parseInt(document.getElementById('input-minutes').value) || 0;
+            const totalMinutes = (h * 60) + m;
 
             let displayDate = "Last Night";
 
@@ -288,6 +293,30 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 // After saving to localStorage:
                 updateSleepChart();
+            }
+
+            try {
+                const response = await fetch('/api/sleep-entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        entryTime: dateInput.value, // Send YYYY-MM-DD format
+                        duration: totalMinutes,     // Send total minutes (Integer)
+                        rating: qualityVal          // Send quality 0-10 (Integer)
+                    })
+                });
+    
+                const result = await response.json();
+    
+                if (result.success) {
+                    M.toast({ html: 'Synced with Alive Scientist!', classes: 'green' });
+                } else {
+                    throw new Error(result.error?.message || 'Server Sync Failed');
+                }
+            
+            } catch (err) {
+                console.error('Server Sync Error:', err);
+                M.toast({ html: 'Local save successful, but Scientist is offline.', classes: 'orange' });
             }
         });
     }
@@ -433,4 +462,43 @@ document.addEventListener('DOMContentLoaded', function () {
     setTimeout(() => {
         updateSleepChart();
     }, 100);
+
+
+    //View AI Insights
+    const viewInsightBtn = document.querySelector('.js-view-insights');
+    const aiContentBox = document.querySelector('.ai-content-box');
+
+    if (viewInsightBtn && aiContentBox) {
+        viewInsightBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Show a loading state
+            viewInsightBtn.innerText = 'Analyzing...';
+
+            try {
+                const response = await fetch('/api/ai/insight');
+                const data = await response.json();
+
+                if (data.error) throw new Error(data.error);
+
+                // Update the UI with the structured JSON from your Helper (ai.js)
+                aiContentBox.innerHTML = `
+                    <ul class="summary-list">
+                        <li><strong>Score:</strong> ${data.insight.score}/100</li>
+                        <li><strong>Insight:</strong> ${data.insight.insight}</li>
+                        <li><strong>Analysis:</strong> ${data.insight.analysis}</li>
+                        <li><strong>Recommendation:</strong> ${data.insight.recommendation}</li>
+                    </ul>
+                `;
+                
+                aiContentBox.style.display = 'block';
+                viewInsightBtn.style.display = 'none'; // Hide the button once viewed
+
+            } catch (err) {
+                console.error('Insight Fetch Error:', err);
+                M.toast({ html: 'Scientist is busy. Try logging more sleep!', classes: 'red' });
+                viewInsightBtn.innerText = 'View';
+            }
+        });
+    }
 });

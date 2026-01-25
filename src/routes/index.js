@@ -12,6 +12,7 @@ const authRoutes = require('./authRoutes');
 const diagnosticsRoutes = require('./diagnosticsRoutes');
 const messageRoutes = require('./messageRoutes');
 const profileRoutes = require('./profileRoutes');
+const aiRoutes = require('./aiRoutes');
 
 // Create a new router instance
 const router = express.Router();
@@ -24,6 +25,7 @@ router.use('/auth', authRoutes);
 router.use('/messages', messageRoutes);
 router.use('/profile', profileRoutes);
 router.use('/diagnostics', diagnosticsRoutes);
+router.use('/api/ai', aiRoutes);
 
 module.exports = router;
 
