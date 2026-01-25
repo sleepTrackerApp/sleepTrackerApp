@@ -15,6 +15,8 @@ const getDailyInsight = async (req, res) => {
 
         // 2. Check the "Memory" (Model) first to save costs
         const existingInsight = await AIInsight.findOne({ userId, dayKey });
+
+        console.log(existingInsight)
         
         if (existingInsight) {
             return res.json({ 
@@ -35,8 +37,8 @@ const getDailyInsight = async (req, res) => {
             return res.status(400).json({ error: 'No sleep data available for analysis.' });
         }
 
-        const userGoal = await goalService.getGoal(userId); 
-        const targetMins = (userGoal && userGoal.goalValue > 0) ? userGoal.goalValue : 480;
+        const userGoalRecord = await goalService.getGoal(userId);
+        const targetMins = (userGoalRecord && userGoalRecord.goalValue > 0) ? userGoalRecord.goalValue : 480;
 
         // 4. Trigger the Helper with the 7-9h goal (480 mins)
         // This uses the 50/30/20 scoring rationale built in ai.js
@@ -65,6 +67,12 @@ const getDailyInsight = async (req, res) => {
     } catch (error) {
         console.error('--- AI SCIENTIST DEBUG ERROR ---');
         console.error('Message:', error.message);
+
+        if (error.response) {
+            console.error('OpenAI Status:', error.response.status);
+            console.error('OpenAI Data:', error.response.data);
+        }
+        
         res.status(500).json({ error: 'Your Sleep Health Assistant is busy. Please try again later.' });
     }
 };

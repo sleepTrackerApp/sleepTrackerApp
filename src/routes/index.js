@@ -19,13 +19,13 @@ const router = express.Router();
 
 // Mount route handlers
 router.use('/', homeRoutes);
+router.use('/api/ai', aiRoutes);
 router.use('/api', apiRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/auth', authRoutes);
 router.use('/messages', messageRoutes);
 router.use('/profile', profileRoutes);
 router.use('/diagnostics', diagnosticsRoutes);
-router.use('/api/ai', aiRoutes);
 
 module.exports = router;
 

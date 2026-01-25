@@ -12,7 +12,7 @@ const openai = new OpenAI({
 const _buildPrompt = (userGoalMins, sleepLogs, periodType) => {
     // Convert DB logs into a readable string for the AI
     const logSummary = sleepLogs.map(log => 
-        `Date: ${log.entryDate.toDateString()}, Duration: ${log.duration}m, Rating: ${log.rating}/10`
+        `Date: ${new Date(log.entryDate).toDateString()}, Duration: ${log.duration}m, Rating: ${log.rating}/10`
     ).join(' | ');
 
     const timeFrame = periodType === 'weekly' ? '7 days' : '30 days';
