@@ -282,6 +282,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (qualityLabel) qualityLabel.innerText = "-";
 
                 displayArea.scrollIntoView({ behavior: 'smooth' });
+
+                // Only save if it's NOT a dash
+                if (totalPillValue === "-") return;
+
+                // After saving to localStorage:
+                updateSleepChart();
             }
         });
     }
@@ -315,4 +321,116 @@ document.addEventListener('DOMContentLoaded', function () {
             historyBody.deleteRow(10);
         }
     }
+
+    const trendToggles = document.querySelectorAll('.js-trend-toggle');
+    let currentTrendView = 'weekly'; 
+
+    // Toggle between weekly and monthly view of the charts
+    trendToggles.forEach(btn => {
+        btn.addEventListener('click', function () {
+            trendToggles.forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            currentTrendView = this.getAttribute('data-view');
+            updateSleepChart(); // Refresh with the new view
+        });
+    });
+
+    let sleepChart;
+
+    function updateSleepChart() {
+        const canvas = document.getElementById('sleepChart');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
+
+        let labels = [];
+        let durations = [];
+
+        if (currentTrendView === 'weekly') {
+            // Weekly View Logic
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - diffToMonday);
+            monday.setHours(0, 0, 0, 0);
+
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                labels.push(dateStr);
+
+                const entry = savedData.find(entry => entry.date === dateStr);
+                if (entry) {
+                    const matches = entry.duration.match(/\d+/g);
+                    const hrs = parseInt(matches[0]) || 0;
+                    const mins = matches[1] ? parseInt(matches[1]) / 60 : 0;
+                    durations.push(hrs + mins);
+                } else {
+                    durations.push(0);
+                }
+            }
+        } else {
+            //Monthly View Logic
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const now = new Date();
+
+            for (let i = 11; i >= 0; i--) {
+                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+                const mIndex = d.getMonth();
+                const year = d.getFullYear();
+
+                
+                labels.push(`${monthNames[mIndex]} ${year.toString()}`);
+
+                // Filter entries for this specific month and year
+                const monthEntries = savedData.filter(entry => {
+                    const entryDate = new Date(entry.date);
+                    return entryDate.getMonth() === mIndex && entryDate.getFullYear() === year;
+                });
+
+                if (monthEntries.length === 0) {
+                    durations.push(0);
+                } else {
+                    // Calculate Average for the month
+                    const totalHours = monthEntries.reduce((sum, entry) => {
+                        const matches = entry.duration.match(/\d+/g);
+                        const h = parseInt(matches[0]) || 0;
+                        const m = matches[1] ? parseInt(matches[1]) / 60 : 0;
+                        return sum + (h + m);
+                    }, 0);
+                    durations.push(parseFloat((totalHours / monthEntries.length).toFixed(1)));
+                }
+            }
+        }
+
+        if (sleepChart) sleepChart.destroy();
+
+        sleepChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: currentTrendView === 'weekly' ? 'Hours Slept' : 'Avg Hours/Month',
+                    data: durations,
+                    backgroundColor: 'rgba(38, 166, 154, 0.7)',
+                    borderColor: '#26a69a',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, suggestedMax: 10, title: { display: true, text: 'Hours' } }
+                }
+            }
+        });
+    }
+    //updateSleepChart();
+    setTimeout(() => {
+        updateSleepChart();
+    }, 100);
 });
