@@ -2,19 +2,6 @@ const messageService = require('../services/messageService');
 const { getReply } = require('../helpers/chatBot');
 
 /**
- * GET /messages — render messages page. Uses requireAuthRoute. Does not pass user
- * so res.locals.user (Auth0 profile with .name) is used by the header; same as dashboard.
- */
-async function renderMessages(req, res) {
-  try {
-    res.render('pages/messages', { title: 'Messages' });
-  } catch (error) {
-    console.error('Error rendering messages:', error);
-    res.status(500).send('Error loading messages: ' + error.message);
-  }
-}
-
-/**
  * GET /api/messages/list — paginated list of all messages (query: page, pageSize).
  * Uses requireAuthAPI + res.locals.userRecord.
  */
@@ -119,7 +106,6 @@ async function getUnreadCount(req, res) {
 }
 
 module.exports = {
-  renderMessages,
   getMessageList,
   getChatLog,
   markAsRead,

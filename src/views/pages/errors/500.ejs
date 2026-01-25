@@ -1,16 +1,16 @@
 <%- include('../../components/header') %>
-  <main>
-    <section class="section hero-section">
-      <div class="container center-align">
-        <div class="row">
-          <div class="col s12">
-            <h1 class="header"><%= title || '500 Internal Server Error' %></h1>
-            <p class="flow-text">An unexpected error occurred. Please try again later or contact support.</p>
-            <a href="/" class="btn-large waves-effect waves-light">Return Home</a>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+<main class="error-page">
+  <div class="error-block">
+    <h1 class="error-code">500</h1>
+    <h2 class="error-title"><%= title || 'Internal server error' %></h2>
+    <p class="error-message">Something went wrong on our side. Please try again in a moment or contact support if it keeps happening.</p>
+    <div class="error-actions">
+      <a href="/" class="pill-btn black waves-effect waves-light">
+        Go home
+        <i class="material-icons" aria-hidden="true">home</i>
+      </a>
+    </div>
+  </div>
+</main>
 <%- include('../../components/footer') %>
 

@@ -10,6 +10,7 @@
 function render404(req, res) {
   res.status(404).render('pages/errors/404', {
     title: '404 - Page Not Found',
+    isErrorPage: true,
   });
 }
 
@@ -33,8 +34,12 @@ function render500(err, req, res, next) {
   const status = err.status || err.statusCode || 500;
   const errorName = err.name || 'Internal Server Error';
 
+  const subtitle = status === 500 && errorName === 'Internal Server Error'
+    ? 'Internal server error'
+    : `${status} - ${errorName}`;
   res.status(status).render('pages/errors/500', {
-    title: `${status} - ${errorName}`,
+    title: subtitle,
+    isErrorPage: true,
   });
 }
 

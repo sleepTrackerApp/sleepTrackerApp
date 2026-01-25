@@ -1,23 +1,26 @@
-/* Profile section layout: sidebar + main content */
+.dash-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 16px;
+}
+
 .profile-layout {
     display: flex;
     gap: 0;
-    max-width: 1400px;
-    margin: 24px auto 40px;
-    padding: 0 20px;
-    min-height: calc(100vh - 180px);
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 0;
 }
 
 .profile-sidebar {
     flex-shrink: 0;
     width: 240px;
+    min-width: 240px;
     background: #fff;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     padding: 0;
     height: fit-content;
-    position: sticky;
-    top: 100px;
     overflow: hidden;
     line-height: normal;
 }
@@ -73,13 +76,13 @@
 .profile-main {
     flex: 1;
     min-width: 0;
-    padding-left: 24px;
+    padding-left: 40px;
 }
 
 @media (max-width: 800px) {
     .profile-layout {
         flex-direction: column;
-        padding: 16px;
+        padding: 20px 0;
     }
 
     .profile-sidebar {

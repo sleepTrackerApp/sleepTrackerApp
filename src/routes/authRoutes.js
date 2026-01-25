@@ -8,6 +8,7 @@ const { authControllers } = require('../controllers');
 const router = express.Router();
 
 router.get('/login', authControllers.login);
+router.get('/register', authControllers.register);
 router.get('/logout', authControllers.logout);
 
 module.exports = router;

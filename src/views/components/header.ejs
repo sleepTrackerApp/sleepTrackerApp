@@ -8,15 +8,19 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"/>
     <link rel="stylesheet" href="/css/base.css"/>
+    <link rel="stylesheet" href="/css/layout.css"/>
     <link rel="stylesheet" href="/css/header.css"/>
+    <% if (typeof isErrorPage !== 'undefined' && isErrorPage) { %>
+        <link rel="stylesheet" href="/css/errors.css"/>
+    <% } %>
     <% if (typeof isDashboard !== 'undefined' && isDashboard) { %>
         <link rel="stylesheet" href="/css/dashboard.css"/>
     <% } %>
     <% if (typeof isProfileSection !== 'undefined' && isProfileSection) { %>
         <link rel="stylesheet" href="/css/profile.css"/>
     <% } %>
-    <% if (typeof isProfileSchedules !== 'undefined' && isProfileSchedules) { %>
-        <link rel="stylesheet" href="/css/dashboard.css"/>
+    <% if (typeof isSupportChat !== 'undefined' && isSupportChat) { %>
+        <link rel="stylesheet" href="/css/supportChat.css"/>
     <% } %>
 </head>
 
@@ -65,7 +69,7 @@
                             </div>
                             <div class="dropdown-section dropdown-links">
                                 <a href="/profile" class="dropdown-link"><i class="material-icons">person</i> Profile</a>
-                                <a href="/profile/schedules" class="dropdown-link"><i class="material-icons">schedule</i> Schedules</a>
+                                <a href="/profile/schedules" class="dropdown-link"><i class="material-icons">schedule</i> Sleep Schedules</a>
                                 <a href="/profile/support" class="dropdown-link"><i class="material-icons">support_agent</i> Support Chat</a>
                             </div>
                             <div class="dropdown-section dropdown-footer">
@@ -87,7 +91,7 @@
     <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
         <li><a href="/dashboard">Dashboard</a></li>
         <li><a href="/profile">Profile</a></li>
-        <li><a href="/profile/schedules">Schedules</a></li>
+        <li><a href="/profile/schedules">Sleep Schedules</a></li>
         <li><a href="/profile/support">Support Chat</a></li>
         <li><a href="/auth/logout">Sign Out</a></li>
     <% } else { %>

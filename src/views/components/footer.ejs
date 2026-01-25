@@ -2,55 +2,61 @@
 
 <footer class="site-footer">
     <div class="footer-shell">
-        <div class="footer-brand">
-            <a href="/" class="footer-logo">
-                <img src="/img/logo.svg" alt="Alive logo" class="footer-logo-mark"/>
-                <div class="footer-logo-text">
-                    <span class="footer-wordmark">ALiVE</span>
-                    <span class="footer-tagline">Sleep Health Tracker</span>
+        <div class="footer-row">
+            <div class="footer-brand">
+                <a href="/" class="footer-logo">
+                    <img src="/img/logo.svg" alt="Alive logo" class="footer-logo-mark"/>
+                    <div class="footer-logo-text">
+                        <span class="footer-wordmark">ALiVE</span>
+                        <span class="footer-tagline">Sleep Health Tracker</span>
+                    </div>
+                </a>
+                <p class="footer-copy">Rest easy with insights, routines, and support tailored to your better sleep.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Navigation</h4>
+                    <ul class="footer-menu">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/insights">Insights</a></li>
+                    </ul>
                 </div>
-            </a>
-            <p class="footer-copy">Rest easy with insights, routines, and support tailored to your better sleep.</p>
-        </div>
 
-        <div class="footer-links">
-            <div class="footer-col">
-                <h4>Navigation</h4>
-                <ul class="footer-menu">
-                    <%- include('./navMenu') %>
-                </ul>
-            </div>
+                <div class="footer-col">
+                    <h4>Account</h4>
+                    <ul class="footer-menu">
+                        <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
+                            <li><a href="/dashboard">Dashboard</a></li>
+                            <li><a href="/profile">Profile</a></li>
+                            <li><a href="/profile/schedules">Sleep Schedules</a>
+                            </li>
+                            <li><a href="/auth/logout">Sign Out</a></li>
+                        <% } else { %>
+                            <li><a href="/auth/login">Sign In</a></li>
+                            <li><a href="/auth/register">Create Account</a></li>
+                        <% } %>
+                    </ul>
+                </div>
 
-            <div class="footer-col">
-                <h4>Account</h4>
-                <ul class="footer-menu">
-                    <% if (typeof isAuthenticated !== 'undefined' && isAuthenticated) { %>
-                        <li><a href="/dashboard">My Sleep Data</a></li>
-                        <li><a href="/auth/logout">Sign Out</a></li>
-                    <% } else { %>
-                        <li><a href="/auth/login">Sign In</a></li>
-                        <li><a href="/auth/register">Create Account</a></li>
-                    <% } %>
-                </ul>
-            </div>
-
-            <div class="footer-col">
-                <h4>Support</h4>
-                <ul class="footer-menu">
-                    <li><a href="/privacy">Privacy</a></li>
-                    <li><a href="/terms">Terms</a></li>
-                    <li><a href="mailto:support@alive.app">Contact</a></li>
-                </ul>
+                <div class="footer-col">
+                    <h4>Support</h4>
+                    <ul class="footer-menu">
+                        <li><a href="/profile/support">Support Chat</a></li>
+                        <li><a href="mailto:support@alive.app">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-
-    <div class="footer-bottom">
-        <span>© <%= new Date().getFullYear() %> Alive. All rights reserved.</span>
-        <div class="footer-bottom-links">
-            <a href="/privacy">Privacy</a>
-            <span class="footer-dot">•</span>
-            <a href="/terms">Terms</a>
+        <div class="footer-bottom">
+            <span>© <%= new Date().getFullYear() %> Alive. All rights reserved.</span>
+            <div class="footer-bottom-links">
+                <a href="/privacy">Privacy Policy</a>
+                <span class="footer-dot">•</span>
+                <a href="/terms">Terms &amp; Conditions</a>
+            </div>
         </div>
     </div>
 </footer>

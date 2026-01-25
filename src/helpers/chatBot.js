@@ -12,20 +12,24 @@ function getReply(userMessage) {
 
   const lower = userMessage.toLowerCase();
 
-  if (/^(hi|hey|hello|hi there)\s*!?\.?$/i.test(userMessage.trim()) || lower === 'hello' || lower === 'hi') {
+  if (
+    /^(hi|hey|hello|hi there)\s*!?\.?$/i.test(userMessage.trim()) ||
+    lower === 'hello' ||
+    lower === 'hi'
+  ) {
     return "Hi! I'm the Alive support bot. You can ask me about schedules, sleep tips, or logging your sleep.";
   }
 
   if (/\b(schedule|schedules|reminder|bedtime|notification)\b/.test(lower)) {
-    return "You can manage schedules and bedtime reminders from your Dashboard → Schedules. Set a time and we'll notify you when it's time for bed.";
+    return "You can manage schedules and bedtime reminders from your Dashboard → Sleep Schedules. Set a time and we'll notify you when it's time for bed.";
   }
 
   if (/\b(sleep|sleeping|tips|improve|quality|routine)\b/.test(lower)) {
-    return "For better sleep: try a consistent bedtime, limit screens before bed, and keep your room cool. Log your sleep on the dashboard to track trends.";
+    return 'For better sleep: try a consistent bedtime, limit screens before bed, and keep your room cool. Log your sleep on the dashboard to track trends.';
   }
 
   if (/\b(log|logging|how do i|how to)\b/.test(lower)) {
-    return "Log your sleep from the Dashboard — choose a date, enter duration or bed/wake times, and add an optional rating. Your history powers your insights.";
+    return 'Log your sleep from the Dashboard — choose a date, enter duration or bed/wake times, and add an optional rating. Your history powers your insights.';
   }
 
   if (/\b(help|support|stuck)\b/.test(lower)) {
@@ -36,7 +40,7 @@ function getReply(userMessage) {
     return "You're welcome! Have a great rest.";
   }
 
-  return "Thanks for your message. I can help with schedules, sleep tips, and logging — just ask in a sentence or two.";
+  return 'Thanks for your message. I can help with schedules, sleep tips, and logging — just ask in a sentence or two.';
 }
 
 module.exports = { getReply };
