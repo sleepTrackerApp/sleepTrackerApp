@@ -469,4 +469,63 @@ document.addEventListener('DOMContentLoaded', function () {
             window.sleepChart.update();
         }
     }
+
+    // View AI Insights
+    const viewInsightBtn = document.querySelector('.js-view-insights');
+    const aiContentBox = document.querySelector('.ai-content-box');
+
+    if (viewInsightBtn && aiContentBox) {
+        viewInsightBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            viewInsightBtn.innerText = 'Analyzing...';
+
+            try {
+                // Route: /api/ai (from index.js) + /insight (from aiRoutes.js)
+                const response = await fetch('/api/ai/insight');
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.error || 'Scientist is busy.');
+
+                aiContentBox.innerHTML = `
+                    <ul class="summary-list" style="margin-top: 20px; border-left: 4px solid #26a69a; padding-left: 15px;">
+                        <li><strong>Score:</strong> ${data.insight.score}/100</li>
+                        <li><strong>Insight:</strong> ${data.insight.insight}</li>
+                        <li><strong>Analysis:</strong> ${data.insight.analysis}</li>
+                        <li><strong>Recommendation:</strong> ${data.insight.recommendation}</li>
+                    </ul>
+                `;
+                aiContentBox.style.display = 'block';
+                viewInsightBtn.style.display = 'none';
+            } catch (err) {
+                console.error('Insight Fetch Error:', err);
+                M.toast({ html: 'Scientist is busy. Try logging more sleep!', classes: 'red' });
+                viewInsightBtn.innerText = 'View';
+            }
+        });
+    }
+
+    // Sleep Goal
+    // Targets the "Save" button in Goal section
+    const saveGoalBtn = document.querySelector('#goal-setup-form .main-action-btn');
+    if (saveGoalBtn) {
+        saveGoalBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const hours = document.getElementById('goal-hours')?.value || 8;
+
+            try {
+                const response = await fetch('/api/goal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ value: parseInt(hours) * 60 })
+                });
+
+                if (response.ok) {
+                    M.toast({ html: 'Goal synced with Scientist!', classes: 'green' });
+                    updateSleepChart();
+                }
+            } catch (err) {
+                console.error('Goal Sync Error:', err);
+            }
+        });
+    }
 });

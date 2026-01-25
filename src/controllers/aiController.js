@@ -35,9 +35,9 @@ const getDailyInsight = async (req, res) => {
             return res.status(400).json({ error: 'No sleep data available for analysis.' });
         }
 
-        const userGoal = await Goal.findOne({ userId }) || { goalValue: 480 }; 
-        const targetMins = userGoal.goalValue || 480;
-        
+        const userGoal = await goalService.getGoal(userId); 
+        const targetMins = (userGoal && userGoal.goalValue > 0) ? userGoal.goalValue : 480;
+
         // 4. Trigger the Helper with the 7-9h goal (480 mins)
         // This uses the 50/30/20 scoring rationale built in ai.js
         const aiResponse = await generateSleepInsight(targetMins, sleepEntries, 'weekly');
