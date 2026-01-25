@@ -167,7 +167,7 @@ async function exportAllSleepEntries(req, res, next){
 
         res.setHeader('Content-Type', 'text/csvEntries'); 
         res.setHeader('Content-Disposition', 'attachment; filename="sleep_entries.csv"'); 
-        
+       
         res.status(200).send(csvEntries); 
     } catch (error) {
         next(error);
