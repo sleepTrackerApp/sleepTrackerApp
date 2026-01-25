@@ -17,6 +17,3 @@ function exportCSV(entry) {
 
 module.exports = { exportCSV };
 
-
-
-
