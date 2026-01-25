@@ -178,176 +178,178 @@
             </div>
         </div>
 
-        <section class="dash-block scrollspy" id="trends-section">
-            <div class="dash-card">
-                <div class="card-head center-align">
-                    <h3>Your Sleep Trends</h3>
-                </div>
-
-                <div class="center-align">
-                    <div class="chip-toggle">
-                        <button class="chip active js-trend-toggle" data-view="weekly">Weekly</button>
-                        <button class="chip js-trend-toggle" data-view="monthly">Monthly</button>
+        <section class="dash-block scrollspy row" id="trends-section">
+            <div class="col l12">
+                <div class="dash-card">
+                    <div class="card-head center-align">
+                        <h3>Your Sleep Trends</h3>
                     </div>
-                </div>
 
-                <div id="view-weekly" class="trend-view-container">
-                    <p class="center-align dash-date-label">Current Week Progress (Dec 22 – Dec 28)</p>
-                    <div class="graph-wrapper">
-                        <div class="y-axis">
-                            <span>12h</span><span>8h</span><span>4h</span><span>0h</span>
+                    <div class="center-align">
+                        <div class="chip-toggle">
+                            <button class="chip active js-trend-toggle" data-view="weekly">Weekly</button>
+                            <button class="chip js-trend-toggle" data-view="monthly">Monthly</button>
                         </div>
-                        <div class="goal-line"><span>Goal</span></div>
-                        <div class="bars-container">
-                            <div class="bar-group">
-                                <div class="bar blue" style="height: 35%;"></div>
-                                <span class="axis-label">Mon</span>
+                    </div>
+
+                    <div id="view-weekly" class="trend-view-container">
+                        <p class="center-align dash-date-label">Current Week Progress (Dec 22 – Dec 28)</p>
+                        <div class="graph-wrapper">
+                            <div class="y-axis">
+                                <span>12h</span><span>8h</span><span>4h</span><span>0h</span>
                             </div>
-                            <div class="bar-group">
-                                <div class="bar-placeholder">Not Specified</div>
-                                <span class="axis-label">Tue</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar blue" style="height: 55%;"></div>
-                                <span class="axis-label">Wed</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar blue" style="height: 52%;"></div>
-                                <span class="axis-label">Thurs</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar blue active" style="height: 55%;">
-                                    <div class="bar-tooltip">Fri, Dec 26: 8h 30m</div>
+                            <div class="goal-line"><span>Goal</span></div>
+                            <div class="bars-container">
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 35%;"></div>
+                                    <span class="axis-label">Mon</span>
                                 </div>
-                                <span class="axis-label">Fri</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar-placeholder">Up coming</div>
-                                <span class="axis-label">Sat</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar-placeholder">Up coming</div>
-                                <span class="axis-label">Sun</span>
+                                <div class="bar-group">
+                                    <div class="bar-placeholder">Not Specified</div>
+                                    <span class="axis-label">Tue</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 55%;"></div>
+                                    <span class="axis-label">Wed</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 52%;"></div>
+                                    <span class="axis-label">Thurs</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue active" style="height: 55%;">
+                                        <div class="bar-tooltip">Fri, Dec 26: 8h 30m</div>
+                                    </div>
+                                    <span class="axis-label">Fri</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar-placeholder">Up coming</div>
+                                    <span class="axis-label">Sat</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar-placeholder">Up coming</div>
+                                    <span class="axis-label">Sun</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row trend-details">
-                        <div class="col s12 m6">
-                            <p class="strong">Weekly Summary</p>
-                            <ul class="summary-list">
-                                <li>
-                                    <strong>Average Duration:</strong> 7h 45m (Just under goal)
-                                </li>
-                                <li>
-                                    <strong>Goal Met:</strong> 3 / 4 recorded days
-                                </li>
-                                <li>
-                                    <strong>Longest Sleep:</strong> Fri, Dec 26 (8h 30m)
-                                </li>
-                                <li>
-                                    <strong>Shortest Sleep:</strong> Mon, Dec 22 (6h 00m)
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col s12 m6 ai-insight-column">
-                            <p class="strong">AI Insights
-                                <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
-                            </p>
-                            <div class="ai-content-box" style="display: none;">
+                        <div class="row trend-details">
+                            <div class="col s12 m6">
+                                <p class="strong">Weekly Summary</p>
                                 <ul class="summary-list">
                                     <li>
-                                        <strong>Insight:</strong> Strong Recovery Streak
+                                        <strong>Average Duration:</strong> 7h 45m (Just under goal)
                                     </li>
                                     <li>
-                                        <strong>Analysis:</strong> After a rough start on Monday (6h), you have bounced back
-                                        impressively!
+                                        <strong>Goal Met:</strong> 3 / 4 recorded days
                                     </li>
                                     <li>
-                                        <strong>Recommendation:</strong> Watch out for the weekend. Keep your bedtime within 1 hour of
-                                        your weekday routine.
+                                        <strong>Longest Sleep:</strong> Fri, Dec 26 (8h 30m)
+                                    </li>
+                                    <li>
+                                        <strong>Shortest Sleep:</strong> Mon, Dec 22 (6h 00m)
                                     </li>
                                 </ul>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="view-monthly" class="trend-view-container" style="display: none;">
-                    <p class="center-align dash-date-label">Current Month Progress (December 2025)</p>
-                    <div class="graph-wrapper">
-                        <div class="y-axis">
-                            <span>12h</span><span>8h</span><span>4h</span><span>0h</span>
-                        </div>
-                        <div class="goal-line"><span>Goal</span></div>
-                        <div class="bars-container">
-                            <div class="bar-group">
-                                <div class="bar blue" style="height: 60%;"></div>
-                                <span class="axis-label">Dec 1-7</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar blue active" style="height: 67%;">
-                                    <div class="bar-tooltip">Week 2 Avg: 8h 10m</div>
+                            <div class="col s12 m6 ai-insight-column">
+                                <p class="strong">AI Insights
+                                    <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
+                                </p>
+                                <div class="ai-content-box" style="display: none;">
+                                    <ul class="summary-list">
+                                        <li>
+                                            <strong>Insight:</strong> Strong Recovery Streak
+                                        </li>
+                                        <li>
+                                            <strong>Analysis:</strong> After a rough start on Monday (6h), you have bounced back
+                                            impressively!
+                                        </li>
+                                        <li>
+                                            <strong>Recommendation:</strong> Watch out for the weekend. Keep your bedtime within 1 hour of
+                                            your weekday routine.
+                                        </li>
+                                    </ul>
                                 </div>
-                                <span class="axis-label">Dec 8-14</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar blue" style="height: 55%;"></div>
-                                <span class="axis-label">Dec 15-21</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar blue" style="height: 63%;"></div>
-                                <span class="axis-label">Dec 22-28</span>
-                            </div>
-                            <div class="bar-group">
-                                <div class="bar-placeholder">Up coming</div>
-                                <span class="axis-label">Dec 29-31</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row trend-details">
-                        <div class="col s12 m6">
-                            <p class="strong">Monthly Summary</p>
-                            <ul class="summary-list">
-                                <li>
-                                    <strong>Average Duration:</strong> 7h 35m (Just under goal)
-                                </li>
-                                <li>
-                                    <strong>Goal Met:</strong> 2 / 4 recorded weeks
-                                </li>
-                                <li>
-                                    <strong>Best Week:</strong> Week 2, Dec 8-14 (8h 10m)
-                                </li>
-                                <li>
-                                    <strong>Lowest Week:</strong> Week 3, Dec 15-21 (6h 45m)
-                                </li>
-                            </ul>
+                    <div id="view-monthly" class="trend-view-container" style="display: none;">
+                        <p class="center-align dash-date-label">Current Month Progress (December 2025)</p>
+                        <div class="graph-wrapper">
+                            <div class="y-axis">
+                                <span>12h</span><span>8h</span><span>4h</span><span>0h</span>
+                            </div>
+                            <div class="goal-line"><span>Goal</span></div>
+                            <div class="bars-container">
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 60%;"></div>
+                                    <span class="axis-label">Dec 1-7</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue active" style="height: 67%;">
+                                        <div class="bar-tooltip">Week 2 Avg: 8h 10m</div>
+                                    </div>
+                                    <span class="axis-label">Dec 8-14</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 55%;"></div>
+                                    <span class="axis-label">Dec 15-21</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 63%;"></div>
+                                    <span class="axis-label">Dec 22-28</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar-placeholder">Up coming</div>
+                                    <span class="axis-label">Dec 29-31</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col s12 m6 ai-insight-column">
-                            <p class="strong">AI Insights
-                                <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
-                            </p>
-                            <div class="ai-content-box" style="display: none;">
+
+                        <div class="row trend-details">
+                            <div class="col s12 m6">
+                                <p class="strong">Monthly Summary</p>
                                 <ul class="summary-list">
                                     <li>
-                                        <strong>Insight:</strong> Getting back on track
+                                        <strong>Average Duration:</strong> 7h 35m (Just under goal)
                                     </li>
                                     <li>
-                                        <strong>Analysis:</strong> You started December really well, but things got tough in Week 3
-                                        (dropping to 6h 45m). The good news is you are already bouncing back this week - great job!
+                                        <strong>Goal Met:</strong> 2 / 4 recorded weeks
                                     </li>
                                     <li>
-                                        <strong>Recommendation:</strong> If you know the middle of the month is usually busy, try to get
-                                        to bed just 30 minutes earlier the week before. It helps you handle the stress much better.
+                                        <strong>Best Week:</strong> Week 2, Dec 8-14 (8h 10m)
+                                    </li>
+                                    <li>
+                                        <strong>Lowest Week:</strong> Week 3, Dec 15-21 (6h 45m)
                                     </li>
                                 </ul>
                             </div>
+                            <div class="col s12 m6 ai-insight-column">
+                                <p class="strong">AI Insights
+                                    <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
+                                </p>
+                                <div class="ai-content-box" style="display: none;">
+                                    <ul class="summary-list">
+                                        <li>
+                                            <strong>Insight:</strong> Getting back on track
+                                        </li>
+                                        <li>
+                                            <strong>Analysis:</strong> You started December really well, but things got tough in Week 3
+                                            (dropping to 6h 45m). The good news is you are already bouncing back this week - great job!
+                                        </li>
+                                        <li>
+                                            <strong>Recommendation:</strong> If you know the middle of the month is usually busy, try to get
+                                            to bed just 30 minutes earlier the week before. It helps you handle the stress much better.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <h4 class="score-label">Sleep Score:</h4>
+                    <h4 class="score-label">Sleep Score:</h4>
+                </div>
             </div>
         </section>
 
