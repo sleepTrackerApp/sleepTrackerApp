@@ -249,7 +249,7 @@ async function getSleepEntryByDate(userId, entryDate) {
  */
 
 async function getAllSleepEntries(userId) {
-    return SleepEntry.find({ userId }).lean()
+    return SleepEntry.find({ userId })
 }
 
 /**
