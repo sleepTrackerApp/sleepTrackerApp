@@ -39,15 +39,16 @@
             Close
         </button>
 
-        <a href="api/sleep-entries/export" 
-           id="delete" 
-           class="btn red"
-           style="opacity: 0.5; pointer-events: none;">
-           Delete
-        </a>
-    </div>
+
+        <button 
+            id="delete" 
+            class="btn red"
+            style="opacity: 0.5; pointer-events: auto;">
+            Delete
+        </button>
+   </div>
 </div>
- 
+
 <script>
     const openPopup = document.getElementById('openPopup');
     const closePopup = document.getElementById('closePopup');
@@ -83,5 +84,19 @@
             deleteBtn.style.pointerEvents = "none";
         }
     });
+    
+    deleteBtn.addEventListener("click", async () => {
+        try {
+            fetch("/api/delete-user", {
+                method: "DELETE",
+                credentials: "include",
+            });
+            window.location.href = "/auth/logout";
+        } catch (err) {
+            console.error(err);
+            console.log("Network error while deleting account");
+        }
+    });
+
 </script>
 
