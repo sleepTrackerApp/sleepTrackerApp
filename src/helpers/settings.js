@@ -128,6 +128,13 @@ const appConfig = Object.freeze({
         CLIENT_SECRET: getEnv('AUTH0_CLIENT_SECRET', '', true),
         SECRET: getEnv('AUTH0_SECRET', '', true),
     }),
+    // OpenAI API key for sleep insights (optional; leave empty if not using AI)
+    OPENAI_API_KEY: getEnv('OPENAI_API_KEY', '', true),
+    // Contentful CMS (optional; use placeholders for local dev without Contentful)
+    CONTENTFUL: Object.freeze({
+        SPACE_ID: getEnv('CONTENTFUL_SPACE_ID', 'test-space-id', true),
+        ACCESS_TOKEN: getEnv('CONTENTFUL_ACCESS_TOKEN', 'test-access-token', true),
+    }),
 });
 
 module.exports = { appConfig };

@@ -6,7 +6,7 @@ export default [
   js.configs.recommended,
   eslintConfigPrettier,
 
-  // ===== Server / shared =====
+  // ===== Base / shared =====
   {
     files: ['**/*.js'],
     languageOptions: {
@@ -24,13 +24,17 @@ export default [
     },
   },
 
-  // ===== Frontend (jQuery) =====
+  // ===== Frontend (browser + jQuery + Materialize + socket.io client) =====
   {
     files: ['public/**/*.js'],
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.jquery,
+        M: 'readonly', // Materialize
+        io: 'readonly', // Socket.IO client
+        Chart: 'readonly', // Chart.js
+        ApexCharts: 'readonly', // ApexCharts
       },
     },
   },

@@ -2,60 +2,58 @@
 <link rel="stylesheet" href="/css/insightDetails.css">
 
 <main class="insight-detail-page">
-  <div class="container">
-    <nav class="breadcrumb-nav">
-      <div class="nav-wrapper">
-        <div class="col s12">
-          <a href="/insights" class="breadcrumb">Insights</a>
-          <a href="#!" class="breadcrumb active"><%= article.title %></a>
-        </div>
-      </div>
-    </nav>
-  
-    <div class="header-section">
-      <div class="pill-row">
-        <% article.tags.forEach(function(tag){ %>
-          <span class="chip blue-text uppercase-bold"><%= tag %></span>
-        <% }) %>
-      </div>
-      <h1 class="detail-title"><%= article.title %></h1>
-      <div class="meta-row valign-wrapper">
-        <span class="author-name valign-wrapper"><i class="material-icons tiny left">account_circle</i><strong><%= article.author %></strong></span>
-        <span class="date-text valign-wrapper"><i class="material-icons tiny left">date_range</i><%= article.date %></span>
-        <span class="read-time valign-wrapper"><i class="material-icons tiny left">schedule</i><%= article.readTime %></span>
-      </div>
-    </div>
-  
-    <div class="row hero-divider-block">
-      <div class="col s12 m7">
-        <div class="hero-image-wrap">
-          <img src="<%= article.image %>" alt="<%= article.title %>" class="responsive-img rounded-img z-depth-1">
-        </div>
-      </div>
-      <div class="col s12 m5">
-        <div class="hero-quote"> 
-          <i class="material-icons medium">format_quote</i>
-          <p class="excerpt-text"><%= article.excerpt %></p>
-        </div>
-      </div>
-    </div>
-  
-    <div class="row">
-      <div class="col s12">
-        <article class="detail-body">
-          <%- article.bodyContent %>
-        </article>
-      </div>
+  <div class="insight-detail-shell">
+    <div class="breadcrumb-path" role="navigation" aria-label="Breadcrumb">
+      <a href="/insights" class="breadcrumb-path-link">Insights</a>
+      <span class="breadcrumb-path-sep" aria-hidden="true">›</span>
+      <span class="breadcrumb-path-current"><%= article.title %></span>
     </div>
 
-    <div class="row mt-4">
-      <div class="col s12 right-align">
-        <p class="cta-text">
-          <a href="/auth/login" class="blue-text">Sign in</a> to check your sleep need today! <br>
-          Don't have an account? <a href="/auth/register" class="blue-text">Create</a> now! <br>
-          Read more insightful articles at <a href="/insights" class="blue-text">Insights</a>
-        </p>
+    <header class="detail-header">
+      <div class="detail-tags">
+        <% if (article.tags && article.tags.length) { %>
+          <% article.tags.forEach(function(tag){ %>
+            <span class="detail-tag"><%= tag %></span>
+          <% }) %>
+        <% } %>
       </div>
+      <h1 class="detail-title"><%= article.title %></h1>
+      <div class="detail-meta">
+        <span class="detail-meta-item">
+          <i class="material-icons">account_circle</i>
+          <span><%= article.author %></span>
+        </span>
+        <span class="detail-meta-item">
+          <i class="material-icons">date_range</i>
+          <span><%= article.date %></span>
+        </span>
+        <span class="detail-meta-item">
+          <i class="material-icons">schedule</i>
+          <span><%= article.readTime %></span>
+        </span>
+      </div>
+    </header>
+
+    <div class="detail-hero">
+      <img src="<%= article.image || fallbackImage %>" alt="<%= article.title %>" class="detail-hero-img">
+    </div>
+
+    <% if (article.excerpt) { %>
+      <blockquote class="detail-excerpt">
+        <p><%= article.excerpt %></p>
+      </blockquote>
+    <% } %>
+
+    <article class="detail-body">
+      <%- article.bodyContent %>
+    </article>
+
+    <div class="detail-cta">
+      <p class="cta-text">
+        <a href="/auth/login" class="blue-text">Sign in</a> to check your sleep need today!<br>
+        Don't have an account? <a href="/auth/register" class="blue-text">Create</a> now.<br>
+        Read more at <a href="/insights" class="blue-text">Insights</a>
+      </p>
     </div>
   </div>
 </main>

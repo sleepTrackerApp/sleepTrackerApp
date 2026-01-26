@@ -28,4 +28,3 @@ router.use('/profile', profileRoutes);
 router.use('/diagnostics', diagnosticsRoutes);
 
 module.exports = router;
-

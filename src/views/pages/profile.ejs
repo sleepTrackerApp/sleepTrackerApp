@@ -7,9 +7,27 @@
       <div class="profile-main">
         <h4>Profile</h4>
         <p class="grey-text text-darken-2">
-          Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>.
-          This page is under construction.
+          Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>
         </p>
+
+        <!-- Export Sleep Entries Data to CSV -->
+        <div class="dash-card">
+            <div class="feature-actions">
+                <a href="/api/sleep-entries/export" class="btn black main-action-btn z-depth-0">
+                    Export Sleep Data
+                </a>
+            </div>
+        </div>
+
+        <!-- User Account Deletion Button  -->
+        <br>
+        <div class="dash-card">
+            <div class="feature-actions">
+            <%- include('../components/confirmUserDelete') %>
+            </div>
+        </div>
+        <!----------------------------->
+
       </div>
     </div>
   </div>

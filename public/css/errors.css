@@ -1,12 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700;800&display=swap');
-
 .error-page {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     background: #fff;
-    font-family: 'Quicksand', sans-serif;
 }
 
 .error-block {

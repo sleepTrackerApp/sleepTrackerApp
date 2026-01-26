@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { homeControllers, insightControllers } = require('../controllers');
+const { homeControllers, articleControllers } = require('../controllers');
 
 /* ===============================
    HOME
@@ -34,10 +34,10 @@ router.get('/terms', (req, res) => {
 });
 
 /* ===============================
-   INSIGHTS
+   INSIGHTS (article list & detail pages)
    =============================== */
 
-router.get('/insights', insightControllers.renderInsights);
-router.get('/insights/:slug', insightControllers.renderInsightDetail);
+router.get('/insights', articleControllers.renderArticleList);
+router.get('/insights/:slug', articleControllers.renderArticle);
 
 module.exports = router;
