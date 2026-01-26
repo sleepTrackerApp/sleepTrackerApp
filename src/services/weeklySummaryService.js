@@ -74,7 +74,7 @@ async function createWeeklySummary(user, summaryDate = new Date()) {
  * @param entryDate - date of the sleep entry
  * @returns {Promise<import('mongoose').Document|null>} - deleted sleep entry object if found
  */
-async function deleteSummary(userId, entryDate) {
+async function deleteUser(userId, entryDate) {
     return Summary.deleteMany({ userId });
 }
 
@@ -82,6 +82,6 @@ async function deleteSummary(userId, entryDate) {
 module.exports = {
     getAllWeeklySummary,
     createWeeklySummary,
-    deleteSummary,
+    deleteUser,
 };
 

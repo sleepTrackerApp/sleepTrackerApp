@@ -51,7 +51,12 @@ async function deleteSchedule(userId, id) {
   return Schedule.findOneAndDelete({ _id: id, userId });
 }
 
-async function deleteAllSchedule(userId) {
+/**
+ * Delete all schedule for user.
+ * @param userId - ID of the user object
+ */
+
+async function deleteUser(userId) {
   return Schedule.deleteMany({ userId });
 }
 
@@ -66,7 +71,7 @@ module.exports = {
   createSchedule,
   updateSchedule,
   deleteSchedule,
-  deleteAllSchedule,
+  deleteUser,
   toggleSchedule,
   buildCronFromBedtimeRule,
 };
