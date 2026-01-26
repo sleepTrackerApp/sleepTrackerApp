@@ -21,7 +21,12 @@
                         <div class="row date-row valign-wrapper">
                             <div class="col s12 m4">Date:</div>
                             <div class="col s12 m8 date-cell">
+                                <%
+                                  const _yesterday = new Date();
+                                  _yesterday.setDate(_yesterday.getDate() - 1);
+                                %>
                                 <input type="date" id="sleep-date" class="browser-default sleep-date-picker date-input-inline"
+                                       value="<%= _yesterday.toISOString().split('T')[0] %>"
                                        aria-label="Select sleep log date">
                             </div>
                         </div>
@@ -96,11 +101,15 @@
             <div class="col s12 l6 dash-col">
                 <div class="dash-card preview-card">
                     <div class="card-head">
-                        <h3>Recent Sleep History</h3>
+                        <h3>My Sleep History</h3>
                     </div>
                     <div class="card-body">
 
-                        <div class="card history-card">
+                        <div id="sleep-history-empty" class="sleep-history-empty center-align muted">
+                            <p>Please record your first sleep log to continue.</p>
+                        </div>
+
+                        <div id="sleep-history-content" class="card history-card" style="display: none;">
                             <div class="card-content">
                                 <table class="striped">
                                     <thead>
@@ -138,7 +147,7 @@
         </div>
 
 
-        <section class="dash-block scrollspy row" id="trends-section">
+        <section class="dash-block scrollspy row" id="trends-section" style="display: none;">
             <div class="col l12">
                 <div class="dash-card">
                     <div class="card-head center-align">

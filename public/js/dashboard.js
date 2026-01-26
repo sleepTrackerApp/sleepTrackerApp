@@ -156,8 +156,22 @@ document.addEventListener('DOMContentLoaded', function () {
     if (result.success) {
       const { sleepEntries, totalPages: apiTotalPages } = result.data || {};
       totalPages = apiTotalPages ?? 1;
+      const entries = sleepEntries || [];
+      const hasEntries = entries.length > 0;
 
-      historyBody.innerHTML = (sleepEntries || [])
+      const emptyEl = document.getElementById('sleep-history-empty');
+      const contentEl = document.getElementById('sleep-history-content');
+      if (emptyEl && contentEl) {
+        emptyEl.style.display = hasEntries ? 'none' : 'block';
+        contentEl.style.display = hasEntries ? 'block' : 'none';
+      }
+
+      const trendsSection = document.getElementById('trends-section');
+      if (trendsSection) {
+        trendsSection.style.display = totalPages > 0 ? 'flex' : 'none';
+      }
+
+      historyBody.innerHTML = entries
         .map((entry) => {
           const date = new Date(entry.entryDate).toLocaleDateString('en-US', {
             month: 'short',

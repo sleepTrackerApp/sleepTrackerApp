@@ -489,6 +489,15 @@ input[type="range"] + .thumb {
     padding: 5px 0;
 }
 
+.sleep-history-empty {
+    padding: 1.5rem 0.5rem;
+}
+
+.sleep-history-empty p {
+    margin: 0;
+    font-size: 1rem;
+}
+
 @media (max-width: 800px) {
 
     .dashboard-page {
