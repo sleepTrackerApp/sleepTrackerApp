@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function () {
           delay: (context) => {
             let delay = 0;
             if (context.type === 'data' && context.mode === 'default') {
-              delay = context.dataIndex * 150;
+              delay = context.dataIndex * 5;
             }
             return delay;
           },
@@ -498,7 +498,62 @@ document.addEventListener('DOMContentLoaded', function () {
       window.sleepChart.data.datasets[0].label = chartTitle;
 
       window.sleepChart.update();
+      updateSummaryStats(chartLabels, chartDurations, userGoal, currentTrendView);
+
+
     }
+  }
+
+  function updateSummaryStats(labels, durations, userGoal, viewType) {
+    // Filter out entries with 0 duration
+    const activeEntries = durations
+      .map((val, index) => ({ value: Number(val), label: labels[index] }))
+      .filter(entry => entry.value > 0);
+
+    const totalCount = activeEntries.length;
+    if (totalCount === 0) return;
+
+    // Calculating sleep duration
+    const totalDuration = activeEntries.reduce((sum, e) => sum + e.value, 0);
+    const avg = totalDuration / totalCount;
+
+    const sorted = [...activeEntries].sort((a, b) => a.value - b.value);
+    const shortest = sorted[0];
+    const longest = sorted[sorted.length - 1];
+
+    const formatTime = (val) => {
+      const h = Math.floor(val);
+      const m = Math.round((val - h) * 60);
+      return `${h}h ${m}m`;
+    };
+
+    // Update UI
+    const unitSpan = document.getElementById('unit-text');
+    const labelPrefix = viewType === 'weekly' ? '' : 'Avg: ';
+
+    if (unitSpan) {
+      if (viewType === 'weekly') {
+        unitSpan.innerText = 'days';
+      } else {
+        unitSpan.innerText = 'months';
+      }
+    }
+
+    // Update Header and stats
+    const titleElement = document.querySelector('.trend-details p.strong');
+    if (titleElement) {
+      titleElement.innerText = viewType === 'weekly' ? 'Weekly Summary' : 'Monthly Summary';
+    }
+
+    const goalStatus = avg >= userGoal ? "(Goal Met)" : "(Just under goal)";
+
+    document.getElementById('avg-duration').innerText = `${formatTime(avg)} ${goalStatus}`;
+    document.getElementById('goal-met').innerText = activeEntries.filter(e => e.value >= userGoal).length;
+    document.getElementById('total-units').innerText = totalCount;
+
+    // Update Longest and Shortest Sleep Duration
+    document.getElementById('longest-sleep').innerText = `${longest.label} (${labelPrefix}${formatTime(longest.value)})`;
+    document.getElementById('shortest-sleep').innerText = `${shortest.label} (${labelPrefix}${formatTime(shortest.value)})`;
   }
 
   // View AI Insights
