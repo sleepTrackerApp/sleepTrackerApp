@@ -8,7 +8,6 @@ const { requireAuthAPI } = require('../helpers/auth');
 const router = express.Router();
 
 // GET /api/ - delete all user data
-router.delete('/', requireAuthAPI, deleteUserController.deleteAllUserData) 
+router.get('/', requireAuthAPI, deleteUserController.deleteAllUserData) 
 
-
-
+module.exports = router;

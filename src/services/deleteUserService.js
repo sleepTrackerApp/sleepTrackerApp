@@ -5,8 +5,10 @@
 const services = require("./index")
 
 async function deleteAllData(userId){
+
     for (const serviceName in services){
         const service = services[serviceName];
+        console.log(service);
 
         if (serviceName === "deleteUserService") continue;
 
@@ -14,7 +16,6 @@ async function deleteAllData(userId){
             await service.deleteUser(userId);
         }
     }
-
 } 
 
 module.exports = { deleteAllData }
