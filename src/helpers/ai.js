@@ -42,6 +42,7 @@ const _buildPrompt = (userGoalMins, sleepLogs, periodType) => {
         - BE SPECIFIC: Mention specific days or trends.
         - BE MOTIVATION: Start by acknowledging a positive trend (like a high quality rating).
         - IDENTIFY AND EMPHASIZE THE GAPS: Clearly explain the distance between their current average and their ${userGoalMins}m goal.
+        - STYLE: The writing should be easy to understand, clear, and focus.
 
         INSTRUCTIONS FOR RECOMMENDATION:
         - ACTIONABLE: Provide 1-2 "Key Focus Points" for improvement. 
