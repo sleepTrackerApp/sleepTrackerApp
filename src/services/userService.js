@@ -46,11 +46,10 @@ async function findUserByAuthId(authId) {
 /**
  * Delete user by ID.
  * @param userId - ID of the user object
- * @param entryDate - date of the sleep entry
  * @returns {Promise<import('mongoose').Document|null>} - deleted sleep entry object if found
  */
 async function deleteUser(userId) {
-    return User.deleteMany({ userId });
+    return User.deleteOne({ _id: userId });
 }
 
 
