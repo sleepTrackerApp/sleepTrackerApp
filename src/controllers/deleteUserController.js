@@ -1,12 +1,12 @@
 /**
- * Sleep Entries Controller
- *
+ * Delete User and all User data controller 
  */
-const deleteUserData  = require("../services/deleteUserService")
+const { deleteUserData }= require("../services")
 
-async function deleteAllUserData (req, res, next){
+async function deleteAllUserData(req, res, next){
     try{
-        const user = res.locals.userRecord;
+        const userId = res.locals.userRecord;
+
         const deleteAll = await deleteUserData.deleteAllData(userId);
 
         res.status(202).json({
@@ -20,5 +20,5 @@ async function deleteAllUserData (req, res, next){
 
 
 module.exports = {   
-    deleteAllUserData
+    deleteAllUserData,
 };
