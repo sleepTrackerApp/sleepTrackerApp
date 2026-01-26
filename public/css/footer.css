@@ -43,10 +43,10 @@
     gap: 4px;
 }
 
-.footer-wordmark {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 0.02em;
+.footer-wordmark-img {
+    height: 26px;
+    width: auto;
+    display: block;
 }
 
 .footer-tagline {

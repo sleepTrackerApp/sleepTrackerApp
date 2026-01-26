@@ -4,6 +4,7 @@
 
 const contentful = require('contentful');
 const { appConfig } = require('./settings');
+const { formatDateReadable } = require('./dateUtils');
 
 // Fields to select for article list (no bodyContent)
 const LIST_FIELDS =
@@ -50,7 +51,7 @@ function mapItemToArticle(item) {
     title: item.fields.title,
     slug: item.fields.slug,
     author: item.fields.author,
-    date: item.fields.date,
+    date: formatDateReadable(item.fields.date),
     readTime: item.fields.readTime,
     tags: item.fields.tags,
     excerpt: item.fields.excerpt,

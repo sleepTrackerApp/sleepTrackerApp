@@ -2,6 +2,7 @@
  * Home page controller handlers.
  */
 const { contentfulService } = require('../services');
+const { formatDateReadable } = require('../helpers/dateUtils');
 
 /**
  * Fallback articles to ensure the Home page Section 3 always has content.
@@ -31,10 +32,10 @@ const renderHome = async (req, res, next) => {
     // Fetch articles from the service 
     const articles = await contentfulService.getArticles();
     
-    // Check if we have dynamic data; if not, use the top 2 fallback articles 
-    const list = Array.isArray(articles) && articles.length 
-      ? articles.slice(0, 2) 
-      : fallbackArticles;
+    // Check if we have dynamic data; if not, use the top 2 fallback articles (dates formatted e.g. 14 Jan, 2026)
+    const list = Array.isArray(articles) && articles.length
+      ? articles.slice(0, 2)
+      : fallbackArticles.map((a) => ({ ...a, date: formatDateReadable(a.date) }));
 
     res.render('pages/home', {
       title: 'Wake Up Truly Alive',

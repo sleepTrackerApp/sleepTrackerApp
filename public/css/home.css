@@ -7,71 +7,158 @@
     --black: #000000;
 }
 
-/* --- GLOBAL HELPERS --- */
-body {
-    font-family: 'Quicksand', sans-serif;
-}
-
 html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 /* Force every section to be EXACTLY the height of the screen */
 section {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  background-size: cover !important;
-  background-position: center center !important;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    background-size: cover !important;
+    background-position: center center !important;
 }
 
-.logo-text {
-  height: 70px;
-  width: auto;
-  margin-bottom: 10px;
+.hero-section .hero-title {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.25em 0.4em;
+    margin-top: 7rem;
+}
+
+.hero-section .hero-title .hero-title-text {
+    white-space: nowrap;
+}
+
+.hero-section .hero-title .logo-text {
+    height: 0.85em;
+    width: auto;
+    vertical-align: baseline;
+    flex-shrink: 0;
+}
+
+/* Other uses of .logo-text (e.g. brand section) keep default size */
+.home-brand .logo-text {
+    height: 70px;
+    width: auto;
 }
 
 /* Materialize Overrides */
-.text-primary { color: var(--primary-blue) !important; }
-.bg-light-blue { background-color: var(--light-blue) !important; }
-.bg-pale-yellow { background-color: var(--pale-yellow) !important; }
+.text-primary {
+    color: var(--primary-blue) !important;
+}
+
+.bg-light-blue {
+    background-color: var(--light-blue) !important;
+}
+
+.bg-pale-yellow {
+    background-color: var(--pale-yellow) !important;
+}
 
 /* Button Styles */
 .pill-btn {
-  display: inline-flex;
-  align-items: center;
-  border-radius: 100px;
-  font-weight: 700;
-  text-decoration: none;
-  height: 48px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    border-radius: 100px;
+    font-weight: 700;
+    text-decoration: none;
+    height: 48px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .pill-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
 }
 
 .pill-btn.black {
-  background-color: #000 !important;
-  border-radius: 50px;
-  text-transform: none;
-  font-weight: 600;
-  padding: 0 30px;
+    background-color: #000 !important;
+    border-radius: 50px;
+    text-transform: none;
+    font-weight: 600;
+    padding: 0 30px;
+}
+
+/* Pill buttons with an icon: less right padding so white circle sits closer to the edge */
+.pill-btn:has(.material-icons) {
+    padding-right: 10px;
 }
 
 .hero-cta-block {
-    position: absolute;
-    bottom: 10%;
-    right: 5%;
     text-align: right;
+}
+
+@media (max-width: 600px) {
+
+    .hero-section {
+        padding-bottom: 40px !important;
+    }
+
+    .home-works, .home-insights, .home-brand {
+        padding: 40px 0 !important;
+    }
+
+    .hero-section .hero-title {
+        margin-top: 3rem;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .hero-section .hero-title .hero-title-text {
+        white-space: normal;
+    }
+
+    .hero-cta-block {
+        position: static;
+        margin-top: 28px;
+        text-align: left;
+    }
+
+    .hero-cta-block .pill-btn {
+        width: auto;
+        max-width: 100%;
+    }
+
+    .home-works {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .home-insights {
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    /* How it works: mobile — all blocks stacked */
+    .home-works .works-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .home-works .works-photo {
+        grid-row: auto;
+        min-height: 280px;
+        height: auto;
+    }
+
+    .home-works .work-card {
+        min-height: 0;
+    }
+
+    .blue-text-large {
+        max-width: none !important;
+    }
 }
 
 .hero-note {
@@ -81,22 +168,53 @@ section {
     display: block;
 }
 
+/* White circle around icon in any pill button that has .material-icons.right */
+.pill-btn .material-icons.right {
+    background: #fff;
+    color: #000;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    font-size: 20px;
+}
+
 /* --- SECTION 1: HERO --- */
 .hero-section {
-    background: url('/img/home/Home-S1-BG.png') no-repeat center center;
-    background-size: cover;
+    background: #BFE3F7;
+    background: -webkit-linear-gradient(132deg, rgba(191, 227, 247, 1) 0%, rgba(255, 251, 228, 1) 70%, rgba(255, 255, 243, 1) 100%);
+    background: -moz-linear-gradient(132deg, rgba(191, 227, 247, 1) 0%, rgba(255, 251, 228, 1) 70%, rgba(255, 255, 243, 1) 100%);
+    background: linear-gradient(132deg, rgba(191, 227, 247, 1) 0%, rgba(255, 251, 228, 1) 70%, rgba(255, 255, 243, 1) 100%);
     min-height: 100vh;
+    width: 100%;
     display: flex;
     align-items: center;
     position: relative;
-    margin-top: -80px; 
-    padding-top: 80px; 
+    margin-top: -80px;
+    padding: 80px 0 10vh;
+    box-sizing: border-box;
 }
 
 .hero-section .container {
-  width: 90vw !important;
-  max-width: 100% !important;
-  margin: 0 auto;
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 5px;
+}
+
+.hero-section .container-main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.hero-section .row {
+    width: 100%;
 }
 
 .hero-title {
@@ -110,257 +228,418 @@ section {
     font-weight: 400;
     margin-top: 20px;
     line-height: 1.5;
+    max-width: 670px;
 }
 
 /* --- SECTION 2: HOW IT WORKS --- */
 .home-works {
-  background: white;
+    background: white;
+    padding-top: 10vh;
+    padding-bottom: 10vh;
 }
 
-.home-works .home-shell {
-  max-width: 1100px;
-  margin: 0 auto;
+.home-works .container {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 5px;
+}
+
+.home-works .row {
+    width: 100%;
 }
 
 .works-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr; 
-  gap: 25px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 25px;
 }
 
 .works-photo {
-  grid-row: span 2;
-  position: relative;
-  border-radius: 30px;
-  overflow: hidden;
-  height: 100%;
-}
-
-.works-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+    grid-row: span 2;
+    border-radius: 30px;
+    overflow: hidden;
+    height: 100%;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    background-image: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6)), url(/img/home/Home-S2-1.jpg);
+    background-size: cover;
+    background-position: center;
 }
 
 .works-photo-text {
-  position: absolute;
-  bottom: 25px;
-  left: 20px;
-  right: 20px;
-  padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+    max-width: 100%;
 }
 
-.works-photo-text h3 {
-  font-weight: 550;
+.works-photo-text p {
+    margin: 0;
+}
+
+.works-photo-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.1em 0.2em;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+    color: #292e61;
+}
+
+.works-photo-logo {
+    display: inline-block;
+    height: 0.9em;
+    width: auto;
+    vertical-align: baseline;
+    flex-shrink: 0;
+    margin-bottom: 0.1em;
 }
 
 .work-card {
-  border-radius: 30px;
-  padding: 35px;
-  display: flex;
-  flex-direction: column;
-  min-height: 280px;
+    border-radius: 30px;
+    padding: 35px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    position: relative;
+    min-height: 280px;
 }
 
-.blue-tint { background-color: #BEE3F7; }
-.light-blue-tint { background-color: #DBF0FC; }
-.yellow-tint { background-color: #FFFAE2; }
-.empty-card { background: transparent; justify-content: space-between; padding: 0 30px; }
+.blue-tint {
+    background-color: #BEE3F7;
+}
+
+.light-blue-tint {
+    background-color: #DBF0FC;
+}
+
+.yellow-tint {
+    background-color: #FFFAE2;
+}
+
+.empty-card {
+    background: transparent;
+    justify-content: flex-start;
+    padding: 35px;
+    align-items: flex-start;
+    position: relative;
+}
+
+/* Why Sleep Matters? button: match hero CTA — right-aligned, white circle icon */
+.empty-card .pill-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
 
 /* The Icon Circle */
 .card-icon-circle {
-  width: 50px;
-  height: 50px;
-  background: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 25px;
+    width: 50px;
+    height: 50px;
+    background: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 35px;
+    left: 35px;
 }
 
-.card-icon-circle i { color: #1DB0FF; font-size: 30px; }
+.card-icon-circle i {
+    color: #1DB0FF;
+    font-size: 30px;
+}
 
-/* Card Typography */
-.work-card h4 { font-weight: 800; font-size: 1.6rem; margin: 25px 0 10px; }
-.work-card p { line-height: 1.5; color: #000000; margin-top: 10px; font-size: 18px;}
-.blue-text-large { color: #1DB0FF; font-weight: 550; font-size: 40px; line-height: 1.3; }
+.work-card h4 {
+    font-weight: 800;
+    font-size: 1.6rem;
+    margin: 65px 0 10px 0;
+}
+
+.work-card p {
+    line-height: 1.5;
+    color: #000000;
+    margin: 0;
+    font-size: 18px;
+}
+
+.blue-text-large {
+    color: #1DB0FF;
+    font-weight: 550;
+    font-size: 33px;
+    line-height: 1.3;
+    max-width: 250px;
+    margin: 0 auto 30px auto;
+    text-align: center;
+}
+
+/* How it works: tablet — girl on top, 4 blocks in 2x2 with equal height */
+@media (min-width: 601px) and (max-width: 992px) {
+    .home-works .works-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr 1fr;
+        gap: 25px;
+    }
+
+    .home-works .works-photo {
+        grid-column: 1 / -1;
+        grid-row: 1;
+        min-height: 280px;
+        height: auto;
+    }
+
+    .home-works .works-grid > *:nth-child(2) {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .home-works .works-grid > *:nth-child(3) {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    .home-works .works-grid > *:nth-child(4) {
+        grid-column: 1;
+        grid-row: 3;
+    }
+
+    .home-works .works-grid > *:nth-child(5) {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    .home-works .work-card {
+        min-height: 0;
+    }
+}
 
 /* --- SECTION 3: HOME INSIGHTS --- */
 .home-insights {
-  padding: 100px 0;
-  background: #DBF0FC;
+    padding: 10vh 0;
+    background: #DBF0FC;
 }
 
-.home-insights .home-shell {
-  width: 90vw;
-  max-width: 1500px;
-  margin: 0 auto;
+.home-insights .container {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 5px;
+}
+
+.home-insights .row {
+    width: 100%;
 }
 
 .insights-head {
-  text-align: center;
-  margin-bottom: 50px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
 
 .insights-title h2 {
-  font-size: 40px;
-  font-weight: 550;
-  margin: 0;
+    font-size: 40px;
+    font-weight: 550;
+    margin: 0;
 }
 
 .insights-title p {
-  font-size: 22px;
+    font-size: 22px;
 }
 
 /* Expansion Hover Logic  */
 .reveal-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr; 
-  gap: 30px;
-  transition: grid-template-columns 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    transition: grid-template-columns 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .reveal-grid:has(.reveal-card:first-child:hover) {
-  grid-template-columns: 1.25fr 0.75fr;
+    grid-template-columns: 1.25fr 0.75fr;
 }
 
 .reveal-grid:has(.reveal-card:last-child:hover) {
-  grid-template-columns: 0.75fr 1.25fr;
+    grid-template-columns: 0.75fr 1.25fr;
+}
+
+/* Insights: single-column articles on 800px and smaller; remove bottom gap by not stretching cards */
+/* Brand: single column, ALiVE block first then Proudly developed, all left-aligned */
+@media (max-width: 800px) {
+    .home-insights .reveal-grid,
+    .home-insights .reveal-grid:has(.reveal-card:first-child:hover),
+    .home-insights .reveal-grid:has(.reveal-card:last-child:hover) {
+        grid-template-columns: 1fr;
+    }
+
+    .home-insights .reveal-card {
+        height: auto;
+    }
+
+    .home-insights .reveal-body {
+        flex-grow: 0;
+    }
+
+    .home-brand .brand-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-brand .brand-content {
+        order: 1;
+        text-align: left;
+        align-items: flex-start;
+    }
+
+    .home-brand .brand-meta {
+        order: 2;
+        margin-top: 30px;
+    }
+
+    .home-brand .brand-logo-word {
+        align-items: flex-start;
+    }
 }
 
 .reveal-card {
-  background: #ffffff;
-  border-radius: 24px;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin-top: 30px;
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .reveal-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
 }
 
 .reveal-card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
 }
 
 .reveal-body {
-  padding: 30px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+    padding: 30px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .reveal-date {
-  font-size: 0.9rem;
-  color: #1DB0FF;
-  font-weight: 700;
+    font-size: 0.9rem;
+    color: #1DB0FF;
+    font-weight: 700;
 }
 
 .reveal-card h3 {
-  margin: 0;
-  font-size: 1.8rem;
-  font-weight: 800;
-  line-height: 1.3;
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1.3;
 }
 
 .reveal-card p {
-  margin: 0;
-  font-size: 1.1rem;
-  line-height: 1.6;
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
 }
 
 .card-link-wrapper {
-  text-decoration: none;
-  color: inherit;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 /* Maintain hover effects on the wrapper */
 .reveal-card:hover .card-link-wrapper {
-  color: inherit;
+    color: inherit;
 }
 
 /* --- SECTION 4: BRAND MISSION --- */
 .home-brand {
-  min-height: 60vh !important; 
-  padding: 130px 0;
-  background: white;
+    min-height: auto;
+    padding: 10vh 0;
+    background: white;
 }
 
-.home-brand .home-shell {
-  width: 90vw;
-  max-width: 1500px;
-  margin: 0 auto;
+.home-brand .container {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 5px;
+}
+
+.home-brand .row {
+    width: 100%;
 }
 
 .brand-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: end;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
 }
 
 .brand-content {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin: 0;
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    margin: 0;
 }
 
 .brand-logo-word {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
 .brand-tag {
-  font-size: 20px;
-  font-weight: 700;
-  margin-top: 10px;
+    font-size: 20px;
+    font-weight: 700;
+    margin-top: 10px;
 }
 
 .brand-desc {
-  font-size: 32px;
-  line-height: 1.4;
-  color: #b0d4f1;
-  max-width: 600px;
+    font-size: 32px;
+    line-height: 1.4;
+    color: #b0d4f1;
+    max-width: 600px;
+    margin: 30px 0 0 0;
 }
 
 .brand-desc .font-bold {
-  font-weight: 800;
+    font-weight: 800;
 }
 
 .brand-meta {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 18px;
-  text-align: left;
-  margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 18px;
+    text-align: left;
+    margin: 0;
 }
 
 .brand-meta strong {
-  font-weight: 800 !important;
+    font-weight: 800 !important;
 }
 
 .deakin-logo {
-  height: 50px;
-  width: auto;
+    height: 50px;
+    width: auto;
 }

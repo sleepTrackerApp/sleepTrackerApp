@@ -3,6 +3,7 @@
  * otherwise returns a hardcoded fallback list.
  */
 const contentfulHelper = require('../helpers/contentful');
+const { formatDateReadable } = require('../helpers/dateUtils');
 
 // Hardcoded fallback articles when Contentful is not configured
 const fallbackArticles = [
@@ -125,9 +126,11 @@ const fallbackArticles = [
  * @returns {Promise<Array<{ id, title, slug, author, date, readTime, tags, excerpt, image, bodyContent? }>>}
  */
 async function getArticles() {
-  if (!contentfulHelper.isContentfulConfigured()) return fallbackArticles;
+  if (!contentfulHelper.isContentfulConfigured()) {
+    return fallbackArticles.map((a) => ({ ...a, date: formatDateReadable(a.date) }));
+  }
   const list = await contentfulHelper.getArticleList();
-  return list && list.length ? list : fallbackArticles;
+  return list && list.length ? list : fallbackArticles.map((a) => ({ ...a, date: formatDateReadable(a.date) }));
 }
 
 /**
@@ -141,7 +144,7 @@ async function getArticleBySlug(slug) {
   if (!contentfulHelper.isContentfulConfigured()) {
     const fallback =
       fallbackArticles.find((a) => a.slug === slug) || fallbackArticles[0];
-    return fallback || null;
+    return fallback ? { ...fallback, date: formatDateReadable(fallback.date) } : null;
   }
   return contentfulHelper.getArticleBySlug(slug);
 }
