@@ -1,43 +1,149 @@
-const contentful = require('contentful');
-const { appConfig } = require('../helpers/settings');
+/**
+ * Service layer for fetching articles. Uses Contentful when configured;
+ * otherwise returns a hardcoded fallback list.
+ */
+const contentfulHelper = require('../helpers/contentful');
 
-const client = contentful.createClient({
-  space: appConfig.CONTENTFUL.SPACE_ID,
-  accessToken: appConfig.CONTENTFUL.ACCESS_TOKEN,
-});
+// Hardcoded fallback articles when Contentful is not configured
+const fallbackArticles = [
+  {
+    id: 'fallback-1',
+    title: 'How Much Sleep Do You Really Need?',
+    slug: 'how-much-sleep-do-you-really-need',
+    author: 'Alive Sleep Team',
+    date: 'December 18, 2025',
+    readTime: '5 min read',
+    tags: ['Sleep Science', 'Wellness'],
+    excerpt:
+      'Recent findings indicate that 40% of people worldwide experience poor sleep, leading to weakened immune function.',
+    image:
+      'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+  {
+    id: 'fallback-2',
+    title: 'The Truth About Insomnia',
+    slug: 'the-truth-about-insomnia',
+    author: 'Alive Sleep Team',
+    date: 'November 25, 2025',
+    readTime: '4 min read',
+    tags: ['Sleep', 'Wellness'],
+    excerpt:
+      'With nearly 29% of the global population suffering from insomnia, understanding the root causes is vital.',
+    image:
+      'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+  {
+    id: 'fallback-3',
+    title: 'Why Your Bedtime Matters More Than You Think',
+    slug: 'why-bedtime-matters',
+    author: 'Alive Sleep Team',
+    date: 'November 25, 2025',
+    readTime: '3 min read',
+    tags: ['Habits'],
+    excerpt:
+      'Consistency builds healthier circadian rhythms and deeper sleep cycles for better recovery.',
+    image:
+      'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+  {
+    id: 'fallback-4',
+    title: 'Morning Light: The Free Sleep Aid',
+    slug: 'morning-light',
+    author: 'Alive Sleep Team',
+    date: 'November 25, 2025',
+    readTime: '4 min read',
+    tags: ['Habits'],
+    excerpt:
+      'Sunlight within an hour of waking reinforces your body clock and helps you fall asleep faster at night.',
+    image:
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+  {
+    id: 'fallback-5',
+    title: 'Small Screens, Big Impact on Sleep',
+    slug: 'screens-and-sleep',
+    author: 'Alive Sleep Team',
+    date: 'November 25, 2025',
+    readTime: '3 min read',
+    tags: ['Wellness'],
+    excerpt:
+      'Blue light and endless feeds delay melatonin. A 30-minute wind-down can transform your rest.',
+    image:
+      'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+  {
+    id: 'fallback-6',
+    title: 'Caffeine Curfew: How Late Is Too Late?',
+    slug: 'caffeine-curfew',
+    author: 'Alive Sleep Team',
+    date: 'November 25, 2025',
+    readTime: '3 min read',
+    tags: ['Nutrition'],
+    excerpt:
+      'Caffeine has a half-life of up to 6 hours. Cutting off by early afternoon protects your deep sleep.',
+    image:
+      'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+  {
+    id: 'fallback-7',
+    title: 'Why Short Naps Beat Long Ones',
+    slug: 'short-naps',
+    author: 'Alive Sleep Team',
+    date: 'November 25, 2025',
+    readTime: '2 min read',
+    tags: ['Recovery'],
+    excerpt:
+      'A 20-minute nap can boost alertness without the grogginess of longer daytime sleep.',
+    image:
+      'https://images.unsplash.com/photo-1502741338009-cac2772e18bc?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+  {
+    id: 'fallback-8',
+    title: 'Sleep and Immunity: The Crucial Link',
+    slug: 'sleep-and-immunity',
+    author: 'Alive Sleep Team',
+    date: 'November 25, 2025',
+    readTime: '4 min read',
+    tags: ['Immunity'],
+    excerpt:
+      'Even a single night of poor sleep can reduce natural killer cell activity. Protect your defense system.',
+    image:
+      'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1400&q=80',
+    bodyContent: null,
+  },
+];
 
-const getArticles = async () => {
-  try {
-    const response = await client.getEntries({
-      content_type: 'articles',
-      order: '-fields.date'
-    });
+/**
+ * Fetch the list of articles. Uses Contentful when configured; otherwise returns fallback list.
+ * @returns {Promise<Array<{ id, title, slug, author, date, readTime, tags, excerpt, image, bodyContent? }>>}
+ */
+async function getArticles() {
+  if (!contentfulHelper.isContentfulConfigured()) return fallbackArticles;
+  const list = await contentfulHelper.getArticleList();
+  return list && list.length ? list : fallbackArticles;
+}
 
-    const cleanArticles = response.items.map((item) => {
-      const imageUrl = item.fields.coverImage?.fields?.file?.url 
-        ? 'https:' + item.fields.coverImage.fields.file.url 
-        : null;
-
-      return {
-        id: item.sys.id,
-        title: item.fields.title,
-        slug: item.fields.slug,
-        author: item.fields.author,
-        date: item.fields.date,
-        readTime: item.fields.readTime,
-        tags: item.fields.tags,
-        excerpt: item.fields.excerpt,
-        image: imageUrl,
-        bodyContent: item.fields.bodyContent
-      };
-    });
-
-    return cleanArticles;
-
-  } catch (error) {
-    console.error('Error fetching Contentful articles:', error);
-    return [];
+/**
+ * Fetch a single article by slug. When configured, uses Contentful only (null = 404).
+ * When not configured, resolves from fallback list.
+ * @param {string} slug - Article slug (e.g. from URL).
+ * @returns {Promise<{ id, title, slug, author, date, readTime, tags, excerpt, image, bodyContent }|null>}
+ */
+async function getArticleBySlug(slug) {
+  if (!slug || typeof slug !== 'string') return null;
+  if (!contentfulHelper.isContentfulConfigured()) {
+    const fallback =
+      fallbackArticles.find((a) => a.slug === slug) || fallbackArticles[0];
+    return fallback || null;
   }
-};
+  return contentfulHelper.getArticleBySlug(slug);
+}
 
-module.exports = { getArticles };
+module.exports = { getArticles, getArticleBySlug };

@@ -2,7 +2,7 @@
  * Aggregates and exposes controller modules for easy importing.
  */
 const apiControllers = require('./apiControllers');
-const insightControllers = require('./insightControllers');
+const articleControllers = require('./articleControllers');
 const sleepEntryController = require('./sleepEntryController');
 const weeklySummaryController = require('./weeklySummaryController');
 const authControllers = require('./authControllers');
@@ -11,11 +11,11 @@ const homeControllers = require('./homeControllers');
 const dashboardControllers = require('./dashboardControllers');
 const scheduleController = require('./scheduleController');
 const goalController = require('./goalController');
-const aiController = require('./aiController')
+const insightsController = require('./insightsController');
 
 module.exports = {
   apiControllers,
-  insightControllers,
+  articleControllers,
   sleepEntryController,
   weeklySummaryController,
   authControllers,
@@ -24,5 +24,5 @@ module.exports = {
   dashboardControllers,
   scheduleController,
   goalController,
-  aiController,
+  insightsController,
 };

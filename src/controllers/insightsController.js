@@ -1,8 +1,18 @@
+/**
+ * Controller to handle AI-generated sleep insights.
+ */
+
 const AIInsight = require('../models/AIInsight');
 const { getSleepEntries } = require('../services/sleepEntryService');
 const { generateSleepInsight } = require('../helpers/ai');
 const { goalService } = require('../services');
 
+/**
+ * Fetches or generates a daily AI sleep insight for the user.
+ * @param req - Express request object
+ * @param res - Express response object
+ * @returns {Promise<*>} - JSON response with sleep insight
+ */
 const getDailyInsight = async (req, res) => {
   try {
     const userId = res.locals.userRecord._id;
@@ -80,11 +90,9 @@ const getDailyInsight = async (req, res) => {
       console.error('OpenAI Data:', error.response.data);
     }
 
-    res
-      .status(500)
-      .json({
-        error: 'Your Sleep Health Assistant is busy. Please try again later.',
-      });
+    res.status(500).json({
+      error: 'Your Sleep Health Assistant is busy. Please try again later.',
+    });
   }
 };
 

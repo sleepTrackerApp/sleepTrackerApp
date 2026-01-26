@@ -25,6 +25,27 @@ describe('Page error controllers', () => {
     ).to.be.true;
   });
 
+  it('renders 404 page when render500 receives statusCode 404', () => {
+    const err = { statusCode: 404, message: 'Article not found' };
+    const req = {};
+    const res = {
+      headersSent: false,
+      status: sinon.stub().returnsThis(),
+      render: sinon.stub(),
+    };
+    const next = sinon.stub();
+
+    render500(err, req, res, next);
+
+    expect(res.status.calledOnceWithExactly(404)).to.be.true;
+    expect(
+      res.render.calledOnceWithExactly('pages/errors/404', {
+        title: '404 - Page Not Found',
+        isErrorPage: true,
+      })
+    ).to.be.true;
+  });
+
   it('renders 500 page on 500 error', () => {
     sinon.stub(console, 'error');
     const err = { message: 'Test error' }; // Plain object without name property

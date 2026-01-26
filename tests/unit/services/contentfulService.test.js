@@ -1,86 +1,128 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
-const contentful = require('contentful');
+const proxyquire = require('proxyquire').noCallThru();
 
 describe('Contentful Service Unit Tests', () => {
+  const mockArticle = {
+    id: '123',
+    title: 'Test Sleep Article',
+    slug: 'test-sleep-article',
+    image: 'https://images.ctfassets.net/example.jpg',
+  };
+  const mockList = [mockArticle];
+
   let getArticles;
-  let mockClient;
-  let createClientStub;
+  let getArticleBySlug;
+  let getArticleListStub;
+  let getArticleBySlugStub;
+  let isContentfulConfiguredStub;
 
   before(() => {
-    // 1. Create a fake client
-    mockClient = { getEntries: sinon.stub() };
-
-    // 2. Intercept the real 'createClient' call
-    createClientStub = sinon.stub(contentful, 'createClient').returns(mockClient);
-
-    // 3. Clear cache to reload service with the mocked client
-    delete require.cache[require.resolve('../../../src/services/contentfulService')];
-    
-    // 4. Load the service
-    const service = require('../../../src/services/contentfulService');
-    getArticles = service.getArticles;
+    getArticleListStub = sinon.stub().resolves(mockList);
+    getArticleBySlugStub = sinon.stub().resolves(mockArticle);
+    isContentfulConfiguredStub = sinon.stub().returns(true);
+    const contentfulService = proxyquire('../../../src/services/contentfulService', {
+      '../helpers/contentful': {
+        isContentfulConfigured: isContentfulConfiguredStub,
+        getArticleList: getArticleListStub,
+        getArticleBySlug: getArticleBySlugStub,
+      },
+    });
+    getArticles = contentfulService.getArticles;
+    getArticleBySlug = contentfulService.getArticleBySlug;
   });
 
-  after(() => {
-    createClientStub.restore();
-  });
-
-  // Reset the mock behavior before each test to prevent cross-contamination
   afterEach(() => {
-    mockClient.getEntries.reset();
+    getArticleListStub.reset();
+    getArticleBySlugStub.reset();
+    isContentfulConfiguredStub.reset();
+    getArticleListStub.resolves(mockList);
+    getArticleBySlugStub.resolves(mockArticle);
+    isContentfulConfiguredStub.returns(true);
   });
 
-  it('should fetch and format articles correctly (Success Case)', async () => {
-    const mockResponse = {
-      items: [
-        {
-          sys: { id: '123', createdAt: '2025-01-01T12:00:00Z' },
-          fields: {
-            title: 'Test Sleep Article',
-            slug: 'test-sleep-article',
-            author: 'Mi Vo',
-            readTime: '5 min',
-            excerpt: 'Testing is important.',
-            bodyContent: { data: {} },
-            coverImage: {
-              fields: { file: { url: '//images.ctfassets.net/example.jpg' } }
-            }
-          },
-        },
-      ],
-    };
+  describe('getArticles', () => {
+    it('calls helper getArticleList and returns its result', async () => {
+      const result = await getArticles();
 
-    mockClient.getEntries.resolves(mockResponse);
+      expect(getArticleListStub.calledOnce).to.be.true;
+      expect(result).to.equal(mockList);
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].title).to.equal('Test Sleep Article');
+    });
 
-    const result = await getArticles();
+    it('returns fallback list when not configured without calling helper', async () => {
+      isContentfulConfiguredStub.returns(false);
 
-    expect(result).to.have.lengthOf(1);
-    expect(result[0].title).to.equal('Test Sleep Article');
-    expect(result[0].image).to.equal('https://images.ctfassets.net/example.jpg');
+      const result = await getArticles();
+
+      expect(isContentfulConfiguredStub.calledOnce).to.be.true;
+      expect(getArticleListStub.notCalled).to.be.true;
+      expect(result).to.be.an('array').that.is.not.empty;
+      expect(result[0].title).to.equal('How Much Sleep Do You Really Need?');
+      expect(result[0].slug).to.equal('how-much-sleep-do-you-really-need');
+    });
+
+    it('returns fallback list when helper returns empty array', async () => {
+      getArticleListStub.resolves([]);
+
+      const result = await getArticles();
+
+      expect(getArticleListStub.calledOnce).to.be.true;
+      expect(result).to.be.an('array').that.is.not.empty;
+      expect(result[0].title).to.equal('How Much Sleep Do You Really Need?');
+      expect(result[0].slug).to.equal('how-much-sleep-do-you-really-need');
+    });
   });
 
-  it('should return empty array gracefully and log error if API fails (Error Case)', async () => {
-    const consoleSpy = sinon.stub(console, 'error');
+  describe('getArticleBySlug', () => {
+    it('validates slug and calls helper when slug is valid', async () => {
+      const result = await getArticleBySlug('test-sleep-article');
 
-    // A. ARRANGE: Force an error
-    mockClient.getEntries.rejects(new Error('Network Error'));
+      expect(getArticleBySlugStub.calledOnceWith('test-sleep-article')).to.be.true;
+      expect(result).to.equal(mockArticle);
+    });
 
-    // B. ACT
-    const result = await getArticles();
+    it('returns null without calling helper for empty slug', async () => {
+      const result = await getArticleBySlug('');
 
-    // C. ASSERT
-    // Check 1: Did we get the empty array?
-    expect(result).to.be.an('array').that.is.empty;
+      expect(getArticleBySlugStub.notCalled).to.be.true;
+      expect(result).to.be.null;
+    });
 
-    // Check 2: Did the service actually catch and log the error?
-    expect(consoleSpy.calledOnce).to.be.true;
-    
-    // Optional: Check if the log message contains the text you expect
-    const loggedError = consoleSpy.firstCall.args[0]; 
-    expect(loggedError).to.include('Error fetching Contentful articles');
+    it('returns null without calling helper for null slug', async () => {
+      const result = await getArticleBySlug(null);
 
-    // CLEANUP: Restore console.error so other tests show errors normally
-    consoleSpy.restore();
+      expect(getArticleBySlugStub.notCalled).to.be.true;
+      expect(result).to.be.null;
+    });
+
+    it('returns null without calling helper for non-string slug', async () => {
+      const result = await getArticleBySlug(123);
+
+      expect(getArticleBySlugStub.notCalled).to.be.true;
+      expect(result).to.be.null;
+    });
+
+    it('returns fallback article when not configured without calling helper', async () => {
+      isContentfulConfiguredStub.returns(false);
+
+      const result = await getArticleBySlug('how-much-sleep-do-you-really-need');
+
+      expect(isContentfulConfiguredStub.calledOnce).to.be.true;
+      expect(getArticleBySlugStub.notCalled).to.be.true;
+      expect(result).to.not.be.null;
+      expect(result.slug).to.equal('how-much-sleep-do-you-really-need');
+      expect(result.title).to.equal('How Much Sleep Do You Really Need?');
+    });
+
+    it('returns null when configured and helper returns null (caller should 404)', async () => {
+      getArticleBySlugStub.resolves(null);
+
+      const result = await getArticleBySlug('nonexistent-slug');
+
+      expect(getArticleBySlugStub.calledOnceWith('nonexistent-slug')).to.be.true;
+      expect(result).to.be.null;
+    });
   });
 });
