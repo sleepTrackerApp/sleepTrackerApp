@@ -49,7 +49,7 @@ async function findUserByAuthId(authId) {
  * @returns {Promise<import('mongoose').Document|null>} - deleted sleep entry object if found
  */
 async function deleteUser(userId) {
-    return User.deleteOne({ _id: userId });
+    return User.deleteMany({ _id: userId });
 }
 
 
