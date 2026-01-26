@@ -1,9 +1,9 @@
 const contentful = require('contentful');
+const { appConfig } = require('../helpers/settings');
 
-// Initialise the Client
 const client = contentful.createClient({
-  space: process.env.CONTENTFUL_SPACE_ID || 'test-space-id',
-  accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'test-access-token'
+  space: appConfig.CONTENTFUL.SPACE_ID,
+  accessToken: appConfig.CONTENTFUL.ACCESS_TOKEN,
 });
 
 const getArticles = async () => {

@@ -115,7 +115,7 @@ Database connectivity is handled through helper modules in `src/helpers/db.js`, 
 
 ## Secure Environment Variable Management
 
-Configuration is centralised in `src/helpers/settings.js`, which loads values via `dotenv` and exposes a frozen `appConfig` object. This ensures that all modules read settings from a single source of truth and that defaults are well defined for local development.
+Configuration is centralised in `src/helpers/settings.js`, which loads values via `dotenv` and exposes a frozen `appConfig` object. All modules—including the AI helper and Contentful service—should read `OPENAI_API_KEY`, `CONTENTFUL_SPACE_ID`, and `CONTENTFUL_ACCESS_TOKEN` from `appConfig` rather than `process.env`. This keeps a single source of truth and consistent defaults for local development.
 
 ## Error Handling
 
@@ -405,17 +405,20 @@ No email addresses, names, or other personal information are stored in the datab
 
 Create a `.env` file in the project root (or use system environment variables) with the following keys:
 
-| Variable                | Example                                         | Description                                            |
-|-------------------------|-------------------------------------------------|--------------------------------------------------------|
-| `PORT`                  | `3000`                                          | Application port                                       |
-| `BASE_URL`              | `http://localhost:3000`                         | Application base URL                                   |
-| `MONGODB_URI`           | `mongodb://localhost:27017/alive-sleep-tracker` | MongoDB connection string                              |
-| `NODE_ENV`              | `development`                                   | Node environment (`development`, `test`, `production`) |
-| `ENCRYPTION_KEY`        | `development-only-secret-key`                   | Secret used to hash Auth0 identifiers                  |
-| `AUTH0_ISSUER_BASE_URL` | `https://dev-example.us.auth0.com`              | Auth0 application domain                               |
-| `AUTH0_CLIENT_ID`       | `replace-with-auth0-client-id`                  | Auth0 client ID                                        |
-| `AUTH0_CLIENT_SECRET`   | `replace-with-auth0-client-secret`              | Auth0 client secret                                    |
-| `AUTH0_SECRET`          | `replace-with-auth0-session-secret`             | Auth0 session secret                                   |
+| Variable                   | Example                                         | Description                                            |
+|----------------------------|-------------------------------------------------|--------------------------------------------------------|
+| `PORT`                     | `3000`                                          | Application port                                       |
+| `BASE_URL`                 | `http://localhost:3000`                         | Application base URL                                   |
+| `MONGODB_URI`              | `mongodb://localhost:27017/alive-sleep-tracker` | MongoDB connection string                              |
+| `NODE_ENV`                 | `development`                                   | Node environment (`development`, `test`, `production`) |
+| `ENCRYPTION_KEY`           | `development-only-secret-key`                   | Secret used to hash Auth0 identifiers                  |
+| `AUTH0_ISSUER_BASE_URL`    | `https://dev-example.us.auth0.com`              | Auth0 application domain                               |
+| `AUTH0_CLIENT_ID`          | `replace-with-auth0-client-id`                  | Auth0 client ID                                        |
+| `AUTH0_CLIENT_SECRET`      | `replace-with-auth0-client-secret`              | Auth0 client secret                                    |
+| `AUTH0_SECRET`             | `replace-with-auth0-session-secret`             | Auth0 session secret                                   |
+| `OPENAI_API_KEY`           | *(optional)*                                    | OpenAI API key for AI-generated sleep insights         |
+| `CONTENTFUL_SPACE_ID`      | *(optional)*                                    | Contentful space ID for insights/articles              |
+| `CONTENTFUL_ACCESS_TOKEN`  | *(optional)*                                    | Contentful access token for CMS content                |
 
 # How to Run
 
