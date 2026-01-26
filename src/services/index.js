@@ -11,5 +11,3 @@ module.exports = {
   goalService: require('./goalService'),
   messageService: require('./messageService'),
 };
-
-          

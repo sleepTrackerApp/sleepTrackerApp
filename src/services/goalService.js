@@ -222,8 +222,13 @@ async function getGoalsInRange(userId, startDate, endDate) {
     return result;
 }
 
+async function deleteAllGoal(userId) {
+    return Goal.deleteMany({ userId });
+}
+
 module.exports = {
     setGoal,
     getGoal,
     getGoalsInRange,
+    deleteAllGoal,
 };

@@ -288,12 +288,26 @@ async function deleteSleepEntryByDate(userId, entryDate) {
     return SleepEntry.findOneAndDelete({ userId, entryDate: normalizedDate });
 }
 
+/**
+ * Delete all sleep entry for a user.
+ * @param userId - ID of the user object
+ * @param entryDate - date of the sleep entry
+ * @returns {Promise<import('mongoose').Document|null>} - deleted sleep entry object if found
+ */
+async function deleteSleepEntry(userId) {
+    return SleepEntry.deleteMany({ userId });
+}
+
+
+
+
 module.exports = {
     getSleepEntries,
     getSleepEntryByDate,
     getOrCreateSleepEntry,
-    deleteSleepEntryByDate,
     getAllSleepEntries,
+    deleteSleepEntryByDate,
+    deleteSleepEntry,
 };
 
 
