@@ -4,6 +4,6 @@ const aiController = require('../controllers/aiController');
 const { requireAuthAPI } = require('../helpers/auth');
 
 // Define the endpoint for getting daily insights
-router.get('/insight', requireAuthAPI, aiController.getDailyInsight);
+router.get('/', requireAuthAPI, aiController.getDailyInsight);
 
 module.exports = router;

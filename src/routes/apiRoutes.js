@@ -8,6 +8,7 @@ const apiWeeklySummaryRoutes = require('./apiWeeklySummaryRoutes');
 const apiScheduleRoutes = require('./apiScheduleRoutes');
 const apiGoalRoutes = require('./apiGoalRoutes');
 const apiMessageRoutes = require('./apiMessageRoutes');
+const apiInsighsRoutes = require('./apiInsighsRoutes');
 const { apiControllers } = require('../controllers');
 const router = express.Router();
 
@@ -21,6 +22,7 @@ router.use('/summary', apiWeeklySummaryRoutes);
 router.use('/schedules', apiScheduleRoutes);
 router.use('/goal', apiGoalRoutes);
 router.use('/messages', apiMessageRoutes);
+router.use('/insights', apiInsighsRoutes);
 
 // Catch-all for unknown API routes
 router.use(apiControllers.apiNotFound);
