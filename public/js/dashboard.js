@@ -141,22 +141,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Confirm and Save Logic
   let currentPage = 1;
+  let totalPages = 1;
   const entriesPerPage = 10;
 
   const loadPersistentHistory = async () => {
     const historyBody = document.getElementById('sleep-history-body');
     if (!historyBody) return;
 
-    // Fetch from Controller's getSleepEntries endpoint
     const response = await fetch(
       `/api/sleep-entries?page=${currentPage}&limit=${entriesPerPage}`
     );
     const result = await response.json();
 
     if (result.success) {
-      const { sleepEntries, totalPages } = result.data;
+      const { sleepEntries, totalPages: apiTotalPages } = result.data || {};
+      totalPages = apiTotalPages ?? 1;
 
-      historyBody.innerHTML = sleepEntries
+      historyBody.innerHTML = (sleepEntries || [])
         .map((entry) => {
           const date = new Date(entry.entryDate).toLocaleDateString('en-US', {
             month: 'short',
@@ -174,23 +175,23 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .join('');
 
-      document.getElementById('page-info').innerText =
-        `Page ${currentPage} of ${totalPages || 1}`;
-      document.getElementById('next-page').disabled = currentPage >= totalPages;
+      const pageInfoEl = document.getElementById('page-info');
+      if (pageInfoEl) {
+        pageInfoEl.innerText = `Page ${currentPage} of ${totalPages}`;
+      }
 
       const prevBtn = document.getElementById('prev-page');
       if (prevBtn) {
-        prevBtn.disabled = currentPage === 1;
+        prevBtn.disabled = currentPage <= 1;
       }
 
       const nextBtn = document.getElementById('next-page');
       if (nextBtn) {
-        nextBtn.disabled = currentPage >= totalPages || totalPages === 0;
+        nextBtn.disabled = totalPages <= 0 || currentPage >= totalPages;
       }
     }
   };
 
-  // Add Event Listeners for Buttons
   document.getElementById('prev-page')?.addEventListener('click', () => {
     if (currentPage > 1) {
       currentPage--;
@@ -199,8 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   document.getElementById('next-page')?.addEventListener('click', () => {
-    const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
-    if (currentPage * entriesPerPage < savedData.length) {
+    if (currentPage < totalPages) {
       currentPage++;
       loadPersistentHistory();
     }
@@ -273,12 +273,11 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-  //Date Picker's default date
+  // Date: default to yesterday
   const dateInput = document.getElementById('sleep-date');
   if (dateInput) {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    // Format to YYYY-MM-DD for the input value
     dateInput.value = yesterday.toISOString().split('T')[0];
   }
 
@@ -389,6 +388,10 @@ document.addEventListener('DOMContentLoaded', function () {
   initChart();
   updateSleepChart();
 
+  window.addEventListener('resize', () => {
+    if (window.sleepChart) window.sleepChart.resize();
+  });
+
   async function updateSleepChart() {
     let chartLabels = [];
     let chartDurations = [];
@@ -498,9 +501,12 @@ document.addEventListener('DOMContentLoaded', function () {
       window.sleepChart.data.datasets[0].label = chartTitle;
 
       window.sleepChart.update();
-      updateSummaryStats(chartLabels, chartDurations, userGoal, currentTrendView);
-
-
+      updateSummaryStats(
+        chartLabels,
+        chartDurations,
+        userGoal,
+        currentTrendView
+      );
     }
   }
 
@@ -508,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Filter out entries with 0 duration
     const activeEntries = durations
       .map((val, index) => ({ value: Number(val), label: labels[index] }))
-      .filter(entry => entry.value > 0);
+      .filter((entry) => entry.value > 0);
 
     const totalCount = activeEntries.length;
     if (totalCount === 0) return;
@@ -542,18 +548,24 @@ document.addEventListener('DOMContentLoaded', function () {
     // Update Header and stats
     const titleElement = document.querySelector('.trend-details p.strong');
     if (titleElement) {
-      titleElement.innerText = viewType === 'weekly' ? 'Weekly Summary' : 'Monthly Summary';
+      titleElement.innerText =
+        viewType === 'weekly' ? 'Weekly Summary' : 'Monthly Summary';
     }
 
-    const goalStatus = avg >= userGoal ? "(Goal Met)" : "(Just under goal)";
+    const goalStatus = avg >= userGoal ? '(Goal Met)' : '(Just under goal)';
 
-    document.getElementById('avg-duration').innerText = `${formatTime(avg)} ${goalStatus}`;
-    document.getElementById('goal-met').innerText = activeEntries.filter(e => e.value >= userGoal).length;
+    document.getElementById('avg-duration').innerText =
+      `${formatTime(avg)} ${goalStatus}`;
+    document.getElementById('goal-met').innerText = activeEntries.filter(
+      (e) => e.value >= userGoal
+    ).length;
     document.getElementById('total-units').innerText = totalCount;
 
     // Update Longest and Shortest Sleep Duration
-    document.getElementById('longest-sleep').innerText = `${longest.label} (${labelPrefix}${formatTime(longest.value)})`;
-    document.getElementById('shortest-sleep').innerText = `${shortest.label} (${labelPrefix}${formatTime(shortest.value)})`;
+    document.getElementById('longest-sleep').innerText =
+      `${longest.label} (${labelPrefix}${formatTime(longest.value)})`;
+    document.getElementById('shortest-sleep').innerText =
+      `${shortest.label} (${labelPrefix}${formatTime(shortest.value)})`;
   }
 
   // View AI Insights
@@ -573,7 +585,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!response.ok) throw new Error(data.error || 'Scientist is busy.');
 
         aiContentBox.innerHTML = `
-                    <ul class="summary-list" style="margin-top: 20px; border-left: 4px solid #26a69a; padding-left: 15px;">
+                    <ul class="summary-list mb-0" style="margin-top: 20px; border-left: 4px solid #26a69a; padding-left: 15px;">
                         <li><strong>Score:</strong> ${data.insight.score}/100</li>
                         <li><strong>Insight:</strong> ${data.insight.insight}</li>
                         <li><strong>Analysis:</strong> ${data.insight.analysis}</li>

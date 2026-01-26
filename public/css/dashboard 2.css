@@ -44,7 +44,7 @@ nav.top-nav {
     border-radius: 30px;
     padding: 30px 40px;
     border: 1px solid #BEE3F7;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
     margin-bottom: 40px;
     flex: 1;
     display: flex;
@@ -94,7 +94,7 @@ nav.top-nav {
 
 .chip-toggle .chip.active {
     background: #fff !important;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Select & Time Input Styling --- */
@@ -124,9 +124,11 @@ nav.top-nav {
 input[type=range]::-webkit-slider-thumb {
     background-color: #1DB0FF !important;
 }
+
 input[type=range]::-moz-range-thumb {
     background-color: #1DB0FF !important;
 }
+
 input[type=range]::-ms-thumb {
     background-color: #1DB0FF !important;
 }
@@ -139,7 +141,7 @@ input[type=range]::-ms-thumb {
     font-size: 32px;
     font-weight: 700;
     margin: 15px 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
 .main-action-btn {
@@ -156,111 +158,14 @@ input[type=range]::-ms-thumb {
     color: #546e7a;
 }
 
-.strong { font-weight: 800; color: #000; }
-
-/* --- Trend Section Styling --- */
-.dash-date-label { 
-    font-weight: 600; 
-    font-size: 18px; 
-    margin-bottom: 50px; 
-}
-
-.graph-wrapper {
-    position: relative;
-    height: 250px;
-    margin: 70px 0 50px;
-    padding-left: 50px;
-    border-bottom: 2px solid #000;
-    background-color: #FFFAE2;
-}
-
-.y-axis {
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-weight: 600;
-    color: #444;
-}
-
-.axis-label {
-    position: absolute;
-    bottom: -35px;
-    font-weight: 700;
-    font-size: 16px;
+.strong {
+    font-weight: 800;
     color: #000;
 }
 
-.goal-line {
-    position: absolute;
-    left: 50px;
-    right: 0;
-    top: 33%;
-    border-top: 2px dashed #1DB0FF;
-    z-index: 1;
-}
-
-.goal-line span {
-    position: absolute;
-    top: -20px;
-    left: 0;
-    color: #1DB0FF;
-    font-weight: 700;
-    font-size: 0.85rem;
-}
-
-.bars-container {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-end;
-    height: 100%;
-    position: relative;
-    z-index: 2;
-}
-
-.bar-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 14%;
-    height: 100%;
-    justify-content: flex-end;
-    position: relative;
-}
-
-.bar {
-    width: 40px;
-    background: #1DB0FF;
-    border-radius: 8px 8px 0 0;
-    transition: transform 0.3s ease;
-    position: relative;
-}
-
-.bar.active { 
-    background: #1DB0FF; 
-    box-shadow: 0 0 15px rgba(29, 176, 255, 0.3); 
-}
-
-.bar-placeholder {
-    font-size: 0.75rem;
-    font-style: italic;
-    color: #999;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.bar-tooltip {
-    position: absolute;
-    top: -45px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #BEE3F7;
-    padding: 5px 15px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    font-weight: 700;
+/* --- Trend Section Styling --- */
+.dash-date-label {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 50px;
 }

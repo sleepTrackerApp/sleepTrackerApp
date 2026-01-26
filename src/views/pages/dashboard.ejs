@@ -1,415 +1,418 @@
 <%- include('../components/header', { isDashboard: true }) %>
 
-  <main class="dashboard-page">
+<main class="dashboard-page">
     <div class="dash-shell">
 
-      <section class="dash-hero">
-        <p class="dash-sub">
-          Good Morning, <b>
-            <%= (typeof user !=='undefined' && user.name) ? user.name : 'User' %>
-          </b>
-        </p>
-      </section>
+        <section class="dash-hero">
+            <p class="dash-sub">
+                Good Morning, <b>
+                    <%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %>
+                </b>
+            </p>
+        </section>
 
-      <section class="row scrollspy" id="log-section">
-        <div class="col s12 l6 dash-col">
-          <div class="dash-card">
-            <div class="card-head">
-              <h3>Log Last Night's Sleep</h3>
-            </div>
-            <div class="card-body">
-              <div class="row date-row">
-                <div class="col s4">
-                  <p>Date</p>
-                </div>
-                <div class="col s8">
-                  <input type="date" id="sleep-date" class="browser-default sleep-date-picker"
-                    aria-label="Select sleep log date">
-                </div>
-              </div>
-
-              <div class="center-align">
-                <div class="chip-toggle">
-                  <button class="chip js-log-toggle" data-view="time">By Time</button>
-                  <button class="chip active js-log-toggle" data-view="duration">By Duration</button>
-                </div>
-              </div>
-
-              <div id="view-duration" class="log-view">
-                <div class="row valign-wrapper">
-                  <div class="col s4">
-                    <p>Duration</p>
-                  </div>
-                  <div class="col s8 flex-row-align">
-                    <select id="input-hours" class="browser-default inline-select" aria-label="Select hours slept">
-                      >
-                      <% for(let h=0; h <=24; h++) { %>
-                        <option value="<%= h %>">
-                          <%= h.toString().padStart(2, '0' ) %>
-                        </option>
-                        <% } %>
-                    </select>
-                    <span class="unit-label">hours</span>
-
-                    <select id="input-minutes" class="browser-default inline-select" aria-label="Select minutes slept">
-                      <% for(let m=0; m < 60; m++) { %>
-                        <option value="<%= m %>">
-                          <%= m.toString().padStart(2, '0' ) %>
-                        </option>
-                        <% } %>
-                    </select>
-                    <span class="unit-label">minutes</span>
-                  </div>
-                </div>
-              </div>
-
-              <div id="view-time" class="log-view" style="display: none;">
-                <div class="row valign-wrapper">
-                  <div class="col s4">
-                    <p>Bed-Wake Time</p>
-                  </div>
-                  <div class="col s8">
-                    <input type="time" class="browser-default inline-select" value="22:00" aria-label="Select bedtime">
-                    to
-                    <input type="time" class="browser-default inline-select" value="06:30"
-                      aria-label="Select wake time">
-                  </div>
-                </div>
-              </div>
-
-              <div class="range-container">
-                <p>Rate Your Sleep</p>
-                <p class="range-field">
-                  <input type="range" id="sleep-rate" min="0" max="10" value="8" aria-label="Rate your sleep quality" />
-                </p>
-              </div>
-
-              <div class="card-footer">
-                <button id="btn-confirm-save" class="btn black white-text main-action-btn z-depth-0">
-                  Confirm and Save
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col s12 l6 dash-col">
-          <div class="dash-card preview-card">
-            <div class="card-head">
-              <h3>Recent Sleep History</h3>
-            </div>
-            <div class="card-body">
-
-              <div class="card history-card">
-                <div class="card-content">
-                  <table class="striped">
-                    <thead>
-                      <tr>
-                        <th>Date</th>
-                        <th>Duration</th>
-                        <th>Quality</th>
-                      </tr>
-                    </thead>
-                    <tbody id="sleep-history-body">
-                    </tbody>
-                  </table>
-                  <div class="pagination-controls center-align" style="margin-top: 20px;">
-                    <button id="prev-page" class="btn-flat waves-effect" disabled>
-                      <i class="material-icons left">chevron_left</i>Prev
-                    </button>
-                    <span id="page-info" style="margin: 0 15px; font-weight: bold;">Page 1</span>
-                    <button id="next-page" class="btn-flat waves-effect">
-                      Next<i class="material-icons right">chevron_right</i>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <div id="saved-sleep-display" class="container" style="display: none; margin-bottom: 20px;">
-        <div class="card-panel teal white-text">
-          <h5>Latest Logged Entry</h5>
-          <p id="final-log-text"></p>
-        </div>
-      </div>
-
-
-
-      <section class="dash-block scrollspy row" id="trends-section">
-        <div class="col l12">
-          <div class="dash-card">
-            <div class="card-head center-align">
-              <h3>Your Sleep Trends</h3>
-            </div>
-
-            <div class="center-align">
-              <div class="chip-toggle">
-                <button class="chip active js-trend-toggle" data-view="weekly">Weekly</button>
-                <button class="chip js-trend-toggle" data-view="monthly">Monthly</button>
-              </div>
-            </div>
-
-            <div id="view-weekly" class="trend-view-container">
-              <p class="center-align dash-date-label">Current Progress</p>
-              <div class="graph-wrapper">
-                <div class="chart-container" style="position: relative; height:30vh; width:100%">
-                  <canvas id="sleepChart"></canvas>
-                </div>
-              </div>
-
-              <div class="row trend-details">
-                <div class="col s12 m6">
-                  <p class="strong">Weekly Summary</p>
-                  <ul class="summary-list">
-                    <li>
-                      <strong>Average Duration:</strong> <span id="avg-duration">--</span>
-                    </li>
-                    <li>
-                      <strong>Goal Met:</strong> <span id="goal-met">--</span> / <span id="total-units">--</span> <span id="unit-text"></span> recorded
-                    </li>
-                    <li>
-                      <strong>Longest Sleep:</strong> <span id="longest-sleep">--</span>
-                    </li>
-                    <li>
-                      <strong>Shortest Sleep:</strong> <span id="shortest-sleep">--</span>
-                    </li>
-                  </ul>
-                </div>
-                <div class="col s12 m6 ai-insight-column">
-                  <p class="strong">AI Insights
-                    <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
-                  </p>
-                  <div class="ai-content-box" style="display: none;">
-                    <ul class="summary-list">
-                      <li>
-                        <strong>Insight:</strong> Strong Recovery Streak
-                      </li>
-                      <li>
-                        <strong>Analysis:</strong> After a rough start on Monday (6h), you have bounced back
-                        impressively!
-                      </li>
-                      <li>
-                        <strong>Recommendation:</strong> Watch out for the weekend. Keep your bedtime within 1 hour of
-                        your weekday routine.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div id="view-monthly" class="trend-view-container" style="display: none;">
-              <p class="center-align dash-date-label">Current Month Progress (December 2025)</p>
-              <div class="graph-wrapper">
-                <div class="y-axis">
-                  <span>12h</span><span>8h</span><span>4h</span><span>0h</span>
-                </div>
-                <div class="goal-line"><span>Goal</span></div>
-                <div class="bars-container">
-                  <div class="bar-group">
-                    <div class="bar blue" style="height: 60%;"></div>
-                    <span class="axis-label">Dec 1-7</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar blue active" style="height: 67%;">
-                      <div class="bar-tooltip">Week 2 Avg: 8h 10m</div>
+        <section class="row scrollspy" id="log-section">
+            <div class="col s12 l6 dash-col">
+                <div class="dash-card">
+                    <div class="card-head">
+                        <h3>Log Last Night's Sleep</h3>
                     </div>
-                    <span class="axis-label">Dec 8-14</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar blue" style="height: 55%;"></div>
-                    <span class="axis-label">Dec 15-21</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar blue" style="height: 63%;"></div>
-                    <span class="axis-label">Dec 22-28</span>
-                  </div>
-                  <div class="bar-group">
-                    <div class="bar-placeholder">Up coming</div>
-                    <span class="axis-label">Dec 29-31</span>
-                  </div>
+                    <div class="card-body">
+                        <div class="row date-row valign-wrapper">
+                            <div class="col s12 m4">Date:</div>
+                            <div class="col s12 m8 date-cell">
+                                <input type="date" id="sleep-date" class="browser-default sleep-date-picker date-input-inline"
+                                       aria-label="Select sleep log date">
+                            </div>
+                        </div>
+
+                        <div class="center-align">
+                            <div class="chip-toggle">
+                                <button class="chip js-log-toggle" data-view="time">By Time</button>
+                                <button class="chip active js-log-toggle" data-view="duration">By Duration</button>
+                            </div>
+                        </div>
+
+                        <div id="view-duration" class="log-view">
+                            <div class="row valign-wrapper">
+                                <div class="col s12 m4">Duration:</div>
+                                <div class="col s12 m8 flex-row-align">
+                                    <select id="input-hours" class="browser-default inline-select" aria-label="Select hours slept">
+                                        >
+                                        <% for(let h = 0; h <= 24; h++) { %>
+                                            <option value="<%= h %>">
+                                                <%= h.toString().padStart(2, '0') %>
+                                            </option>
+                                        <% } %>
+                                    </select>
+                                    <span class="unit-label">hours</span>
+
+                                    <select id="input-minutes" class="browser-default inline-select" aria-label="Select minutes slept">
+                                        <% for(let m = 0; m < 60; m++) { %>
+                                            <option value="<%= m %>">
+                                                <%= m.toString().padStart(2, '0') %>
+                                            </option>
+                                        <% } %>
+                                    </select>
+                                    <span class="unit-label">minutes</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="view-time" class="log-view" style="display: none;">
+                            <div class="row valign-wrapper">
+                                <div class="col s12 m4">Bed-Wake Time:</div>
+                                <div class="col s12 m8">
+                                    <input type="time" class="browser-default inline-select" value="22:00" aria-label="Select bedtime">
+                                    to
+                                    <input type="time" class="browser-default inline-select" value="06:30"
+                                           aria-label="Select wake time">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row range-row valign-wrapper">
+                            <div class="col s12 m4">Rate Your Sleep:</div>
+                            <div class="col s12 m8">
+                                <div class="range-with-labels">
+                                    <span class="range-end-label" aria-hidden="true">1</span>
+                                    <p class="range-field">
+                                        <input type="range" id="sleep-rate" min="1" max="10" value="8" aria-label="Rate your sleep quality"/>
+                                    </p>
+                                    <span class="range-end-label" aria-hidden="true">10</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer">
+                            <button id="btn-confirm-save" class="btn black white-text main-action-btn z-depth-0">
+                                Confirm and Save
+                            </button>
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
-              <div class="row trend-details">
-                <div class="col s12 m6">
-                  <p class="strong">Monthly Summary</p>
-                  <ul class="summary-list">
-                    <li>
-                      <strong>Average Duration:</strong> 7h 35m (Just under goal)
-                    </li>
-                    <li>
-                      <strong>Goal Met:</strong> 2 / 4 recorded weeks
-                    </li>
-                    <li>
-                      <strong>Best Week:</strong> Week 2, Dec 8-14 (8h 10m)
-                    </li>
-                    <li>
-                      <strong>Lowest Week:</strong> Week 3, Dec 15-21 (6h 45m)
-                    </li>
-                  </ul>
+            <div class="col s12 l6 dash-col">
+                <div class="dash-card preview-card">
+                    <div class="card-head">
+                        <h3>Recent Sleep History</h3>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="card history-card">
+                            <div class="card-content">
+                                <table class="striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Duration</th>
+                                        <th>Quality</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="sleep-history-body">
+                                    </tbody>
+                                </table>
+                                <div class="pagination-controls center-align" style="margin-top: 20px;">
+                                    <button id="prev-page" class="btn-flat waves-effect" disabled>
+                                        <i class="material-icons left">chevron_left</i>Prev
+                                    </button>
+                                    <span id="page-info" style="margin: 0 15px; font-weight: bold;">Page 1</span>
+                                    <button id="next-page" class="btn-flat waves-effect">
+                                        Next<i class="material-icons right">chevron_right</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
-                <div class="col s12 m6 ai-insight-column">
-                  <p class="strong">AI Insights
-                    <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
-                  </p>
-                  <div class="ai-content-box" style="display: none;">
-                    <ul class="summary-list">
-                      <li>
-                        <strong>Insight:</strong> Getting back on track
-                      </li>
-                      <li>
-                        <strong>Analysis:</strong> You started December really well, but things got tough in Week 3
-                        (dropping to 6h 45m). The good news is you are already bouncing back this week - great job!
-                      </li>
-                      <li>
-                        <strong>Recommendation:</strong> If you know the middle of the month is usually busy, try to get
-                        to bed just 30 minutes earlier the week before. It helps you handle the stress much better.
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
             </div>
+        </section>
 
-            <h4 class="score-label">Sleep Score:</h4>
-          </div>
-        </div>
-      </section>
-
-      <section class="row dash-block goals" id="goals-section">
-        <!-- Goal Settings / Summary + History -->
-        <div class="col s12 l6 dash-col">
-          <div class="dash-card goal-settings-card">
-            <!-- Loading state -->
-            <div id="goal-loading" class="goal-loading">
-              <div class="goal-spinner"></div>
-              <p>Loading your goal...</p>
+        <div id="saved-sleep-display" class="container" style="display: none; margin-bottom: 20px;">
+            <div class="card-panel teal white-text">
+                <h5>Latest Logged Entry</h5>
+                <p id="final-log-text"></p>
             </div>
-
-            <!-- Goal form -->
-            <div id="goal-form-wrapper" class="card-body goal-form" style="display: none;">
-              <div class="card-head">
-                <h3 class="mb-1">Set New Sleep Goal</h3>
-              </div>
-              <p class="m-0 mb-6">Choose a nightly goal between 6 and 12
-                hours</p>
-
-              <div class="row valign-wrapper mt-1">
-                <div class="col">
-                  <p class="goal-label m-0">Duration</p>
-                </div>
-                <div class="col s8 flex-row-align">
-                  <select id="goal-hours" class="browser-default inline-select" aria-label="Select goal hours">
-                    <% for(let h=6; h <=12; h++) { %>
-                      <option value="<%= h %>">
-                        <%= h.toString().padStart(2, '0' ) %>
-                      </option>
-                      <% } %>
-                  </select>
-                  <span class="unit-label">hours</span>
-
-                  <select id="goal-minutes" class="browser-default inline-select" aria-label="Select goal minutes">
-                    <% for(let m=0; m < 60; m +=5) { %>
-                      <option value="<%= m %>">
-                        <%= m.toString().padStart(2, '0' ) %>
-                      </option>
-                      <% } %>
-                  </select>
-                  <span class="unit-label">minutes</span>
-                </div>
-              </div>
-
-              <p id="goal-error" class="goal-error red-text" style="display: none;"></p>
-
-              <div class="card-footer">
-                <button id="goal-save-btn" class="btn black white-text main-action-btn z-depth-0">
-                  Save Goal
-                </button>
-                <a href="#" id="goal-cancel-link" class="goal-cancel-link">Cancel</a>
-              </div>
-            </div>
-
-            <!-- Current goal summary -->
-            <div id="goal-summary-wrapper" class="card-body goal-summary" style="display: none;">
-              <div class="card-head">
-                <h3>Sleep Goal</h3>
-              </div>
-
-              <div class="goal-row">
-                <span class="goal-label">Current Goal:</span>
-                <span id="goal-summary-current" class="goal-value"></span>
-              </div>
-
-              <div class="goal-row">
-                <span class="goal-label">Set on:</span>
-                <span id="goal-summary-date" class="goal-date muted"></span>
-              </div>
-
-              <div class="card-footer">
-                <button id="goal-change-btn" class="btn black white-text main-action-btn z-depth-0 goal-change-btn">
-                  Change Goal
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monthly goal history -->
-          <div id="goal-history-card" class="dash-card goal-history-card" style="display: none;">
-            <div class="card-head">
-              <h3 id="goal-history-month">Loading...</h3>
-            </div>
-            <div class="card-body">
-              <div id="goal-history-grid" class="goal-history-grid"></div>
-              <p id="goal-history-empty" class="goal-history-empty muted center-align mt-3" style="display: none;"></p>
-            </div>
-          </div>
         </div>
 
-        <!-- Progress / Goal insight -->
-        <div class="col s12 l6 dash-col">
-          <div class="dash-card goal-progress-card" style="display: none;">
-            <div class="card-head">
-              <h3>Your Progress</h3>
+
+        <section class="dash-block scrollspy row" id="trends-section">
+            <div class="col l12">
+                <div class="dash-card">
+                    <div class="card-head center-align">
+                        <h3>Your Sleep Trends</h3>
+                    </div>
+
+                    <div class="center-align">
+                        <div class="chip-toggle">
+                            <button class="chip active js-trend-toggle" data-view="weekly">Weekly</button>
+                            <button class="chip js-trend-toggle" data-view="monthly">Monthly</button>
+                        </div>
+                    </div>
+
+                    <div id="view-weekly" class="trend-view-container">
+                        <p class="center-align dash-date-label">Current Progress</p>
+                        <div class="graph-wrapper">
+                            <div class="chart-container" style="position: relative; height:30vh; width:100%">
+                                <canvas id="sleepChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="row trend-details mb-0">
+                            <div class="col s12 m6">
+                                <p class="strong">Weekly Summary</p>
+                                <ul class="summary-list mb-0">
+                                    <li>
+                                        <strong>Average Duration:</strong>
+                                        <span id="avg-duration">--</span>
+                                    </li>
+                                    <li>
+                                        <strong>Goal Met:</strong>
+                                        <span id="goal-met">--</span> /
+                                        <span id="total-units">--</span>
+                                        <span id="unit-text"></span> recorded
+                                    </li>
+                                    <li>
+                                        <strong>Longest Sleep:</strong>
+                                        <span id="longest-sleep">--</span>
+                                    </li>
+                                    <li>
+                                        <strong>Shortest Sleep:</strong>
+                                        <span id="shortest-sleep">--</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col s12 m6 ai-insight-column">
+                                <p class="strong">AI Insights
+                                    <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
+                                </p>
+                                <div class="ai-content-box mb-0" style="display: none;">
+                                    <ul class="summary-list mb-0">
+                                        <li>
+                                            <strong>Insight:</strong> Strong Recovery Streak
+                                        </li>
+                                        <li>
+                                            <strong>Analysis:</strong> After a rough start on Monday (6h), you have bounced back
+                                            impressively!
+                                        </li>
+                                        <li>
+                                            <strong>Recommendation:</strong> Watch out for the weekend. Keep your bedtime within 1 hour of
+                                            your weekday routine.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="view-monthly" class="trend-view-container" style="display: none;">
+                        <p class="center-align dash-date-label">Current Month Progress (December 2025)</p>
+                        <div class="graph-wrapper">
+                            <div class="y-axis">
+                                <span>12h</span><span>8h</span><span>4h</span><span>0h</span>
+                            </div>
+                            <div class="goal-line"><span>Goal</span></div>
+                            <div class="bars-container">
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 60%;"></div>
+                                    <span class="axis-label">Dec 1-7</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue active" style="height: 67%;">
+                                        <div class="bar-tooltip">Week 2 Avg: 8h 10m</div>
+                                    </div>
+                                    <span class="axis-label">Dec 8-14</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 55%;"></div>
+                                    <span class="axis-label">Dec 15-21</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar blue" style="height: 63%;"></div>
+                                    <span class="axis-label">Dec 22-28</span>
+                                </div>
+                                <div class="bar-group">
+                                    <div class="bar-placeholder">Up coming</div>
+                                    <span class="axis-label">Dec 29-31</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row trend-details mb-0">
+                            <div class="col s12 m6">
+                                <p class="strong">Monthly Summary</p>
+                                <ul class="summary-list mb-0">
+                                    <li>
+                                        <strong>Average Duration:</strong> 7h 35m (Just under goal)
+                                    </li>
+                                    <li>
+                                        <strong>Goal Met:</strong> 2 / 4 recorded weeks
+                                    </li>
+                                    <li>
+                                        <strong>Best Week:</strong> Week 2, Dec 8-14 (8h 10m)
+                                    </li>
+                                    <li>
+                                        <strong>Lowest Week:</strong> Week 3, Dec 15-21 (6h 45m)
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col s12 m6 ai-insight-column">
+                                <p class="strong">AI Insights
+                                    <a href="#" class="js-view-insights blue-text text-lighten-2">View</a>
+                                </p>
+                                <div class="ai-content-box mb-0" style="display: none;">
+                                    <ul class="summary-list mb-0">
+                                        <li>
+                                            <strong>Insight:</strong> Getting back on track
+                                        </li>
+                                        <li>
+                                            <strong>Analysis:</strong> You started December really well, but things got tough in Week 3
+                                            (dropping to 6h 45m). The good news is you are already bouncing back this week - great job!
+                                        </li>
+                                        <li>
+                                            <strong>Recommendation:</strong> If you know the middle of the month is usually busy, try to get
+                                            to bed just 30 minutes earlier the week before. It helps you handle the stress much better.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-              <p id="goal-progress-message" class="muted m-0 mb-4"></p>
+        </section>
 
-              <!-- Goal progress chart & stats -->
-              <div id="goal-progress-empty" class="muted center-align" style="display: none;"></div>
+        <section class="row dash-block goals" id="goals-section">
+            <!-- Goal Settings / Summary + History -->
+            <div class="col s12 l6 dash-col">
+                <div class="dash-card goal-settings-card">
+                    <!-- Loading state -->
+                    <div id="goal-loading" class="goal-loading">
+                        <div class="goal-spinner"></div>
+                        <p>Loading your goal...</p>
+                    </div>
 
-              <div id="goal-progress-content" style="display: none;">
-                <div id="goal-progress-chart"></div>
+                    <!-- Goal form -->
+                    <div id="goal-form-wrapper" class="card-body goal-form" style="display: none;">
+                        <div class="card-head">
+                            <h3 class="mb-1">Set New Sleep Goal</h3>
+                        </div>
+                        <p class="m-0 mb-6">Choose a nightly goal between 6 and 12
+                            hours</p>
 
-                <div class="goal-progress-row">
-                  <span class="goal-progress-label">Days Recorded</span>
-                  <span id="goal-progress-recorded" class="goal-progress-value"></span>
+                        <div class="row valign-wrapper mt-1">
+                            <div class="col">
+                                <p class="goal-label m-0">Duration</p>
+                            </div>
+                            <div class="col s8 flex-row-align">
+                                <select id="goal-hours" class="browser-default inline-select" aria-label="Select goal hours">
+                                    <% for(let h = 6; h <= 12; h++) { %>
+                                        <option value="<%= h %>">
+                                            <%= h.toString().padStart(2, '0') %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                                <span class="unit-label">hours</span>
+
+                                <select id="goal-minutes" class="browser-default inline-select" aria-label="Select goal minutes">
+                                    <% for(let m = 0; m < 60; m += 5) { %>
+                                        <option value="<%= m %>">
+                                            <%= m.toString().padStart(2, '0') %>
+                                        </option>
+                                    <% } %>
+                                </select>
+                                <span class="unit-label">minutes</span>
+                            </div>
+                        </div>
+
+                        <p id="goal-error" class="goal-error red-text" style="display: none;"></p>
+
+                        <div class="card-footer">
+                            <button id="goal-save-btn" class="btn black white-text main-action-btn z-depth-0">
+                                Save Goal
+                            </button>
+                            <a href="#" id="goal-cancel-link" class="goal-cancel-link">Cancel</a>
+                        </div>
+                    </div>
+
+                    <!-- Current goal summary -->
+                    <div id="goal-summary-wrapper" class="card-body goal-summary" style="display: none;">
+                        <div class="card-head">
+                            <h3>Sleep Goal</h3>
+                        </div>
+
+                        <div class="goal-row">
+                            <span class="goal-label">Current Goal:</span>
+                            <span id="goal-summary-current" class="goal-value"></span>
+                        </div>
+
+                        <div class="goal-row">
+                            <span class="goal-label">Set on:</span>
+                            <span id="goal-summary-date" class="goal-date muted"></span>
+                        </div>
+
+                        <div class="card-footer">
+                            <button id="goal-change-btn" class="btn black white-text main-action-btn z-depth-0 goal-change-btn">
+                                Change Goal
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="goal-progress-row">
-                  <span class="goal-progress-label">Monthly Average</span>
-                  <span class="goal-progress-value">
+                <!-- Monthly goal history -->
+                <div id="goal-history-card" class="dash-card goal-history-card" style="display: none;">
+                    <div class="card-head">
+                        <h3 id="goal-history-month">Loading...</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="goal-history-grid" class="goal-history-grid"></div>
+                        <p id="goal-history-empty" class="goal-history-empty muted center-align mt-3" style="display: none;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress / Goal insight -->
+            <div class="col s12 l6 dash-col">
+                <div class="dash-card goal-progress-card" style="display: none;">
+                    <div class="card-head">
+                        <h3>Your Progress</h3>
+                    </div>
+                    <div class="card-body">
+                        <p id="goal-progress-message" class="muted m-0 mb-4"></p>
+
+                        <!-- Goal progress chart & stats -->
+                        <div id="goal-progress-empty" class="muted center-align" style="display: none;"></div>
+
+                        <div id="goal-progress-content" style="display: none;">
+                            <div id="goal-progress-chart"></div>
+
+                            <div class="goal-progress-row">
+                                <span class="goal-progress-label">Days Recorded</span>
+                                <span id="goal-progress-recorded" class="goal-progress-value"></span>
+                            </div>
+
+                            <div class="goal-progress-row">
+                                <span class="goal-progress-label">Monthly Average</span>
+                                <span class="goal-progress-value">
                     <span id="goal-progress-average"></span>
                     <span id="goal-progress-average-label" class="goal-progress-tag"></span>
                   </span>
-                </div>
+                            </div>
 
-                <div class="goal-progress-row">
-                  <span class="goal-progress-label">Goal Consistency</span>
-                  <span id="goal-progress-projected" class="goal-progress-value"></span>
-                </div>
+                            <div class="goal-progress-row">
+                                <span class="goal-progress-label">Goal Consistency</span>
+                                <span id="goal-progress-projected" class="goal-progress-value"></span>
+                            </div>
 
-                <p id="goal-progress-summary" class="goal-progress-summary center-align muted mt-3"></p>
-              </div>
+                            <p id="goal-progress-summary" class="goal-progress-summary center-align muted mt-3"></p>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </section>
+        </section>
     </div>
-  </main>
+</main>
 
-  <%- include('../components/footer', { isDashboard: true }) %>
+<%- include('../components/footer', { isDashboard: true }) %>
