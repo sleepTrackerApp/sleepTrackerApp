@@ -3,6 +3,7 @@
  *
  */
 const { sleepEntryService } = require("../services")
+const { exportCSV } = require("../helpers/exportCSV")
 
 /**
  * Get sleep entries for a user with pagination and optional date range filtering.
@@ -148,11 +149,36 @@ async function deleteSleepEntry(req, res, next) {
   }
 }
 
+async function exportAllSleepEntries(req, res, next){
+    try{
+        const userId = res.locals.userRecord._id;
+        const entries = await sleepEntryService.getAllSleepEntries(userId);
+        const csvEntries = exportCSV(entries); 
+
+        if (!csvEntries) {
+            return res.status(404).json({
+                success: false,
+                error: {
+                    code: 'NOT_FOUND',
+                    message: 'Unable to export '
+                }
+            });
+        }
+
+        res.setHeader('Content-Type', 'text/csvEntries'); 
+        res.setHeader('Content-Disposition', 'attachment; filename="sleep_entries.csv"'); 
+
+        res.status(200).send(csvEntries); 
+    } catch (error) {
+        next(error);
+    }
+}
 module.exports = {
   getSleepEntries,
   getSleepEntryByDate,
   createOrUpdateSleepEntry,
   deleteSleepEntry,
+  exportAllSleepEntries,
 }
 
 

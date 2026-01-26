@@ -3,6 +3,8 @@ const sinon = require('sinon');
 const { sleepEntryController } = require('../../../src/controllers');
 const { sleepEntryService } = require('../../../src/services');
 
+const exportCSV = require('../../../src/helpers/exportCSV');
+
 describe('Sleep Entry Controller', () => {
   const mockUserId = '507f1f77bcf86cd799439011';
   let req, res, next;
@@ -17,7 +19,9 @@ describe('Sleep Entry Controller', () => {
       locals: {
         userRecord: { _id: mockUserId }
       },
+      setHeader: sinon.stub(),
       status: sinon.stub().returnsThis(),
+      send: sinon.stub(),
       json: sinon.stub(),
     };
     next = sinon.stub();
@@ -48,6 +52,26 @@ describe('Sleep Entry Controller', () => {
       })).to.be.true;
     });
   });
+
+    describe('exportAllSleepEntries', () => {
+        it('should export all sleep entries', async () => {
+            const mockEntries = [ 
+                { _id: 'entry1', duration: 480 }
+            ];
+
+            const mockCSV = '"_id","duration"\n"entry1",480';
+
+            sinon.stub(sleepEntryService, 'getAllSleepEntries').resolves(mockEntries);
+            sinon.stub(exportCSV, 'exportCSV').returns(mockCSV);
+
+            await sleepEntryController.exportAllSleepEntries(req, res, next);
+
+            expect(res.setHeader.calledWith('Content-Type', 'text/csvEntries')).to.be.true;
+            expect(res.setHeader.calledWith('Content-Disposition','attachment; filename="sleep_entries.csv"')).to.be.true;
+
+            expect(res.send.calledWith(mockCSV)).to.be.true;
+        });
+    });
 
   describe('getSleepEntryByDate', () => {
     it('should return sleep entry by date', async () => {

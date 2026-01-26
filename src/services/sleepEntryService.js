@@ -244,6 +244,15 @@ async function getSleepEntryByDate(userId, entryDate) {
 }
 
 /**
+ * Export all sleep data for CSV export document download.
+ * @parm userId - ID of the user object
+ */
+async function getAllSleepEntries(userId) {
+    return SleepEntry.find({ userId })
+
+}
+
+/**
  * Get or create a sleep entry for a user by date.
  * @param {string} userId - ID of the user object
  * @param {Date} entryData - data for the sleep entry if creating new
@@ -284,6 +293,7 @@ module.exports = {
     getSleepEntryByDate,
     getOrCreateSleepEntry,
     deleteSleepEntryByDate,
+    getAllSleepEntries,
 };
 
 

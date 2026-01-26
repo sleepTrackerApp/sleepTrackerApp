@@ -140,157 +140,129 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    //View Summary Logic
-    const summaryBtn = document.getElementById('btn-view-summary');
+    // Confirm and Save Logic
+    let currentPage = 1;
+    const entriesPerPage = 10;
 
-    if (summaryBtn) {
-        summaryBtn.addEventListener('click', () => {
-            //Determine which tab is active
-            const activeBtn = document.querySelector('.js-log-toggle.active');
-            const viewType = activeBtn ? activeBtn.getAttribute('data-view') : 'duration';
-
-            //Select preview elements by ID
-            const totalPill = document.querySelector('.total-pill');
-            const timeDisplay = document.getElementById('preview-time-window');
-            const qualityDisplay = document.getElementById('preview-quality');
-            const qualityVal = document.getElementById('sleep-rate').value;
-
-            //Update Quality 
-            if (qualityDisplay) {
-                const status = qualityVal >= 7 ? 'Good' : (qualityVal >= 4 ? 'Fair' : 'Poor');
-                qualityDisplay.innerText = `${qualityVal}/10 - ${status}`;
-            }
-
-            //pdate Sleep Data based on Tab
-            if (viewType === 'duration') {
-                const h = document.getElementById('input-hours').value;
-                const m = document.getElementById('input-minutes').value;
-
-                const hours = h ? parseInt(h) : 0;
-                const mins = m ? parseInt(m) : 0;
-
-                // VALIDATION: Duration cannot be 0
-                if (hours === 0 && mins === 0) {
-                    if (totalPill) totalPill.innerText = "-";
-                    if (timeDisplay) timeDisplay.innerText = "-";
-                    if (qualityDisplay) qualityDisplay.innerText = "-";
-
-                    //Trigger the error message
-                    M.toast({
-                        html: 'Sleep duration cannot be 0 hours!',
-                        classes: 'rounded red',
-                        displayLength: 3000
-                    });
-
-                    return;
-                }
-
-                if (totalPill) {
-                    totalPill.innerText = `${hours} hrs ${mins.toString().padStart(2, '0')} mins`;
-                }
-                if (timeDisplay) timeDisplay.innerText = '-';
-            }
-            else {
-                const startTime = document.querySelector('#view-time input:nth-of-type(1)').value;
-                const endTime = document.querySelector('#view-time input:nth-of-type(2)').value;
-
-                const start = new Date(`2026-01-01T${startTime}`);
-                const end = new Date(`2026-01-01T${endTime}`);
-                let diff = (end - start) / 1000 / 60 / 60;
-                if (diff < 0) diff += 24;
-
-                const h = Math.floor(diff);
-                const m = Math.round((diff - h) * 60);
-
-                if (totalPill) totalPill.innerText = `${h} hrs ${m.toString().padStart(2, '0')} mins`;
-
-                // Format 24h to 12h
-                const format12h = (t) => {
-                    const [hr, min] = t.split(':');
-                    const hInt = parseInt(hr);
-                    return `${((hInt + 11) % 12 + 1)}:${min} ${hInt >= 12 ? 'PM' : 'AM'}`;
-                };
-                if (timeDisplay) timeDisplay.innerText = `${format12h(startTime)} - ${format12h(endTime)}`;
-            }
-        });
-    }
-
-    //Confirm and Save Logic
-    const loadPersistentHistory = () => {
+    const loadPersistentHistory = async () => {
         const historyBody = document.getElementById('sleep-history-body');
         if (!historyBody) return;
 
-        const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
-        historyBody.innerHTML = savedData.map(entry =>
-            `<tr><td>${entry.date}</td><td>${entry.duration}</td><td>${entry.quality}</td></tr>`
-        ).join('');
+        // Fetch from Controller's getSleepEntries endpoint
+        const response = await fetch(`/api/sleep-entries?page=${currentPage}&limit=${entriesPerPage}`);
+        const result = await response.json();
+
+        if (result.success) {
+            const { sleepEntries, totalPages } = result.data;
+
+            historyBody.innerHTML = sleepEntries.map(entry => {
+                const date = new Date(entry.entryDate).toLocaleDateString('en-US', {
+                    month: 'short', day: 'numeric', year: 'numeric'
+                });
+                const hrs = Math.floor(entry.duration / 60);
+                const mins = entry.duration % 60;
+
+                return `<tr>
+                <td>${date}</td>
+                <td>${hrs} hrs ${mins.toString().padStart(2, '0')} mins</td>
+                <td>${entry.rating}/10</td>
+            </tr>`;
+            }).join('');
+
+            document.getElementById('page-info').innerText = `Page ${currentPage} of ${totalPages || 1}`;
+            document.getElementById('next-page').disabled = (currentPage >= totalPages);
+
+            const prevBtn = document.getElementById('prev-page');
+            if (prevBtn) {
+                prevBtn.disabled = (currentPage === 1);
+            }
+
+            const nextBtn = document.getElementById('next-page');
+            if (nextBtn) {
+                nextBtn.disabled = (currentPage >= totalPages || totalPages === 0);
+            }
+        }
     };
+
+    // Add Event Listeners for Buttons
+    document.getElementById('prev-page')?.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            loadPersistentHistory();
+        }
+    });
+
+    document.getElementById('next-page')?.addEventListener('click', () => {
+        const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
+        if (currentPage * entriesPerPage < savedData.length) {
+            currentPage++;
+            loadPersistentHistory();
+        }
+    });
 
     loadPersistentHistory();
 
-    const confirmBtn = document.querySelector('.preview-card .main-action-btn');
+    const confirmBtn = document.getElementById('btn-confirm-save');
 
-    if (confirmBtn) {
-        confirmBtn.addEventListener('click', () => {
-            const displayArea = document.getElementById('saved-sleep-display');
-            const textElement = document.getElementById('final-log-text');
-            const totalPillValue = document.querySelector('.total-pill').innerText;
-            const dateInput = document.getElementById('sleep-date');
-            const qualityLabel = document.getElementById('preview-quality');
-            const qualityValue = qualityLabel ? qualityLabel.innerText : "-";
+    confirmBtn.addEventListener('click', async () => {
+        const activeBtn = document.querySelector('.js-log-toggle.active');
+        const viewType = activeBtn ? activeBtn.getAttribute('data-view') : 'duration';
+        const entryTime = document.getElementById('sleep-date').value;
 
-            let displayDate = "Last Night";
+        const entryData = {
+            entryTime: entryTime,
+            rating: parseInt(document.getElementById('sleep-rate').value)
+        };
 
-            if (dateInput && dateInput.value) {
-                const dateObj = new Date(dateInput.value);
-                displayDate = dateObj.toLocaleDateString('en-US', {
-                    month: 'short', day: 'numeric', year: 'numeric'
-                });
+        if (viewType === 'duration') {
+            const h = parseInt(document.getElementById('input-hours').value) || 0;
+            const m = parseInt(document.getElementById('input-minutes').value) || 0;
+            entryData.duration = (h * 60) + m;
+        } else {
+
+            const startVal = document.querySelector('#view-time input:nth-of-type(1)').value;
+            const endVal = document.querySelector('#view-time input:nth-of-type(2)').value;
+
+            // Create Date objects using the entry date as the base
+            let startDate = new Date(`${entryTime}T${startVal}`);
+            let endDate = new Date(`${entryTime}T${endVal}`);
+
+            // If the start time is in AM, the date is the next
+            if (startDate.getHours() < 12) {
+                startDate.setDate(startDate.getDate() + 1);
             }
 
-            //Validation to prevent data submission before previewing.
-            if (totalPillValue === "-" || totalPillValue.startsWith("0 hrs 00")) {
-                M.toast({ html: 'Please "View Summary" first!', classes: 'rounded orange' });
-                return;
+            if (endDate <= startDate) {
+                endDate.setDate(endDate.getDate() + 1);
             }
 
-            //Validation to prevent duplicate data.
-            const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
-            if (savedData.some(entry => entry.date === displayDate)) {
-                M.toast({ html: `Entry for ${displayDate} already exists!`, classes: 'rounded red' });
-                return;
-            }
+            entryData.startTime = startDate.toISOString();
+            entryData.endTime = endDate.toISOString();
+        }
 
-            const newEntry = { date: displayDate, duration: totalPillValue, quality: qualityValue };
-            savedData.unshift(newEntry);
-            //if (savedData.length > 10) savedData.pop();
-            localStorage.setItem('sleepHistory', JSON.stringify(savedData));
+        try {
+            const response = await fetch('/api/sleep-entries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entryData)
+            });
 
-            loadPersistentHistory();
+            const result = await response.json();
 
-            // Latest Logged Entry
-            if (displayArea && textElement) {
-                displayArea.style.display = 'block';
-                textElement.innerHTML = `<strong>Success:</strong> Sleep data logged for ${displayDate}.`;
-                displayArea.classList.add('pulse');
-                setTimeout(() => displayArea.classList.remove('pulse'), 2000);
-
-                // Reset UI
-                document.querySelector('.total-pill').innerText = "-";
-                const timeWindow = document.getElementById('preview-time-window');
-                if (timeWindow) timeWindow.innerText = "-";
-                if (qualityLabel) qualityLabel.innerText = "-";
-
-                displayArea.scrollIntoView({ behavior: 'smooth' });
-
-                // Only save if it's NOT a dash
-                if (totalPillValue === "-") return;
-
-                // After saving to localStorage:
+            if (result.success) {
+                M.toast({ html: 'Sleep data saved to database!', classes: 'green' });
+                currentPage = 1;
+                loadPersistentHistory();
                 updateSleepChart();
+            } else {
+                M.toast({ html: result.error.message, classes: 'red' });
             }
-        });
-    }
+        } catch (err) {
+            M.toast({ html: 'Server connection error', classes: 'red' });
+        }
+    });
+
+
 
     //Date Picker's default date
     const dateInput = document.getElementById('sleep-date');
@@ -305,7 +277,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const historyBody = document.getElementById('sleep-history-body');
         if (!historyBody) return;
 
-        // Create a new row with your data
         const row = document.createElement('tr');
         row.innerHTML = `
         <td>${date}</td>
@@ -313,17 +284,16 @@ document.addEventListener('DOMContentLoaded', function () {
         <td>${quality}</td>
     `;
 
-        // Add it to the top of the table
+        // Add new entry to the top
         historyBody.insertBefore(row, historyBody.firstChild);
 
-        // Limit to 10: If we have 11 rows, remove the oldest one at the bottom
         if (historyBody.rows.length > 10) {
             historyBody.deleteRow(10);
         }
     }
 
     const trendToggles = document.querySelectorAll('.js-trend-toggle');
-    let currentTrendView = 'weekly'; 
+    let currentTrendView = 'weekly';
 
     // Toggle between weekly and monthly view of the charts
     trendToggles.forEach(btn => {
@@ -331,106 +301,172 @@ document.addEventListener('DOMContentLoaded', function () {
             trendToggles.forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             currentTrendView = this.getAttribute('data-view');
-            updateSleepChart(); // Refresh with the new view
+            updateSleepChart(); 
         });
     });
 
-    let sleepChart;
+    // Global variable to hold the chart instance
+    window.sleepChart = null;
 
-    function updateSleepChart() {
-        const canvas = document.getElementById('sleepChart');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const savedData = JSON.parse(localStorage.getItem('sleepHistory')) || [];
-
-        let labels = [];
-        let durations = [];
-
-        if (currentTrendView === 'weekly') {
-            // Weekly View Logic
-            const now = new Date();
-            const dayOfWeek = now.getDay();
-            const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-            const monday = new Date(now);
-            monday.setDate(now.getDate() - diffToMonday);
-            monday.setHours(0, 0, 0, 0);
-
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(monday);
-                d.setDate(monday.getDate() + i);
-                const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                labels.push(dateStr);
-
-                const entry = savedData.find(entry => entry.date === dateStr);
-                if (entry) {
-                    const matches = entry.duration.match(/\d+/g);
-                    const hrs = parseInt(matches[0]) || 0;
-                    const mins = matches[1] ? parseInt(matches[1]) / 60 : 0;
-                    durations.push(hrs + mins);
-                } else {
-                    durations.push(0);
-                }
-            }
-        } else {
-            //Monthly View Logic
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const now = new Date();
-
-            for (let i = 11; i >= 0; i--) {
-                const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                const mIndex = d.getMonth();
-                const year = d.getFullYear();
-
-                
-                labels.push(`${monthNames[mIndex]} ${year.toString()}`);
-
-                // Filter entries for this specific month and year
-                const monthEntries = savedData.filter(entry => {
-                    const entryDate = new Date(entry.date);
-                    return entryDate.getMonth() === mIndex && entryDate.getFullYear() === year;
-                });
-
-                if (monthEntries.length === 0) {
-                    durations.push(0);
-                } else {
-                    // Calculate Average for the month
-                    const totalHours = monthEntries.reduce((sum, entry) => {
-                        const matches = entry.duration.match(/\d+/g);
-                        const h = parseInt(matches[0]) || 0;
-                        const m = matches[1] ? parseInt(matches[1]) / 60 : 0;
-                        return sum + (h + m);
-                    }, 0);
-                    durations.push(parseFloat((totalHours / monthEntries.length).toFixed(1)));
-                }
-            }
-        }
-
-        if (sleepChart) sleepChart.destroy();
-
-        sleepChart = new Chart(ctx, {
+    const initChart = () => {
+        const ctx = document.getElementById('sleepChart').getContext('2d');
+        window.sleepChart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: labels,
+                labels: [],
                 datasets: [{
-                    label: currentTrendView === 'weekly' ? 'Hours Slept' : 'Avg Hours/Month',
-                    data: durations,
-                    backgroundColor: 'rgba(38, 166, 154, 0.7)',
-                    borderColor: '#26a69a',
-                    borderWidth: 1,
-                    borderRadius: 5
+                    label: 'Hours Slept',
+                    data: [],
+                    borderColor: '#1b3f88',
+                    backgroundColor: 'rgba(51, 142, 240, 0.2)',
+                    borderWidth: 1.5,
+                    borderRadius: 4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        bottom: 35,
+                        top: 10,
+                        left: 10,
+                        right: 10
+                    }
+                },
+                animation: {
+                    delay: (context) => {
+                        let delay = 0;
+                        if (context.type === 'data' && context.mode === 'default') {
+                            delay = context.dataIndex * 150;
+                        }
+                        return delay;
+                    },
+                },
                 scales: {
-                    y: { beginAtZero: true, suggestedMax: 10, title: { display: true, text: 'Hours' } }
+                    y: {
+                        beginAtZero: true,
+
+                        title: { display: true, text: 'Hours' }
+                    }
+                },
+                plugins: {
+                    annotation: {
+                        annotations: {
+                            goalLine: {
+                                type: 'line',
+                                yMin: 8, 
+                                yMax: 8,
+                                borderColor: '#22ff29', 
+                                borderWidth: 2,
+                                borderDash: [6, 6], 
+                                label: {
+                                    display: true,
+                                    content: 'Goal',
+                                    position: 'end',
+                                    backgroundColor: '#22ff29',
+                                    font: { size: 10 }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         });
+    };
+
+    initChart();
+    updateSleepChart();
+
+
+    async function updateSleepChart() {
+        let chartLabels = [];
+        let chartDurations = [];
+        let userGoal = 8;
+        let chartTitle = 'Hours Slept';
+
+        //Fetching Goal and displaying on the graph
+        const goalResponse = await fetch('/api/goal');
+        const goalResult = await goalResponse.json();
+        if (goalResult.success && goalResult.data) {
+            userGoal = (goalResult.data.goalValue / 60).toFixed(1);
+        }
+
+        //Weekly View
+        if (currentTrendView === 'weekly') {
+            const now = new Date();
+            const dayOfWeek = now.getDay();
+            const monday = new Date(now);
+            const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+            monday.setDate(now.getDate() - diffToMonday);
+            monday.setHours(0, 0, 0, 0);
+
+            const weekDates = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                chartLabels.push(d.toLocaleDateString('en-AU', { weekday: 'short', day: 'numeric' }));
+                weekDates.push(d.toISOString().split('T')[0]);
+            }
+
+            const response = await fetch(`/api/sleep-entries?startDate=${monday.toISOString()}`);
+            const result = await response.json();
+            chartDurations = new Array(7).fill(0);
+
+            if (result.success && result.data.sleepEntries) {
+                result.data.sleepEntries.forEach(entry => {
+                    const entryDateStr = new Date(entry.entryDate).toISOString().split('T')[0];
+                    const index = weekDates.indexOf(entryDateStr);
+                    if (index !== -1) {
+                        chartDurations[index] = (entry.duration / 60).toFixed(1);
+                    }
+                });
+            }
+        } else { //Monthly View
+            chartTitle = 'Avg Hours/Month';
+            const now = new Date();
+            const twelveMonthsAgo = new Date(now);
+            twelveMonthsAgo.setMonth(now.getMonth() - 11);
+            twelveMonthsAgo.setDate(1);
+
+            const response = await fetch(`/api/sleep-entries?startDate=${twelveMonthsAgo.toISOString()}&limit=1000`);
+            const result = await response.json();
+
+            if (result.success && result.data.sleepEntries) {
+                const entries = result.data.sleepEntries;
+                for (let i = 0; i < 12; i++) {
+                    const targetMonth = new Date(twelveMonthsAgo);
+                    targetMonth.setMonth(twelveMonthsAgo.getMonth() + i);
+                    chartLabels.push(targetMonth.toLocaleDateString('en-AU', { month: 'short', year: '2-digit' }));
+
+                    const monthEntries = entries.filter(e => {
+                        const d = new Date(e.entryDate);
+                        return d.getMonth() === targetMonth.getMonth() && d.getFullYear() === targetMonth.getFullYear();
+                    });
+
+                    if (monthEntries.length > 0) {
+                        const totalHrs = monthEntries.reduce((sum, e) => sum + (e.duration / 60), 0);
+                        chartDurations.push((totalHrs / monthEntries.length).toFixed(1));
+                    } else {
+                        chartDurations.push(0);
+                    }
+                }
+            }
+        }
+
+        if (window.sleepChart) {
+            const annotations = window.sleepChart.options.plugins.annotation.annotations;
+            if (annotations.goalLine) {
+                annotations.goalLine.yMin = userGoal;
+                annotations.goalLine.yMax = userGoal;
+                annotations.goalLine.label.content = `Goal: ${userGoal}h`;
+            }
+
+            window.sleepChart.data.labels = chartLabels;
+            window.sleepChart.data.datasets[0].data = chartDurations;
+            window.sleepChart.data.datasets[0].label = chartTitle;
+
+            window.sleepChart.update();
+        }
     }
-    //updateSleepChart();
-    setTimeout(() => {
-        updateSleepChart();
-    }, 100);
 });
