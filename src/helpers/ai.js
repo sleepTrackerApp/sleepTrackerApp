@@ -18,6 +18,11 @@ const _buildPrompt = (userGoalMins, sleepLogs, periodType) => {
 
     const timeFrame = periodType === 'weekly' ? '7 days' : '30 days';
 
+    // Convert goal minutes to hours for the AI's reference
+    const goalHrs = Math.floor(userGoalMins / 60);
+    const goalMins = userGoalMins % 60;
+    const goalText = goalMins > 0 ? `${goalHrs}h ${goalMins}m` : `${goalHrs}h`;
+
     return `
         CONTEXT: 
         You are the 'Alive' Sleep Scientist, an expert in circadian rhythms and sleep hygiene. 
@@ -28,17 +33,20 @@ const _buildPrompt = (userGoalMins, sleepLogs, periodType) => {
 
         USER DATA:
         - Timeframe: Past ${timeFrame}
-        - Personal Goal: ${userGoalMins} minutes (Range: 7-9 hours)
+        - Personal Goal: ${goalText} (${userGoalMins} minutes)
         - Sleep Logs: ${logSummary}
 
         INSTRUCTIONS FOR ANALYSIS:
-        - Be Specific: Mention specific days or trends (e.g., "Your consistency on Wed-Fri was elite").
-        - Be Motivational: Start by acknowledging a positive trend (like a high quality rating).
-        - Identify the Gap: Clearly explain the distance between their current average and their ${userGoalMins}m goal.
+        - NO MINUTES: Never write "415 minutes". Use the format "6h55m".
+        - BULLET POINTS: The "analysis" section MUST use "-" bullet points for every distinct observations.
+        - BE SPECIFIC: Mention specific days or trends.
+        - BE MOTIVATION: Start by acknowledging a positive trend (like a high quality rating).
+        - IDENTIFY AND EMPHASIZE THE GAPS: Clearly explain the distance between their current average and their ${userGoalMins}m goal.
+        - STYLE: The writing should be easy to understand, clear, and focus.
 
         INSTRUCTIONS FOR RECOMMENDATION:
-        - Actionable: Provide 1-2 "Key Focus Points" for improvement. 
-        - Simple: Ensure the advice is something they can do TONIGHT.
+        - ACTIONABLE: Provide 1-2 "Key Focus Points" for improvement. 
+        - SIMPLE: Ensure the advice is something they can do TONIGHT.
 
         TASK:
         1. Calculate a Sleep Score (0-100) using this rationale:
@@ -49,9 +57,9 @@ const _buildPrompt = (userGoalMins, sleepLogs, periodType) => {
         2. Provide the response strictly in this JSON format:
         {
             "score": [number],
-            "insight": "[Short bur meaningful headline]",
-            "analysis": "[2-3 sentences explaining ${periodType} trends]",
-            "recommendation": "[1 actionable tip or instruction for the user]"
+            "insight": "[Short but meaningful headline]",
+            "analysis": "[3 sentences explaining ${periodType} trends], - [Sentence 1 in h/m format]\\n - [Sentence 2 in h/m format], - [Sentence 3 in h/m format]",
+            "recommendation": "[1-2 actionable tips or instruction for the user tonight and onwards]"
         }
     `;
 };
@@ -71,7 +79,11 @@ const generateSleepInsight = async (userGoalMins, sleepLogs, periodType = 'weekl
             messages: [
                 { 
                     role: "system", 
-                    content: "You are the 'Alive' Sleep Health Scientist. You provide high-detail, encouraging JSON feedback." 
+                    content: `You are the 'Alive' Sleep Health Scientist. 
+                              STRICT RULES:
+                              - ALWAYS convert minutes to "XhYm" format.
+                              - "Analysis" MUST be 3 sentences, each starting with a "- ".
+                              - Use \\n between sentences.` 
                 },
                 { 
                     role: "user", 

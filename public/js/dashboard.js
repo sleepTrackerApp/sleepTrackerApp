@@ -589,23 +589,41 @@ document.addEventListener('DOMContentLoaded', function () {
   if (viewInsightBtn && aiContentBox) {
     viewInsightBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      viewInsightBtn.innerText = 'Analyzing...';
+      viewInsightBtn.innerText = 'One moment, your sleep health assistant is on it...';
 
       try {
         // Route: /api/insights
         const response = await fetch('/api/insights');
         const data = await response.json();
 
-        if (!response.ok) throw new Error(data.error || 'Scientist is busy.');
+        if (!response.ok) throw new Error(data.error || 'Sleep Health Assistant is busy.');
+
+        // Display Sleep Score
+        const scoreLabel = document.querySelector('.score-label');
+        if (scoreLabel) {
+            scoreLabel.innerHTML = `Sleep Score: <span style="color: #1DB0FF; font-weight: bold;">${data.insight.score}/100</span>`;
+        }
+        
+        // Display Insights
+        const formattedAnalysis = data.insight.analysis.replace(/\n/g, '<br><br>');
 
         aiContentBox.innerHTML = `
-                    <ul class="summary-list mb-0" style="margin-top: 20px; border-left: 4px solid #26a69a; padding-left: 15px;">
-                        <li><strong>Score:</strong> ${data.insight.score}/100</li>
-                        <li><strong>Insight:</strong> ${data.insight.insight}</li>
-                        <li><strong>Analysis:</strong> ${data.insight.analysis}</li>
-                        <li><strong>Recommendation:</strong> ${data.insight.recommendation}</li>
-                    </ul>
-                `;
+          <div style="margin-top: 15px; border-left: 4px solid #26a69a; padding-left: 20px;">
+              <p style="margin-bottom: 20px;">
+                  <span style="font-weight: 700;">Insight:</span><br>
+                  <span>${data.insight.insight}</span>
+              </p>
+              <p style="margin-bottom: 20px;">
+                  <span style="font-weight: 700;">Analysis:</span><br>
+                  <span>${formattedAnalysis}</span>
+              </p>
+              <p>
+                  <span style="font-weight: 700;">Recommendation:</span><br>
+                  <span>${data.insight.recommendation}</span>
+              </p>
+          </div>
+        `;
+      
         aiContentBox.style.display = 'block';
         viewInsightBtn.style.display = 'none';
       } catch (err) {

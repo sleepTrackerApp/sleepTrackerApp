@@ -12,12 +12,14 @@ const authRoutes = require('./authRoutes');
 const diagnosticsRoutes = require('./diagnosticsRoutes');
 const messageRoutes = require('./messageRoutes');
 const profileRoutes = require('./profileRoutes');
+const aiRoutes = require('./aiRoutes');
 
 // Create a new router instance
 const router = express.Router();
 
 // Mount route handlers
 router.use('/', homeRoutes);
+router.use('/api/ai', aiRoutes);
 router.use('/api', apiRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/auth', authRoutes);
