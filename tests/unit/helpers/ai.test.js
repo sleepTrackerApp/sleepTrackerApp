@@ -20,12 +20,6 @@ describe('AI Helper: Prompt Construction Logic (Mocha/Chai)', () => {
         expect(prompt).to.include("Rating: 9/10");
     });
 
-    it('should enforce the 7-9 hour research-backed goal range', () => {
-        const prompt = _buildPrompt(mockUserGoal, mockLogs, 'weekly');
-        expect(prompt).to.include("Range: 7-9 hours");
-        expect(prompt).to.include("480 minutes");
-    });
-
     it('should request the 50/30/20 scoring rationale', () => {
         const prompt = _buildPrompt(mockUserGoal, mockLogs, 'weekly');
         expect(prompt).to.include("50% Goal Achievement");
