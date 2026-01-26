@@ -12,6 +12,7 @@ const dashboardControllers = require('./dashboardControllers');
 const scheduleController = require('./scheduleController');
 const goalController = require('./goalController');
 const insightsController = require('./insightsController');
+const deleteUserController = require('./deleteUserController');
 
 module.exports = {
   apiControllers,
@@ -25,4 +26,5 @@ module.exports = {
   scheduleController,
   goalController,
   insightsController,
+  deleteUserController,
 };

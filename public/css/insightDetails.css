@@ -213,7 +213,7 @@
 @media (max-width: 900px) {
     .insight-detail-page {
         margin-top: -80px;
-        padding: 40px 0;
+        padding: 100px 0 40px 0;
     }
 
     .detail-title {

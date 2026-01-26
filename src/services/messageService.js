@@ -154,6 +154,13 @@ async function deleteMessage(messageId, userId) {
 }
 
 /**
+ * Delete a all message. Only if it belongs to the given user.
+ * @param userId - User Id
+ */
+async function deleteUser(userId) {
+  return Message.deleteMany({ userId });
+}
+/**
  * Get unread message count for a user.
  * @param {string|import('mongoose').Types.ObjectId} userId
  * @returns {Promise<number>}
@@ -170,5 +177,6 @@ module.exports = {
   getChatLog,
   markAsRead,
   deleteMessage,
+  deleteUser,
   getUnreadCount,
 };

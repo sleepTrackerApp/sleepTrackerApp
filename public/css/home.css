@@ -338,6 +338,24 @@ section {
     right: 0;
 }
 
+@media (max-width: 600px) {
+    .empty-card {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .empty-card .pill-btn {
+        position: static;
+        bottom: auto;
+        right: auto;
+        margin-top: 0;
+    }
+
+    .empty-card {
+        align-items: center;
+    }
+}
+
 /* The Icon Circle */
 .card-icon-circle {
     width: 50px;

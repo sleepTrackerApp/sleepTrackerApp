@@ -9,6 +9,7 @@ const apiScheduleRoutes = require('./apiScheduleRoutes');
 const apiGoalRoutes = require('./apiGoalRoutes');
 const apiMessageRoutes = require('./apiMessageRoutes');
 const apiInsightsRoutes = require('./apiInsightsRoutes');
+const apiDeleteUserRoutes = require('./apiDeleteUserRoutes');
 const { apiControllers } = require('../controllers');
 const router = express.Router();
 
@@ -23,9 +24,11 @@ router.use('/schedules', apiScheduleRoutes);
 router.use('/goal', apiGoalRoutes);
 router.use('/messages', apiMessageRoutes);
 router.use('/insights', apiInsightsRoutes);
+router.use('/delete-user', apiDeleteUserRoutes);
 
 // Catch-all for unknown API routes
 router.use(apiControllers.apiNotFound);
 router.use(apiControllers.apiError);
 
 module.exports = router;
+

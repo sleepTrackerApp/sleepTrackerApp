@@ -43,8 +43,19 @@ async function findUserByAuthId(authId) {
   return User.findOne({ authIdHash });
 }
 
+/**
+ * Delete user by ID.
+ * @param userId - ID of the user object
+ * @returns {Promise<import('mongoose').Document|null>} - deleted sleep entry object if found
+ */
+async function deleteUser(userId) {
+    return User.deleteMany({ _id: userId });
+}
+
+
 module.exports = {
   getOrCreateUser,
   findUserByAuthId,
+  deleteUser,
 };
 
