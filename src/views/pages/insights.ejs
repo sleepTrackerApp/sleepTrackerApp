@@ -1,74 +1,76 @@
 <%- include('../components/header') %>
-<link rel="stylesheet" href="/css/insights.css" />
+<link rel="stylesheet" href="/css/insights.css"/>
 
 <main class="insights-page">
-  <section class="insights-top">
-    <div class="insights-shell">
-      <div class="mini-label">Insights</div>
-      <h1 class="hero-heading text-primary">Latest Articles</h1>
-  
-      <div class="latest-row">
-        <article class="latest-card">
-          <div class="latest-card-inner">
-            <h2 class="feature-title"><%= featured.title %></h2>
-            <p class="feature-date"><%= featured.date || '' %></p>
-            <p class="feature-excerpt"><%= featured.excerpt || '' %></p>
-            
-            <div class="feature-meta">
-              <% if (featured.readTime) { %>
-                <span class="meta-item">
-                  <i class="material-icons tiny">access_time</i>
-                  <%= featured.readTime %>
-                </span>
-              <% } %>
-              <% if (featured.tags && featured.tags.length) { %>
-                <span class="meta-item">
-                  <i class="material-icons tiny">bookmark_border</i>
-                  <%= featured.tags.join(', ') %>
-                </span>
-              <% } %>
-            </div>
-  
-            <div class="feature-actions">
-              <a class="btn-large pill-btn black waves-effect waves-light" href="/insights/<%= featured.slug %>">
-                Read Now!
-                <i class="material-icons right">call_made</i>
-              </a>
-            </div>
-          </div>
-        </article>
-  
-        <div class="latest-hero">
-          <img src="<%= featured.image %>" alt="<%= featured.title %>">
-        </div>
-      </div>
-    </div>
-  </section>
+    <section class="insights-top">
+        <div class="insights-shell">
+            <div class="mini-label">Insights</div>
+            <h1 class="hero-heading text-primary">Latest Article</h1>
 
-  <section class="insights-grid">
-    <div class="insights-shell">
-      <div class="grid-head">
-        <h2 class="text-primary">Explore More Insights</h2>
-      </div>
-  
-      <div class="grid-cards">
-        <% more.forEach(function(article){ %>
-          <article class="insight-card">
-            <a href="/insights/<%= article.slug %>" class="card-link-wrapper">
-              <div class="card-image-wrap">
-                <img src="<%= article.image %>" alt="<%= article.title %>">
-              </div>
-              <div class="card-body">
-                <p class="card-date"><%= article.date || '' %></p>
-                <h3 class="card-title"><%= article.title %></h3>
-                <p class="card-excerpt"><%= article.excerpt || '' %></p>
-              </div>
-            </a>
-          </article>
-        <% }) %>
-      </div>
-    </div>
-  </section>
+            <div class="latest-row">
+                <article class="latest-card">
+                    <a href="/insights/<%= featured.slug %>" class="latest-hero latest-hero--mobile" aria-label="Read article: <%= featured.title %>">
+                        <img src="<%= featured.image %>" alt="">
+                    </a>
+                    <div class="latest-card-inner">
+                        <h2 class="feature-title"><%= featured.title %></h2>
+                        <p class="feature-date"><%= featured.date || '' %></p>
+                        <p class="feature-excerpt"><%= featured.excerpt || '' %></p>
+
+                        <div class="feature-meta">
+                            <% if (featured.readTime) { %>
+                                <span class="meta-item">
+                                    <i class="material-icons tiny">access_time</i>
+                                    <%= featured.readTime %>
+                                </span>
+                            <% } %>
+                            <% if (featured.tags && featured.tags.length) { %>
+                                <span class="meta-item">
+                                    <i class="material-icons tiny">bookmark_border</i>
+                                    <%= featured.tags.join(', ') %>
+                                </span>
+                            <% } %>
+                        </div>
+
+                        <div class="feature-actions">
+                            <a class="btn-large pill-btn black waves-effect waves-light" href="/insights/<%= featured.slug %>">
+                                Read Now!
+                                <i class="material-icons right">call_made</i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+                <a href="/insights/<%= featured.slug %>" class="latest-hero latest-hero--desktop">
+                    <img src="<%= featured.image %>" alt="<%= featured.title %>">
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="insights-grid">
+        <div class="insights-shell">
+            <div class="grid-head">
+                <h2 class="text-primary mt-0">Explore More Insights</h2>
+            </div>
+
+            <div class="grid-cards">
+                <% more.forEach(function(article){ %>
+                    <article class="insight-card">
+                        <a href="/insights/<%= article.slug %>" class="card-link-wrapper">
+                            <div class="card-image-wrap">
+                                <img src="<%= article.image %>" alt="<%= article.title %>">
+                            </div>
+                            <div class="card-body">
+                                <p class="card-date"><%= article.date || '' %></p>
+                                <h3 class="card-title"><%= article.title %></h3>
+                                <p class="card-excerpt"><%= article.excerpt || '' %></p>
+                            </div>
+                        </a>
+                    </article>
+                <% }) %>
+            </div>
+        </div>
+    </section>
 
 </main>
 
