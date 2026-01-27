@@ -11,6 +11,8 @@
   if (!messagesArea || !messageInput || !sendBtn) return;
 
   var shownIds = Object.create(null);
+  var lastMessageCreatedAt = null;
+  var pollingIntervalId = null;
 
   function markShown(id) {
     if (id !== null) shownIds[String(id)] = true;
@@ -59,6 +61,7 @@
       .then(function (data) {
         messagesArea.innerHTML = '';
         shownIds = Object.create(null);
+        lastMessageCreatedAt = null;
         if (data.success && data.messages && data.messages.length) {
           data.messages.forEach(function (m) {
             renderMessage(
@@ -67,6 +70,9 @@
               m.createdAt,
               m._id
             );
+            if (m.createdAt) {
+              lastMessageCreatedAt = m.createdAt;
+            }
           });
         } else {
           messagesArea.innerHTML =
@@ -105,6 +111,32 @@
         );
         if (data.success) {
           clearEmptyPlaceholder();
+          // Immediately render the user message and bot reply so the chat
+          // feels responsive even without sockets. Dedup logic based on
+          // message ids will prevent double-rendering when socket or polling
+          // later delivers the same messages.
+          if (data.message && !alreadyShown(data.message._id)) {
+            renderMessage(
+              data.message.content,
+              'sent',
+              data.message.createdAt,
+              data.message._id
+            );
+            if (data.message.createdAt) {
+              lastMessageCreatedAt = data.message.createdAt;
+            }
+          }
+          if (data.reply && !alreadyShown(data.reply._id)) {
+            renderMessage(
+              data.reply.content,
+              'received',
+              data.reply.createdAt,
+              data.reply._id
+            );
+            if (data.reply.createdAt) {
+              lastMessageCreatedAt = data.reply.createdAt;
+            }
+          }
         }
       })
       .catch(function (err) {
@@ -120,7 +152,10 @@
     var socket =
       typeof window !== 'undefined' && window.socket ? window.socket : null;
     if (!socket) {
-      console.log('[Chat] attachSocketListeners: no window.socket, skipping');
+      console.log(
+        '[Chat] attachSocketListeners: no real socket, will use polling fallback'
+      );
+      startPolling();
       return;
     }
     console.log(
@@ -146,6 +181,17 @@
       }
       clearEmptyPlaceholder();
       renderMessage(data.content, 'sent', data.createdAt, data.messageId);
+      if (data.createdAt) {
+        lastMessageCreatedAt = data.createdAt;
+      }
+      if (data.messageId) {
+        fetch('/api/messages/' + encodeURIComponent(data.messageId) + '/read', {
+          method: 'PATCH',
+          credentials: 'same-origin',
+        }).catch(function (err) {
+          console.log('[Chat] markAsRead (chat:message) error', err);
+        });
+      }
     });
     socket.on('chat:reply', function (data) {
       console.log('[Chat] socket chat:reply received', data);
@@ -158,7 +204,57 @@
       }
       clearEmptyPlaceholder();
       renderMessage(data.content, 'received', data.createdAt, data.messageId);
+      if (data.createdAt) {
+        lastMessageCreatedAt = data.createdAt;
+      }
+      if (data.messageId) {
+        fetch('/api/messages/' + encodeURIComponent(data.messageId) + '/read', {
+          method: 'PATCH',
+          credentials: 'same-origin',
+        }).catch(function (err) {
+          console.log('[Chat] markAsRead (chat:reply) error', err);
+        });
+      }
     });
+  }
+
+  function startPolling() {
+    if (pollingIntervalId !== null) return;
+    console.log('[Chat] Starting polling fallback for chat log');
+    pollingIntervalId = setInterval(function () {
+      var since = lastMessageCreatedAt;
+      var url = '/api/messages/chat?page=1&pageSize=50';
+      if (since) {
+        url += '&since=' + encodeURIComponent(since);
+      }
+      fetch(url, {
+        credentials: 'same-origin',
+      })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data.success || !data.messages) return;
+          data.messages.forEach(function (m) {
+            if (alreadyShown(m._id)) {
+              return;
+            }
+            clearEmptyPlaceholder();
+            renderMessage(
+              m.content,
+              m.messageType === 'message' ? 'sent' : 'received',
+              m.createdAt,
+              m._id
+            );
+            if (m.createdAt) {
+              lastMessageCreatedAt = m.createdAt;
+            }
+          });
+        })
+        .catch(function (err) {
+          console.log('[Chat] polling error', err);
+        });
+    }, 1000);
   }
 
   messageInput.addEventListener('keydown', function (e) {
@@ -171,4 +267,11 @@
 
   loadHistory();
   attachSocketListeners();
+
+  window.addEventListener('beforeunload', function () {
+    if (pollingIntervalId !== null) {
+      clearInterval(pollingIntervalId);
+      pollingIntervalId = null;
+    }
+  });
 })();

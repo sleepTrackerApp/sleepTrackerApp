@@ -1,32 +1,52 @@
 document.addEventListener('DOMContentLoaded', function () {
   // Use the global socket from header or create if needed
-  let socket = window.socket || io();
-  window.socket = socket; // Store globally for other scripts
+  // Skip socket creation when it is not available (on Vercel)
+  let socket = null;
 
-  console.log('[Dashboard] Using Socket.IO:', socket);
-  console.log('[Dashboard] Socket connected?', socket.connected);
-
-  // Listen for bedtime notifications
-  socket.on('schedule:notification', function (notification) {
-    console.log('[Dashboard] Received notification:', notification);
-    console.log('[Dashboard] Notification type:', notification.type);
-    console.log('[Dashboard] Is bedtime?', notification.type === 'bedtime');
-
-    if (notification.type === 'bedtime') {
-      console.log('[Dashboard] Calling showBedtimeNotification...');
-      showBedtimeNotification(notification);
-    } else {
-      console.log('[Dashboard] Notification type is not bedtime, skipping...');
+  if (typeof window !== 'undefined' && window.socket) {
+    socket = window.socket;
+  } else if (typeof io !== 'undefined') {
+    try {
+      socket = io({ withCredentials: true });
+    } catch (e) {
+      console.log(
+        '[Dashboard] Failed to initialize Socket.IO, disabling realtime notifications',
+        e
+      );
+      socket = null;
     }
-  });
+  }
 
-  socket.on('connect', function () {
-    console.log('[Dashboard] Socket connected successfully, ID:', socket.id);
-  });
+  if (socket) {
+    window.socket = socket; // Store globally for other scripts
 
-  socket.on('disconnect', function () {
-    console.log('[Dashboard] Socket disconnected');
-  });
+    console.log('[Dashboard] Using Socket.IO:', socket);
+    console.log('[Dashboard] Socket connected?', socket.connected);
+
+    // Listen for bedtime notifications
+    socket.on('schedule:notification', function (notification) {
+      console.log('[Dashboard] Received notification:', notification);
+      console.log('[Dashboard] Notification type:', notification.type);
+      console.log('[Dashboard] Is bedtime?', notification.type === 'bedtime');
+
+      if (notification.type === 'bedtime') {
+        console.log('[Dashboard] Calling showBedtimeNotification...');
+        showBedtimeNotification(notification);
+      } else {
+        console.log(
+          '[Dashboard] Notification type is not bedtime, skipping...'
+        );
+      }
+    });
+
+    socket.on('connect', function () {
+      console.log('[Dashboard] Socket connected successfully, ID:', socket.id);
+    });
+
+    socket.on('disconnect', function () {
+      console.log('[Dashboard] Socket disconnected');
+    });
+  }
 
   function showBedtimeNotification(notification) {
     console.log('[Notification] Creating notification element...');
@@ -589,23 +609,28 @@ document.addEventListener('DOMContentLoaded', function () {
   if (viewInsightBtn && aiContentBox) {
     viewInsightBtn.addEventListener('click', async (e) => {
       e.preventDefault();
-      viewInsightBtn.innerText = 'One moment, your sleep health assistant is on it...';
+      viewInsightBtn.innerText =
+        'One moment, your sleep health assistant is on it...';
 
       try {
         // Route: /api/insights
         const response = await fetch('/api/insights');
         const data = await response.json();
 
-        if (!response.ok) throw new Error(data.error || 'Sleep Health Assistant is busy.');
+        if (!response.ok)
+          throw new Error(data.error || 'Sleep Health Assistant is busy.');
 
         // Display Sleep Score
         const scoreLabel = document.querySelector('.score-label');
         if (scoreLabel) {
-            scoreLabel.innerHTML = `Sleep Score: <span style="color: #1DB0FF; font-weight: bold;">${data.insight.score}/100</span>`;
+          scoreLabel.innerHTML = `Sleep Score: <span style="color: #1DB0FF; font-weight: bold;">${data.insight.score}/100</span>`;
         }
-        
+
         // Display Insights
-        const formattedAnalysis = data.insight.analysis.replace(/\n/g, '<br><br>');
+        const formattedAnalysis = data.insight.analysis.replace(
+          /\n/g,
+          '<br><br>'
+        );
 
         aiContentBox.innerHTML = `
           <div style="margin-top: 15px; border-left: 4px solid #26a69a; padding-left: 20px;">
@@ -623,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function () {
               </p>
           </div>
         `;
-      
+
         aiContentBox.style.display = 'block';
         viewInsightBtn.style.display = 'none';
       } catch (err) {

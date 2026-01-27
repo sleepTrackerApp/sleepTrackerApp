@@ -4,6 +4,7 @@
 const http = require('http');
 const { initialize } = require('./socket');
 const { startScheduler } = require('./scheduler');
+const { appConfig } = require('./settings');
 
 /**
  * Creates an HTTP server, attaches Socket.IO, and starts the scheduler.
@@ -13,10 +14,12 @@ const { startScheduler } = require('./scheduler');
  */
 function createHttpServer(app) {
   const server = http.createServer(app);
-  const io = initialize(server, app);
-  console.log('Socket initialized successfully');
-
-  app.set('io', io);
+  // Ensure the app is not running in a serverless environment
+  if (!appConfig.VERCEL) {
+    const io = initialize(server, app);
+    console.log('Socket initialized successfully');
+    app.set('io', io);
+  }
   app.set('server', server);
 
   void startScheduler();

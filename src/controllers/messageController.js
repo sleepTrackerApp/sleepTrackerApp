@@ -8,10 +8,11 @@ const { getReply } = require('../helpers/chatBot');
 async function getMessageList(req, res) {
   try {
     const userId = res.locals.userRecord._id;
-    const { page, pageSize } = req.query;
+    const { page, pageSize, since } = req.query;
     const { messages, total } = await messageService.getMessageList(userId, {
       page,
       pageSize,
+      since,
     });
     res.json({ success: true, messages, total });
   } catch (error) {
@@ -26,10 +27,11 @@ async function getMessageList(req, res) {
 async function getChatLog(req, res) {
   try {
     const userId = res.locals.userRecord._id;
-    const { page, pageSize } = req.query;
+    const { page, pageSize, since } = req.query;
     const { messages, total } = await messageService.getChatLog(userId, {
       page,
       pageSize,
+      since,
     });
     res.json({ success: true, messages, total });
   } catch (error) {
