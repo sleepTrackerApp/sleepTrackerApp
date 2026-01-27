@@ -5,16 +5,21 @@
     <div class="profile-layout">
       <%- include('../components/profileSidebar', { activeSection: typeof activeSection !== 'undefined' ? activeSection : 'profile' }) %>
       <div class="profile-main">
-        <h4>Profile</h4>
+        <h3>Profile</h3>
         <p class="grey-text text-darken-2">
           Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>
         </p>
 
-        <%- include('../components/profile-page') %>
+        <hr>
+        <!-- Showcase Message History in Profile Page -->
+        <h3>Message History</h3>  
+        <script src="/js/profile-page.js"></script>
+        
 
-
+        <!----------------------------->
 
         <!-- Export Sleep Entries Data to CSV -->
+        <hr><br>
         <div class="dash-card">
             <div class="feature-actions">
                 <a href="/api/sleep-entries/export" class="btn black main-action-btn z-depth-0">
