@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
     let currentPage = 1;
-    let totalPages = 12;
+    let totalPages = 1;
     const entriesPerPage = 10;
 
     const messageHistoryLoad = async() => {
@@ -9,19 +9,52 @@ document.addEventListener('DOMContentLoaded', function() {
         if(!messageHistoryBody) return; 
 
         const response = await fetch(
-            `/api/messages/list?page=${currentPage}&pageSize=${totalPages}`
+            `/api/messages/list?page=${currentPage}&pageSize=${entriesPerPage}`
         );
         const result = await response.json();
         
         if (result.success){
-            const { messages } = result || {};
+            const { messages, total } = result || {};
+            totalPages = total ?? 1;
             const message = messages || [];
 
             messageHistoryBody.innerHTML = message
-                .map(msg => msg.content)
+                .map(msg => `${msg.messageType}: ${msg.content}`)
                 .join('<br>');
         };
+
+        const pageInfoEl = document.getElementById('page-info');
+        if (pageInfoEl) {
+            pageInfoEl.innerText = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        const prevBtn = document.getElementById('prev-page');
+        if (prevBtn) {
+            prevBtn.disabled = currentPage <= 1;
+        }
+
+        const nextBtn = document.getElementById('next-page');
+        if (nextBtn) {
+            nextBtn.disabled = totalPages <= 0 || currentPage >= totalPages;
+        }
+
     }
 
+    document.getElementById('prev-page')?.addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            messageHistoryLoad()
+        }
+    });
+
+    document.getElementById('next-page')?.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            messageHistoryLoad()
+        }
+    });
+
+
     messageHistoryLoad()
+
 });
