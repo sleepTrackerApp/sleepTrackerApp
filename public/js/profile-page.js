@@ -14,13 +14,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = await response.json();
         
         if (result.success){
-            messageHistoryBody.innerHTML = JSON.stringify(result, null, 2); 
+            const { messages } = result || {};
+            const message = messages || [];
+
+            messageHistoryBody.innerHTML = message
+                .map(msg => msg.content)
+                .join('<br>');
         };
-
-
-
     }
 
     messageHistoryLoad()
-
 });
