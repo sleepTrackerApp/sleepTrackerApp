@@ -126,3 +126,19 @@
         justify-content: center;
     }
 }
+
+.message-pill {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 6px 0;
+  background: #f0f0f5;
+  border-radius: 20px;
+  font-size: 14px;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.message-pill.text { background: #e8f0fe; }
+.message-pill.message { background: #d1ffd6; }
+.message-pill.reply { background: #ffe7c2; }
+

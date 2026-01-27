@@ -19,7 +19,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const message = messages || [];
 
             messageHistoryBody.innerHTML = message
-                .map(msg => `${msg.messageType}: ${msg.content}`)
+                .map(msg => `
+                    <div class="message-pill">
+                    ${msg.messageType}: ${msg.content}
+                    </div>
+                    `)
                 .join('<br>');
         };
 
