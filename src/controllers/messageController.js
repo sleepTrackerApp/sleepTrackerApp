@@ -80,12 +80,19 @@ async function postChatMessage(req, res) {
     const userId = res.locals.userRecord._id;
     const content = (req.body?.content ?? '').trim();
     if (!content) return res.status(400).json({ error: 'content is required' });
-    console.log('[Chat] POST /api/messages/chat received', { userId: String(userId), content: content.substring(0, 80) });
+    console.log('[Chat] POST /api/messages/chat received', {
+      userId: String(userId),
+      content: content.substring(0, 80),
+    });
     const message = await messageService.saveUserMessage(userId, content);
-    console.log('[Chat] user message saved, socket chat:message emitted', { messageId: message._id });
+    console.log('[Chat] user message saved, socket chat:message emitted', {
+      messageId: message._id,
+    });
     const replyText = getReply(content);
     const reply = await messageService.sendReply(userId, replyText);
-    console.log('[Chat] bot reply saved, socket chat:reply emitted', { replyId: reply._id });
+    console.log('[Chat] bot reply saved, socket chat:reply emitted', {
+      replyId: reply._id,
+    });
     res.status(201).json({ success: true, message, reply });
   } catch (error) {
     console.error('Error saving chat message:', error);

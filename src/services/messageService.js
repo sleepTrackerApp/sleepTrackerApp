@@ -208,7 +208,7 @@ async function deleteUser(userId) {
  * @returns {Promise<number>}
  */
 async function getUnreadCount(userId) {
-  return Message.countDocuments({ userId, isRead: false });
+  return Message.countDocuments({ userId, isRead: false, messageType: 'text' });
 }
 
 module.exports = {
