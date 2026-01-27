@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (result.success){
             const { messages, total } = result || {};
             totalPages = total ?? 1;
-            const announcement = messages.filter(msg => msg.messageType === "text") || [];
-            console.log(announcement);
-            messageHistoryBody.innerHTML = announcement
+            const message = messages || [];
+            
+            messageHistoryBody.innerHTML = message
                 .map(msg => `
                     <div class="message-pill">
                         ${msg.content.trim()}
