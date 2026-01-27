@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let currentPage = 1;
     let totalPages = 1;
-    const entriesPerPage = 10;
+    const entriesPerPage = 99999;
 
     const messageHistoryLoad = async() => {
         const messageHistoryBody = document.getElementById("message-history"); 
@@ -16,12 +16,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (result.success){
             const { messages, total } = result || {};
             totalPages = total ?? 1;
-            const message = messages || [];
-
-            messageHistoryBody.innerHTML = message
+            const announcement = messages.filter(msg => msg.messageType === "text") || [];
+            console.log(announcement);
+            messageHistoryBody.innerHTML = announcement
                 .map(msg => `
                     <div class="message-pill">
-                    ${msg.messageType}: ${msg.content}
+                        ${msg.content.trim()}
                     </div>
                     `)
                 .join('<br>');
@@ -57,7 +57,6 @@ document.addEventListener('DOMContentLoaded', function() {
             messageHistoryLoad()
         }
     });
-
 
     messageHistoryLoad()
 

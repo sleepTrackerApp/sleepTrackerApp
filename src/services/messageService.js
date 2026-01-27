@@ -98,7 +98,7 @@ async function getMessageList(userId, options = {}) {
     Message.countDocuments({ userId }),
   ]);
 
-  return { messages, total };
+  return { messages, total};
 }
 
 /**
