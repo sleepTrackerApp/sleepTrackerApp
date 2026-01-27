@@ -43,12 +43,16 @@ async function sendReply(userId, content) {
     content,
     isRead: false,
   });
-  deliver(userId, {
-    type: 'reply',
-    content: message.content,
-    messageId: message._id,
-    createdAt: message.createdAt,
-  }, 'chat:reply');
+  deliver(
+    userId,
+    {
+      type: 'reply',
+      content: message.content,
+      messageId: message._id,
+      createdAt: message.createdAt,
+    },
+    'chat:reply'
+  );
   return message;
 }
 
@@ -66,19 +70,39 @@ async function saveUserMessage(userId, content) {
     content,
     isRead: false,
   });
-  deliver(userId, {
-    type: 'message',
-    content: message.content,
-    messageId: message._id,
-    createdAt: message.createdAt,
-  }, 'chat:message');
+  deliver(
+    userId,
+    {
+      type: 'message',
+      content: message.content,
+      messageId: message._id,
+      createdAt: message.createdAt,
+    },
+    'chat:message'
+  );
   return message;
 }
 
 /**
- * Get paginated list of all messages for a user (newest first).
+ * Mark fetched messages as read in the database.
+ * @param {Array<import('../models/Message')>} messages
+ * @returns {Promise<void>}
+ */
+async function markFetchedAsRead(messages) {
+  const unreadIds = messages
+    .filter((m) => m && m.isRead === false)
+    .map((m) => m._id);
+  if (!unreadIds.length) return;
+  await Message.updateMany(
+    { _id: { $in: unreadIds }, isRead: false },
+    { $set: { isRead: true, readAt: new Date() } }
+  );
+}
+
+/**
+ * Get paginated list of announcement messages (type 'text') for a user (newest first).
  * @param {string|import('mongoose').Types.ObjectId} userId
- * @param {{ page?: number, pageSize?: number }} options
+ * @param {{ page?: number, pageSize?: number, since?: string }} options
  * @returns {Promise<{ messages: import('../models/Message')[], total: number }>}
  */
 async function getMessageList(userId, options = {}) {
@@ -89,14 +113,24 @@ async function getMessageList(userId, options = {}) {
   );
   const skip = (page - 1) * pageSize;
 
+  const filter = { userId, messageType: 'text' };
+  if (options.since) {
+    const sinceDate = new Date(options.since);
+    if (!Number.isNaN(sinceDate.getTime())) {
+      filter.createdAt = { $gt: sinceDate };
+    }
+  }
+
   const [messages, total] = await Promise.all([
-    Message.find({ userId })
+    Message.find(filter)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(pageSize)
       .lean(),
-    Message.countDocuments({ userId }),
+    Message.countDocuments(filter),
   ]);
+
+  await markFetchedAsRead(messages);
 
   return { messages, total };
 }
@@ -104,7 +138,7 @@ async function getMessageList(userId, options = {}) {
 /**
  * Get paginated chat log (only type 'message' and 'reply') for a user, oldest first.
  * @param {string|import('mongoose').Types.ObjectId} userId
- * @param {{ page?: number, pageSize?: number }} options
+ * @param {{ page?: number, pageSize?: number, since?: string }} options
  * @returns {Promise<{ messages: import('../models/Message')[], total: number }>}
  */
 async function getChatLog(userId, options = {}) {
@@ -116,6 +150,13 @@ async function getChatLog(userId, options = {}) {
   const skip = (page - 1) * pageSize;
 
   const filter = { userId, messageType: { $in: ['message', 'reply'] } };
+  if (options.since) {
+    const sinceDate = new Date(options.since);
+    if (!Number.isNaN(sinceDate.getTime())) {
+      filter.createdAt = { $gt: sinceDate };
+    }
+  }
+
   const [messages, total] = await Promise.all([
     Message.find(filter)
       .sort({ createdAt: 1 })
@@ -124,6 +165,7 @@ async function getChatLog(userId, options = {}) {
       .lean(),
     Message.countDocuments(filter),
   ]);
+  await markFetchedAsRead(messages);
 
   return { messages, total };
 }
