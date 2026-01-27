@@ -10,6 +10,10 @@
           Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>
         </p>
 
+        <%- include('../components/profile-page') %>
+
+
+
         <!-- Export Sleep Entries Data to CSV -->
         <div class="dash-card">
             <div class="feature-actions">
