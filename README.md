@@ -324,6 +324,9 @@ The application follows a privacy-first approach:
   available during the active session and is not saved
 - **Secure hashing**: The `ENCRYPTION_KEY` environment variable is used as the
   secret for hashing, ensuring identifiers cannot be reversed
+- **Export Data**: User data (e.g., sleep entries) may be exported by respected users to ensure complete transparency with what is collected and what the user may wish to do with their data.
+- **Account Deletion**: User model data (e.g., sleep entries) upon account deletion via the Profile → Account Deletion will remove all user data stored within the models.
+ 
 
 ### User Login
 
@@ -355,6 +358,7 @@ res.redirect('/auth/logout');
 
 The logout route invalidates the Auth0 session and redirects users to the home
 page (`/`).
+
 
 ### Checking Authentication Status
 
@@ -545,7 +549,7 @@ Brand Color (#2B3990) and Midnight Background (#121212) are used correctly.
   handles code indentation and layout to match our 2-space standard, making the
   code as organized as our UI spacing scale (4px to 40px).
 
-# How to Use
+## How to Use
 
 Before submitting your code, please run the following commands:
 
@@ -556,18 +560,18 @@ Before submitting your code, please run the following commands:
 - npm run lint:fix: Automatically fixes any basic logic issues found by the
   linter.
 
-# Recommended VS Code Setup
+## Recommended VS Code Setup
 
 For the best experience, install the ESLint and Prettier extensions. We
 recommend enabling "Format on Save" in your settings so that your code snaps to
 the ALIVE style guide automatically every time you save your work.
 
-# Record new sleep entry
+## Record New Sleep Entry
 
 The backend now supports recording daily sleep entries with automatic duration
 calculation and quality mapping.
 
-# API Specification
+### API Specification
 
 - Endpoint: POST /recordsleep
 - Purpose: Validates and stores sleep session data in MongoDB.
@@ -579,7 +583,7 @@ calculation and quality mapping.
         "quality": "good | poor | missed"
       }
 
-# Core Logic & Validation
+### Core Logic & Validation
 
 - Duration Calculation: The server automatically calculates the hours slept
   based on the difference between startTime and endTime.
@@ -590,7 +594,9 @@ calculation and quality mapping.
 - Error Handling: Implemented try/catch blocks to ensure a 500 Internal Server
   Error is returned during database failures instead of a system crash.
 
-# Verification
+### Verification
 
 Tested extensively via Postman to ensure a 201 Created status and successful
 MongoDB document creation (verified by the return of a unique _id).
+
+
