@@ -10,9 +10,10 @@
 
             const entryDate = inputDate.toISOString().split("T")[0];
 
-            const ranHour = Math.floor(Math.random() * 58) + 1;
+            const ranHours = Math.floor(Math.random() * 22) + 1;
+            const ranMinutes = Math.floor(Math.random() * 58) + 1;
 
-            const startTime = `${entryDate}T22:${String(ranHour).padStart(2, "0")}:00`;
+            const startTime = `${entryDate}T${String(ranHours).padStart(2, "0")}:${String(ranMinutes).padStart(2, "0")}:00`;
             const endTime = `${entryDate}T23:59:59`;
 
             const entryData = { 
@@ -33,7 +34,19 @@
             } catch (err) {
                 console.log(err);
             }
-
         } 
+
+        // Set Rnadom Goal
+        const goal = Math.floor(Math.random() * (775 - 360 + 1)) + 360; 
+        try{
+            fetch('/api/goal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ value: goal }),
+            });
+        } catch (err){
+            console.log(err)
+        }
+
     });
 </script>
