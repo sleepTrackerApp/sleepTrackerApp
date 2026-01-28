@@ -31,26 +31,31 @@
             </div>
         <!----------------------------->
         <hr><br>
-        <button id="gen-data" class="btn">Generate Data</button>
-        <%- include('../components/gen-data') %>
+        <div class="btn-card">
+            <div class="btn-card-header"> Generate Data </div>
+            <p> Generate 60 sleep entries and on goal entry of various days and hours</p>
+            <button id="gen-data" class="btn">Generate Data</button>
+            <%- include('../components/gen-data') %>
+        </div>
 
 
         <!-- Export Sleep Entries Data to CSV -->
         <br>
-        <div class="dash-card">
-            <div class="feature-actions">
+        <div class="btn-card">
+            <div class="btn-card-header"> Export </div>
+            <p> Export sleep entries into CSV format</p>
                 <a href="/api/sleep-entries/export" class="btn black main-action-btn z-depth-0">
                     Export Sleep Data
                 </a>
-            </div>
         </div>
 
         <!-- User Account Deletion Button  -->
         <br>
-        <div class="dash-card">
-            <div class="feature-actions">
+        <div class="warn-btn-card">
+            <div class="btn-card-header"> Delete Personal Account </div>
+            <p>User accounts and data are permanently deleted. An email confirmation
+            is required before completion of aciton. Please ensure caution is applied if wishing to proceed.</p>
             <%- include('../components/confirmUserDelete') %>
-            </div>
         </div>
 
         <!----------------------------->

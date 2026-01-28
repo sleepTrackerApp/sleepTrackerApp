@@ -1,4 +1,6 @@
 .dash-shell {
+- Ouptut total 60 day worth of entries
+    - Ensure within spamn of days (Can just do 28 days per month)
     max-width: 1240px;
     margin: 0 auto;
     padding: 0 16px;
@@ -127,6 +129,7 @@
     }
 }
 
+/* Announcement Card Style */
 .message-pill {
   display: inline-block;
   padding: 8px 14px;
@@ -139,3 +142,32 @@
 }
 
 .message-pill.text { background: #e8f0fe; }
+
+
+/* Profile Button Styles */
+.btn-card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5px;   
+  max-width: 960px;
+  padding: 20px 16px 20px 20px;
+}
+
+.btn-card-header {
+    font-size: 26px !important;
+    font-weight: 800;
+    margin-top: 0;
+    margin-bottom: 0.2rem;
+
+}
+
+.warn-btn-card {
+  border: 2px solid red;
+  box-shadow: 0 4px 8px 0 rgba(255,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5px; 
+  max-width: 960px;
+  padding: 20px 16px 20px 20px;
+}
+
+
