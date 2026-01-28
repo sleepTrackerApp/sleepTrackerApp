@@ -1,0 +1,26 @@
+<script>
+    const entryData = { 
+        entryTime: '2020-03-01', 
+        startTime: '2020-03-01T22:00:00', 
+        endTime: '2020-03-02T06:00:00', 
+        rating: 5,
+    };
+
+    document.getElementById('gen-data')?.addEventListener('click', async () => {
+        const initialDate = new Date("2026-01-01");
+
+
+
+        try{
+            fetch('/api/sleep-entries', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(entryData),
+            });
+        } catch (err) {
+            console.error(err);
+            console.log(err);
+        }
+
+    });
+</script>
