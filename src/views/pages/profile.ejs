@@ -5,66 +5,72 @@
     <div class="profile-layout">
       <%- include('../components/profileSidebar', { activeSection: typeof activeSection !== 'undefined' ? activeSection : 'profile' }) %>
       <div class="profile-main">
-        <h3>Profile</h3>
-        <div class="btn-card">
-        <p class="grey-text text-darken-2">
-          Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>
-        </p>
-        </div>
+          <div class="card-head">
+              <h3>Profile</h3>
+          </div>
+          <div class="btn-card">
+              <p class="grey-text text-darken-2">
+              <div class="btn-card-hello">
+                  Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>
+              </div><br>
+                <%= user.email %>
+              </p>
+          </div>
 
-        <!-- Showcase Message History in Profile Page -->
-        <div class="previw-card">
-            <div class="card-head">
-                <h3>Announcement History</h3>  
-            </div>
-            <div class="card-body"> 
-                <div id="message-history"></div> 
-            </div>  
-            <div class="pagination-controls center-align" style="margin-top: 20px;">
-                <button id="prev-page" class="btn-flat waves-effect" disabled>
-                    <i class="material-icons left">chevron_left</i>Prev
-                </button>
-                <span id="page-info" style="margin: 0 15px; font-weight: bold;">Page 1</span>
-                <button id="next-page" class="btn-flat waves-effect">
-                    Next<i class="material-icons right">chevron_right</i>
-                </button>
+          <!-- Showcase Message History in Profile Page -->
+          <div class="dash-card">
+              <div class="card-head">
+                  <br>
+                  <h3>Announcement History</h3>  
+              </div>
 
-            </div>
-        <!----------------------------->
-        <hr><br>
-        <div class="btn-card">
-            <div class="btn-card-header"> Generate Data </div>
-            <p> Generate 60 random sleep entries and one goal entry of various days and hours</p>
-            <button id="gen-data" class="btn">Generate Data</button>
-            <%- include('../components/gen-data') %>
-        </div>
+              <div class="btn-card"> 
+                  <div id="message-history"></div> 
+                  <div class="pagination-controls center-align" style="margin-top: 20px;">
+                      <button id="prev-page" class="btn-flat waves-effect" disabled>
+                          <i class="material-icons left">chevron_left</i>Prev
+                      </button>
+                      <span id="page-info" style="margin: 0 15px; font-weight: bold;">Page 1</span>
+                      <button id="next-page" class="btn-flat waves-effect">
+                          Next<i class="material-icons right">chevron_right</i>
+                      </button>
+                  </div>  
+              </div>
+              <!----------------------------->
+              <br><hr><br>
+              <div class="btn-card">
+                  <div class="btn-card-header"> Generate Data </div>
+                  <p> Generate 60 random sleep entries and one goal entry of various days and hours</p>
+                  <button id="gen-data" class="btn">Generate Data</button>
+                  <%- include('../components/gen-data') %>
+              </div>
 
 
-        <!-- Export Sleep Entries Data to CSV -->
-        <br>
-        <div class="btn-card">
-            <div class="btn-card-header"> Export </div>
-            <p> Export sleep entries into CSV format</p>
-                <a href="/api/sleep-entries/export" class="btn black main-action-btn z-depth-0">
-                    Export Sleep Data
-                </a>
-        </div>
+              <!-- Export Sleep Entries Data to CSV -->
+              <br>
+              <div class="btn-card">
+                  <div class="btn-card-header"> Export </div>
+                  <p> Export sleep entries into CSV format</p>
+                  <a href="/api/sleep-entries/export" class="btn black main-action-btn z-depth-0">
+                      Export Sleep Data
+                  </a>
+              </div>
 
-        <!-- User Account Deletion Button  -->
-        <br>
-        <div class="warn-btn-card">
-            <div class="btn-card-header"> Delete Personal Account </div>
-            <p>User account and all stored data are permanently deleted. An email confirmation
-            is required before completion of aciton. Please ensure caution is applied if wishing to proceed.</p>
-            <%- include('../components/confirmUserDelete') %>
-        </div>
+              <!-- User Account Deletion Button  -->
+              <br>
+              <div class="warn-btn-card">
+                  <div class="btn-card-header"> Delete Personal Account </div>
+                  <p>User account and all stored data are permanently deleted. An email confirmation
+                  is required before completion of aciton. Please ensure caution is applied if wishing to proceed.</p>
+                  <%- include('../components/confirmUserDelete') %>
+              </div>
 
-        <!----------------------------->
+              <!----------------------------->
 
+          </div>
       </div>
     </div>
-  </div>
-  <script src="/js/profile-page.js"></script>
+    <script src="/js/profile-page.js"></script>
 </main>
 
 <%- include('../components/footer') %>

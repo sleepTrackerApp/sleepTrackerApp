@@ -143,6 +143,11 @@
 
 .message-pill.text { background: #e8f0fe; }
 
+.card-head h3 {
+    font-size: 32px !important;
+    font-weight: 700;
+    margin-top: 0;
+}
 
 /* Profile Button Styles */
 .btn-card {
@@ -151,6 +156,13 @@
   border-radius: 5px;   
   max-width: 960px;
   padding: 20px 16px 20px 20px;
+}
+
+.btn-card-hello {
+    font-size: 26px !important;
+    font-weight: 760;
+    margin-top: 0;
+    margin-bottom: 0.2rem;
 }
 
 .btn-card-header {
