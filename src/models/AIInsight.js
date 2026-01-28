@@ -28,6 +28,11 @@ const aiInsightSchema = new mongoose.Schema({
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
     
+    goalValue: { 
+        type: Number, 
+        required: true 
+    },
+    
     sleepScore: {
         type: Number,
         required: true,

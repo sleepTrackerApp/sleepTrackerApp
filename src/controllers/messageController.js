@@ -56,6 +56,25 @@ async function markAsRead(req, res) {
 }
 
 /**
+ * POST /api/messages/mark-all-read
+ * Marks all announcements as read for the notification logic.
+ */
+async function markAllAsRead(req, res) {
+  try {
+    const userId = res.locals.userRecord._id;
+    
+    await Message.updateMany(
+      { userId, messageType: 'text', isRead: false },
+      { $set: { isRead: true, readAt: new Date() } }
+    );
+    
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
  * DELETE /api/messages/:id — delete message.
  */
 async function deleteMessage(req, res) {
@@ -115,6 +134,7 @@ module.exports = {
   getMessageList,
   getChatLog,
   markAsRead,
+  markAllAsRead,
   deleteMessage,
   postChatMessage,
   getUnreadCount,

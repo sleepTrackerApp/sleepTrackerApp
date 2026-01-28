@@ -17,6 +17,9 @@ router.get('/chat', requireAuthAPI, messageController.getChatLog);
 /** GET /api/messages/unread — unread count */
 router.get('/unread', requireAuthAPI, messageController.getUnreadCount);
 
+/** POST /api/messages/mark-all-read — bulk mark announcements as read */
+router.post('/mark-all-read', requireAuthAPI, messageController.markAllAsRead);
+
 /** PATCH /api/messages/:id/read — mark as read */
 router.patch('/:id/read', requireAuthAPI, messageController.markAsRead);
 

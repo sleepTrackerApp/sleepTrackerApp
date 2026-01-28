@@ -651,6 +651,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
         aiContentBox.style.display = 'block';
         viewInsightBtn.style.display = 'none';
+
+        // Trigger the red bell notification
+        if (typeof window.refreshNotifications === 'function') {
+          window.refreshNotifications(); 
+        }
+
       } catch (err) {
         console.error('Insight Fetch Error:', err);
         M.toast({
