@@ -10,7 +10,7 @@
 
             const entryDate = inputDate.toISOString().split("T")[0];
 
-            const ranHours = Math.floor(Math.random() * 22) + 1;
+            const ranHours = Math.floor(Math.random() * (22 - 14 + 1)) + 14;
             const ranMinutes = Math.floor(Math.random() * 58) + 1;
 
             const startTime = `${entryDate}T${String(ranHours).padStart(2, "0")}:${String(ranMinutes).padStart(2, "0")}:00`;
@@ -36,7 +36,7 @@
             }
         } 
 
-        // Set Rnadom Goal
+        // Set Rnadom Goal 
         const goal = Math.floor(Math.random() * (775 - 360 + 1)) + 360; 
         try{
             fetch('/api/goal', {
