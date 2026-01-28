@@ -1,3 +1,22 @@
+/* Delete message button styles */
+.delete-message-btn {
+    background: none;
+    border: none;
+    color: #fff;
+    margin-left: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    vertical-align: middle;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.message.sent .delete-message-btn {
+    color: #fff;
+}
+.message.sent .delete-message-btn:hover {
+    opacity: 1;
+    color: #ff5252;
+}
 .main--with-chat {
     display: flex;
     flex-direction: column;

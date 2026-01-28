@@ -84,11 +84,8 @@ async function postChatMessage(req, res) {
       userId: String(userId),
       content: content.substring(0, 80),
     });
-    const message = await messageService.saveUserMessage(userId, content);
-    console.log('[Chat] user message saved, socket chat:message emitted', {
-      messageId: message._id,
-    });
-    const replyText = getReply(content);
+    console.log('[Chat] user message saved, socket chat:message emitted', { messageId: message._id });
+    const replyText = await getReply(content, userId);
     const reply = await messageService.sendReply(userId, replyText);
     console.log('[Chat] bot reply saved, socket chat:reply emitted', {
       replyId: reply._id,

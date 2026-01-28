@@ -198,10 +198,10 @@ function prepareSleepEntryData(entryData) {
  */
 async function getSleepEntries(userId, page, limit, startDate = null, endDate = null) {
     const skip = (page - 1) * limit;
-    
+
     // Build query with optional date range filtering
     const query = { userId };
-    
+
     if (startDate || endDate) {
         query.entryDate = {};
         if (startDate) {
@@ -215,7 +215,8 @@ async function getSleepEntries(userId, page, limit, startDate = null, endDate = 
             query.entryDate.$lte = end;
         }
     }
-    
+
+    // Paginated results
     const result = await SleepEntry.find(query)
         .sort({ entryDate: -1})
         .skip(skip)
@@ -228,8 +229,81 @@ async function getSleepEntries(userId, page, limit, startDate = null, endDate = 
         sleepEntries: result,
         totalEntries,
         totalPages,
-        currentPage: page
+        currentPage: page,
     }
+}
+
+/**
+ * Compute statistics over all sleep entries in an optional date range.
+ * @param userId - ID of the user
+ * @param startDate - optional start date for filtering (inclusive)
+ * @param endDate - optional end date for filtering (inclusive)
+ * @returns {Promise<Object>} - stats object
+ */
+async function getSleepStats(userId, startDate = null, endDate = null) {
+    const query = { userId };
+
+    if (startDate || endDate) {
+        query.entryDate = {};
+        if (startDate) {
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+            query.entryDate.$gte = start;
+        }
+        if (endDate) {
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+            query.entryDate.$lte = end;
+        }
+    }
+
+    const allEntries = await SleepEntry.find(query).sort({ entryDate: 1 });
+
+    let avgDuration = null,
+        bestDay = null,
+        worstDay = null,
+        avgRating = null,
+        totalSleep = 0,
+        stdDev = null;
+
+    if (allEntries.length > 0) {
+        const durations = allEntries.map((e) => e.duration || 0);
+        const ratings = allEntries
+            .map((e) => (typeof e.rating === 'number' ? e.rating : null))
+            .filter((r) => r !== null);
+
+        totalSleep = durations.reduce((a, b) => a + b, 0);
+        avgDuration = totalSleep / durations.length;
+
+        if (durations.length > 1) {
+            const mean = avgDuration;
+            stdDev = Math.sqrt(
+                durations.reduce((sum, d) => sum + Math.pow(d - mean, 2), 0) /
+                    durations.length
+            );
+        } else {
+            stdDev = 0;
+        }
+
+        const max = Math.max(...durations);
+        const min = Math.min(...durations);
+        bestDay = allEntries.find((e) => e.duration === max) || null;
+        worstDay = allEntries.find((e) => e.duration === min) || null;
+
+        if (ratings.length > 0) {
+            avgRating =
+                ratings.reduce((a, b) => a + b, 0) / ratings.length;
+        }
+    }
+
+    return {
+        avgDuration,
+        bestDay,
+        worstDay,
+        avgRating,
+        totalSleep,
+        stdDev,
+    };
 }
 
 /**
@@ -300,6 +374,7 @@ async function deleteUser(userId) {
 
 module.exports = {
     getSleepEntries,
+    getSleepStats,
     getSleepEntryByDate,
     getOrCreateSleepEntry,
     getAllSleepEntries,
