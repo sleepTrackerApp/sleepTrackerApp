@@ -1,5 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+
+    const seedData = async() => {
+
+        
+
+    }
+
+    // Load all announcements for user
     let currentPage = 1;
     let totalPages = 1;
     const entriesPerPage = 10;
