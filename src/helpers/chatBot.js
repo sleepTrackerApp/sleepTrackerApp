@@ -8,7 +8,6 @@
 
 
 const scheduleService = require('../services/scheduleService');
-const { getAIReply } = require('./aiChat');
 
 /**
  * Async chat bot reply function. Returns a reply string for a given user message and userId.
