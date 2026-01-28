@@ -22,8 +22,8 @@
                             <div class="col s12 m4">Date:</div>
                             <div class="col s12 m8 date-cell">
                                 <%
-                                  const _yesterday = new Date();
-                                  _yesterday.setDate(_yesterday.getDate() - 1);
+                                const _yesterday = new Date();
+                                _yesterday.setDate(_yesterday.getDate() - 1);
                                 %>
                                 <input type="date" id="sleep-date" class="browser-default sleep-date-picker date-input-inline"
                                        value="<%= _yesterday.toISOString().split('T')[0] %>"
@@ -351,6 +351,7 @@
                     <div id="goal-summary-wrapper" class="card-body goal-summary" style="display: none;">
                         <div class="card-head">
                             <h3>Sleep Goal</h3>
+                            <p class="muted m-0" style="font-size: 0.9rem; margin-top: 4px !important;">Set your target nightly sleep duration to track your progress</p>
                         </div>
 
                         <div class="goal-row">
@@ -379,6 +380,25 @@
                     <div class="card-body">
                         <div id="goal-history-grid" class="goal-history-grid"></div>
                         <p id="goal-history-empty" class="goal-history-empty muted center-align mt-3" style="display: none;"></p>
+                        <p class="goal-progress-summary center-align muted m-0 mt-2">Your goal progess this month</p>
+                        <div class="goal-history-legend muted">
+                            <span class="goal-history-legend-item">
+                                <span class="goal-history-icon goal-history-icon--met">
+                                    <i class="material-icons">check</i>
+                                </span>
+                                <span>Goal met</span>
+                            </span>
+                            <span class="goal-history-legend-item">
+                                <span class="goal-history-icon goal-history-icon--missed">
+                                    <i class="material-icons">close</i>
+                                </span>
+                                <span>Goal missed</span>
+                            </span>
+                            <span class="goal-history-legend-item">
+                                <span class="goal-history-icon goal-history-icon--empty"></span>
+                                <span>No data recorded</span>
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -388,6 +408,7 @@
                 <div class="dash-card goal-progress-card" style="display: none;">
                     <div class="card-head">
                         <h3>Your Progress</h3>
+                        <p class="muted m-0" style="font-size: 0.9rem; margin-top: 4px !important;">Monthly statistics and consistency tracking for your sleep goal</p>
                     </div>
                     <div class="card-body">
                         <p id="goal-progress-message" class="muted m-0 mb-4"></p>
