@@ -24,7 +24,13 @@ async function getSleepEntries(req, res, next) {
     const entries = await sleepEntryService.getSleepEntries(userId, page, limit, startDate, endDate);
     res.status(200).json({
       success: true,
-      data: entries,
+      data: {
+        sleepEntries: entries.sleepEntries,
+        totalEntries: entries.totalEntries,
+        totalPages: entries.totalPages,
+        currentPage: entries.currentPage,
+        stats: entries.stats
+      },
     });
   } catch (error) {
     next(error);

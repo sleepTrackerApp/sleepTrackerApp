@@ -22,22 +22,78 @@
     return id !== null && shownIds[String(id)];
   }
 
-  function renderMessage(content, kind, createdAt, id) {
-    if (id !== null) markShown(id);
-    var time = createdAt
-      ? new Date(createdAt).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
+    function renderMessage(content, kind, createdAt, id) {
+      if (id !== null) markShown(id);
+      var time = createdAt
+        ? new Date(createdAt).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })
+        : '';
+      var div = document.createElement('div');
+      div.className = 'message ' + (kind === 'sent' ? 'sent' : 'received');
+        let safeContent = (content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        let actions = '';
+          if (kind === 'sent') {
+            actions = `<button class="delete-message-btn" title="Delete" onclick="window.deleteChatMessage && window.deleteChatMessage('${id}')">🗑️</button>`;
+          } else {
+            actions = `<button class="delete-message-btn" title="Dismiss" onclick="window.deleteChatMessage && window.deleteChatMessage('${id}')">✖️</button>`;
+          }
+        div.innerHTML =
+          safeContent +
+          actions +
+          (time ? '<div class="message-time">' + time + '</div>' : '');
+      messagesArea.appendChild(div);
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+      // Attach delete handler if button exists
+      if (kind === 'sent' && id) {
+        const btn = div.querySelector('.delete-message-btn');
+        if (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (confirm('Delete this message?')) {
+              deleteMessage(id, div);
+            }
+          });
+        }
+      }
+    }
+  // Delete chat message (sent by user)
+  window.deleteChatMessage = function (id) {
+    if (!id) return;
+    if (!confirm('Delete this message?')) return;
+    fetch('/api/messages/' + encodeURIComponent(id), {
+      method: 'DELETE',
+      credentials: 'same-origin',
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (data) {
+        if (data.success) {
+          // Remove from UI
+          var el = Array.from(messagesArea.children).find(e => e.innerHTML.includes(id));
+          if (el) el.remove();
+        } else {
+          alert('Could not delete message.');
+        }
+      })
+      .catch(function () { alert('Could not delete message.'); });
+  };
+
+    function deleteMessage(id, div) {
+      fetch('/api/messages/' + encodeURIComponent(id), {
+        method: 'DELETE',
+        credentials: 'same-origin',
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          if (data.success) {
+            if (div && div.parentNode) div.parentNode.removeChild(div);
+          } else {
+            alert('Failed to delete message.');
+          }
         })
-      : '';
-    var div = document.createElement('div');
-    div.className = 'message ' + (kind === 'sent' ? 'sent' : 'received');
-    div.innerHTML =
-      (content || '').replace(/</g, '&lt;').replace(/>/g, '&gt;') +
-      (time ? '<div class="message-time">' + time + '</div>' : '');
-    messagesArea.appendChild(div);
-    messagesArea.scrollTop = messagesArea.scrollHeight;
-  }
+        .catch(function () { alert('Failed to delete message.'); });
+    }
 
   function clearEmptyPlaceholder() {
     var el = messagesArea.querySelector('.messages-empty');
