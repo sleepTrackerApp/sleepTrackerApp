@@ -6,11 +6,12 @@
       <%- include('../components/profileSidebar', { activeSection: typeof activeSection !== 'undefined' ? activeSection : 'profile' }) %>
       <div class="profile-main">
         <h3>Profile</h3>
+        <div class="btn-card">
         <p class="grey-text text-darken-2">
           Welcome, <%= (typeof user !== 'undefined' && user && user.name) ? user.name : 'User' %>
         </p>
+        </div>
 
-        <hr>
         <!-- Showcase Message History in Profile Page -->
         <div class="previw-card">
             <div class="card-head">
@@ -33,7 +34,7 @@
         <hr><br>
         <div class="btn-card">
             <div class="btn-card-header"> Generate Data </div>
-            <p> Generate 60 sleep entries and on goal entry of various days and hours</p>
+            <p> Generate 60 random sleep entries and one goal entry of various days and hours</p>
             <button id="gen-data" class="btn">Generate Data</button>
             <%- include('../components/gen-data') %>
         </div>
@@ -53,7 +54,7 @@
         <br>
         <div class="warn-btn-card">
             <div class="btn-card-header"> Delete Personal Account </div>
-            <p>User accounts and data are permanently deleted. An email confirmation
+            <p>User account and all stored data are permanently deleted. An email confirmation
             is required before completion of aciton. Please ensure caution is applied if wishing to proceed.</p>
             <%- include('../components/confirmUserDelete') %>
         </div>
