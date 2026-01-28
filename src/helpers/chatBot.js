@@ -6,7 +6,6 @@
  * @returns {string} Bot reply text
  */
 
-
 const scheduleService = require('../services/scheduleService');
 
 /**
@@ -15,7 +14,6 @@ const scheduleService = require('../services/scheduleService');
  * @param {string|Object} [userId] - User ID for personalized data
  * @returns {Promise<string>} Bot reply text
  */
-
 async function getReply(userMessage, userId) {
   if (!userMessage || typeof userMessage !== 'string') {
     return "Say something and I'll do my best to help.";
@@ -75,8 +73,8 @@ async function getReply(userMessage, userId) {
     return "You're welcome! Have a great rest.";
   }
 
-  // For all other questions, use AI
-  return await getAIReply(userMessage);
+  // For all other questions, just return a static message
+  return "Just text me chat.";
 }
 
 module.exports = { getReply };
