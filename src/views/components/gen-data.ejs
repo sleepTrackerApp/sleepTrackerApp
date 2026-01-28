@@ -9,9 +9,10 @@
             inputDate.setDate(initialDate.getDate() + i);
 
             const entryDate = inputDate.toISOString().split("T")[0];
-            console.log(entryDate);
 
-            const startTime = `${entryDate}T22:00:00`;
+            const ranHour = Math.floor(Math.random() * 58) + 1;
+
+            const startTime = `${entryDate}T22:${String(ranHour).padStart(2, "0")}:00`;
             const endTime = `${entryDate}T23:59:59`;
 
             const entryData = { 
@@ -21,6 +22,7 @@
                 rating: Math.floor(Math.random() * 10) + 1, 
 
             };
+            console.log(startTime);
 
             try{
                 fetch('/api/sleep-entries', {
