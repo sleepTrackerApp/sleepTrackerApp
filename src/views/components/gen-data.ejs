@@ -3,22 +3,25 @@
         const initialDate = new Date("2026-01-01");
 
         // Loop through 60 days worth of data
-        for (let i = 0; i <= 60; i++){
+        for (let i = 0; i < 60; i++){
 
             const inputDate = new Date(initialDate);
             inputDate.setDate(initialDate.getDate() + i);
 
-            const entryTime;
-            const startTime;
-            const endTime;
-            const rating;
+            const entryDate = inputDate.toISOString().split("T")[0];
+            console.log(entryDate);
+
+            const startTime = `${entryDate}T22:00:00`;
+            const endTime = `${entryDate}T23:59:59`;
 
             const entryData = { 
-                entryTime: '2020-03-01', 
-                startTime: '2020-03-01T22:00:00', 
-                endTime: '2020-03-02T06:00:00', 
-                rating: 5,
+                entryTime: entryDate, 
+                startTime, 
+                endTime, 
+                rating: Math.floor(Math.random() * 10) + 1, 
+
             };
+
             try{
                 fetch('/api/sleep-entries', {
                     method: 'POST',
@@ -26,7 +29,6 @@
                     body: JSON.stringify(entryData),
                 });
             } catch (err) {
-                console.error(err);
                 console.log(err);
             }
 
