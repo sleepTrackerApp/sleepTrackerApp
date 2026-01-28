@@ -42,4 +42,38 @@ $(document).ready(function () {
       });
     });
   }
+
+  // Person-Bell Swap Notification (authenticated header)
+  window.refreshNotifications = async () => {
+    try {
+      const response = await fetch('/api/messages/unread');
+      const data = await response.json();
+      const count = data.unreadCount || 0;
+
+      const $navIcon = $('#nav-user-icon');
+      const $notifText = $('#notif-text');
+
+      if (count > 0) {
+        $navIcon.text('notifications_active');
+        $navIcon.addClass('red-text');
+        $notifText.html(`You have <span class="red-text" style="font-weight: 700;">${count}</span> new message${count > 1 ? 's' : ''}`);
+        
+      } else {
+        $navIcon.text('person');
+        $navIcon.removeClass('teal-text');
+        $notifText.text('You have no new messages');
+        
+      }
+    } catch (err) { console.error('Notification refresh failed', err); }
+  };
+
+  refreshNotifications();
+
+  if (window.location.pathname.includes('/profile')) {
+    fetch('/api/messages/mark-all-read', { method: 'POST' }).then(() => refreshNotifications());
+  }
+
+  if (window.socket) {
+    window.socket.on('message:new', refreshNotifications);
+  }
 });

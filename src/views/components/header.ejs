@@ -58,15 +58,18 @@
 
                     <div class="header-profile-wrap">
                         <button type="button" class="header-profile-btn" id="header-profile-btn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
-                            <i class="material-icons">person</i>
+                            <i class="material-icons" id="nav-user-icon">person</i>
                         </button>
                         <div class="header-profile-dropdown" id="header-profile-dropdown" aria-hidden="true">
                             <div class="dropdown-section dropdown-welcome">
                                 Welcome,
                                 <a href="/profile" class="dropdown-welcome-link"><%= (typeof user !== 'undefined' && user.name) ? user.name : 'User' %></a>
                             </div>
-                            <div class="dropdown-section dropdown-messages">
-                                <span class="dropdown-messages-text">You have no new messages</span>
+                            <div class="dropdown-section dropdown-links">
+                                <a href="/profile" class="dropdown-link">
+                                    <i class="material-icons">notifications</i>
+                                    <span id="notif-text" class="dropdown-messages-text">You have no new messages</span>
+                                </a>
                             </div>
                             <div class="dropdown-section dropdown-links">
                                 <a href="/profile" class="dropdown-link"><i class="material-icons">person</i> Profile</a>

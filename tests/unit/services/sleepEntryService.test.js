@@ -17,7 +17,12 @@ describe('Sleep Entry Service', () => {
   describe('getSleepEntries', () => {
     it('should fetch sleep entries with pagination', async () => {
       const mockEntries = [
-        { _id: 'entry1', userId: mockUserId, entryDate: new Date('2024-01-01'), duration: 480 },
+        {
+          _id: 'entry1',
+          userId: mockUserId,
+          entryDate: new Date('2026-01-01'),
+          duration: 480,
+        },
       ];
       const mockQuery = {
         sort: sandbox.stub().returnsThis(),
@@ -29,9 +34,12 @@ describe('Sleep Entry Service', () => {
         countDocuments: sandbox.stub().resolves(1),
       };
 
-      const sleepEntryService = proxyquire('../../../src/services/sleepEntryService', {
-        '../models': { SleepEntry: SleepEntryStub },
-      });
+      const sleepEntryService = proxyquire(
+        '../../../src/services/sleepEntryService',
+        {
+          '../models': { SleepEntry: SleepEntryStub },
+        }
+      );
 
       const result = await sleepEntryService.getSleepEntries(mockUserId, 1, 10);
 
@@ -46,18 +54,24 @@ describe('Sleep Entry Service', () => {
       const mockEntry = {
         _id: 'entry1',
         userId: mockUserId,
-        entryDate: new Date('2024-01-01'),
+        entryDate: new Date('2026-01-01'),
         duration: 480,
       };
       const SleepEntryStub = {
         findOne: sandbox.stub().resolves(mockEntry),
       };
 
-      const sleepEntryService = proxyquire('../../../src/services/sleepEntryService', {
-        '../models': { SleepEntry: SleepEntryStub },
-      });
+      const sleepEntryService = proxyquire(
+        '../../../src/services/sleepEntryService',
+        {
+          '../models': { SleepEntry: SleepEntryStub },
+        }
+      );
 
-      const result = await sleepEntryService.getSleepEntryByDate(mockUserId, '2024-01-01');
+      const result = await sleepEntryService.getSleepEntryByDate(
+        mockUserId,
+        '2026-01-01'
+      );
 
       expect(SleepEntryStub.findOne.calledOnce).to.be.true;
       expect(result).to.deep.equal(mockEntry);
@@ -69,23 +83,29 @@ describe('Sleep Entry Service', () => {
       const mockEntry = {
         _id: 'entry1',
         userId: mockUserId,
-        entryDate: new Date('2024-01-01'),
+        entryDate: new Date('2026-01-01'),
         duration: 480,
       };
       const SleepEntryStub = {
         findOneAndUpdate: sandbox.stub().resolves(mockEntry),
       };
 
-      const sleepEntryService = proxyquire('../../../src/services/sleepEntryService', {
-        '../models': { SleepEntry: SleepEntryStub },
-      });
+      const sleepEntryService = proxyquire(
+        '../../../src/services/sleepEntryService',
+        {
+          '../models': { SleepEntry: SleepEntryStub },
+        }
+      );
 
       const entryData = {
-        entryTime: '2024-01-01',
+        entryTime: '2026-01-01',
         duration: 480,
       };
 
-      const result = await sleepEntryService.getOrCreateSleepEntry(mockUserId, entryData);
+      const result = await sleepEntryService.getOrCreateSleepEntry(
+        mockUserId,
+        entryData
+      );
 
       expect(SleepEntryStub.findOneAndUpdate.calledOnce).to.be.true;
       expect(result).to.deep.equal(mockEntry);
@@ -95,22 +115,25 @@ describe('Sleep Entry Service', () => {
       const mockEntry = {
         _id: 'entry1',
         userId: mockUserId,
-        entryDate: new Date('2024-01-01'),
+        entryDate: new Date('2026-01-01'),
         duration: 480,
       };
       const SleepEntryStub = {
         findOneAndUpdate: sandbox.stub().resolves(mockEntry),
       };
 
-      const sleepEntryService = proxyquire('../../../src/services/sleepEntryService', {
-        '../models': { SleepEntry: SleepEntryStub },
-      });
+      const sleepEntryService = proxyquire(
+        '../../../src/services/sleepEntryService',
+        {
+          '../models': { SleepEntry: SleepEntryStub },
+        }
+      );
 
       // Use local time strings to ensure date portion matches entryTime
       const entryData = {
-        entryTime: '2024-01-01',
-        startTime: '2024-01-01T22:00:00',
-        endTime: '2024-01-02T06:00:00',
+        entryTime: '2026-01-01',
+        startTime: '2026-01-01T22:00:00',
+        endTime: '2026-01-02T06:00:00',
       };
 
       await sleepEntryService.getOrCreateSleepEntry(mockUserId, entryData);
@@ -125,12 +148,17 @@ describe('Sleep Entry Service', () => {
         findOneAndUpdate: sandbox.stub(),
       };
 
-      const sleepEntryService = proxyquire('../../../src/services/sleepEntryService', {
-        '../models': { SleepEntry: SleepEntryStub },
-      });
+      const sleepEntryService = proxyquire(
+        '../../../src/services/sleepEntryService',
+        {
+          '../models': { SleepEntry: SleepEntryStub },
+        }
+      );
 
       try {
-        await sleepEntryService.getOrCreateSleepEntry(mockUserId, { duration: 480 });
+        await sleepEntryService.getOrCreateSleepEntry(mockUserId, {
+          duration: 480,
+        });
         expect.fail('Should have thrown an error');
       } catch (error) {
         expect(error.message).to.include('Entry date is required');
@@ -143,22 +171,27 @@ describe('Sleep Entry Service', () => {
       const mockDeletedEntry = {
         _id: 'entry1',
         userId: mockUserId,
-        entryDate: new Date('2024-01-01'),
+        entryDate: new Date('2026-01-01'),
         duration: 480,
       };
       const SleepEntryStub = {
         findOneAndDelete: sandbox.stub().resolves(mockDeletedEntry),
       };
 
-      const sleepEntryService = proxyquire('../../../src/services/sleepEntryService', {
-        '../models': { SleepEntry: SleepEntryStub },
-      });
+      const sleepEntryService = proxyquire(
+        '../../../src/services/sleepEntryService',
+        {
+          '../models': { SleepEntry: SleepEntryStub },
+        }
+      );
 
-      const result = await sleepEntryService.deleteSleepEntryByDate(mockUserId, '2024-01-01');
+      const result = await sleepEntryService.deleteSleepEntryByDate(
+        mockUserId,
+        '2026-01-01'
+      );
 
       expect(SleepEntryStub.findOneAndDelete.calledOnce).to.be.true;
       expect(result).to.deep.equal(mockDeletedEntry);
     });
   });
 });
-

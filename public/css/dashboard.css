@@ -318,6 +318,21 @@ input[type=range]::-ms-thumb {
     color: transparent;
 }
 
+.goal-history-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+    font-size: 0.9rem;
+}
+
+.goal-history-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
 .goal-history-day {
     margin-top: 0;
     font-size: 0.7rem;
@@ -359,6 +374,7 @@ input[type=range]::-ms-thumb {
 .goal-progress-summary {
     margin-top: 16px;
     font-style: italic;
+    margin-bottom: 0;
 }
 
 .goal-loading {
