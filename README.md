@@ -39,6 +39,7 @@ to manage configuration across environments securely.
 - [Sinon](https://sinonjs.org/) (Mock/stub library)
 - [Proxyquire](https://github.com/thlorenz/proxyquire) (Testing module
   replacement library)
+- [Playwright](https://playwright.dev/) (End-to-end browser testing framework)
 
 # Project Features
 
@@ -83,7 +84,11 @@ src/
 tests/
 ├── helpers/             # Test utilities
 ├── integration/         # Integration test suites
-└── unit/                # Unit test suites
+│   ├── flows/           # Integration flow tests
+│   └── pages/           # Page rendering tests
+├── unit/                # Unit test suites
+├── smoke/               # Quick health check tests
+└── e2e/                 # Browser-based end-to-end tests
 api/                     # Serverless API function for Vercel
 docs/                    # Supporting documentation
 .github/                 # GitHub actions
@@ -169,6 +174,8 @@ serving a specific purpose:
   for isolating units under test
 - **Proxyquire**: Module replacement library that enables mocking dependencies
   when requiring modules, to isolate code under test
+- **Playwright**: End-to-end browser testing framework for simulating real user
+  interactions in a headless browser environment
 
 ### How to Add Tests
 
@@ -279,12 +286,43 @@ describe('Module with dependencies', () => {
 - `.noCallThru()`: Prevents the original module from being loaded
 - `.noPreserveCache()`: Ensures fresh module loads for each test
 
+### Test Organization
+
+The project uses a multi-layered testing strategy:
+
+- **Unit Tests** (`tests/unit/`): Test individual functions and modules in
+  isolation using mocks/stubs
+- **Integration Tests** (`tests/integration/`): Test API endpoints and page
+  rendering with real app wiring
+    - `tests/integration/flows/`: Full user flows (sleep entry, goal setting)
+    - `tests/integration/pages/`: Page rendering and routing
+- **Smoke Tests** (`tests/smoke/`): Quick health checks for basic app
+  functionality
+- **E2E Tests** (`tests/e2e/`): Browser-based tests using Playwright for real
+  user interactions
+
 ### Running Tests
 
 Run all tests:
 
 ```bash
 npm test
+```
+
+Run specific test suites:
+
+```bash
+# Unit tests only
+npm run test:unit
+
+# Integration tests only
+npm run test:integration
+
+# Smoke tests only (quick health checks)
+npm run test:smoke
+
+# End-to-end browser tests
+npm run test:e2e
 ```
 
 Run specific test file:
@@ -324,9 +362,12 @@ The application follows a privacy-first approach:
   available during the active session and is not saved
 - **Secure hashing**: The `ENCRYPTION_KEY` environment variable is used as the
   secret for hashing, ensuring identifiers cannot be reversed
-- **Export Data**: User data (e.g., sleep entries) may be exported by respected users to ensure complete transparency with what is collected and what the user may wish to do with their data.
-- **Account Deletion**: User model data (e.g., sleep entries) upon account deletion via the Profile → Account Deletion will remove all user data stored within the models.
- 
+- **Export Data**: User data (e.g., sleep entries) may be exported by respected
+  users to ensure complete transparency with what is collected and what the user
+  may wish to do with their data.
+- **Account Deletion**: User model data (e.g., sleep entries) upon account
+  deletion via the Profile → Account Deletion will remove all user data stored
+  within the models.
 
 ### User Login
 
@@ -358,7 +399,6 @@ res.redirect('/auth/logout');
 
 The logout route invalidates the Auth0 session and redirects users to the home
 page (`/`).
-
 
 ### Checking Authentication Status
 

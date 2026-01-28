@@ -51,6 +51,10 @@
     "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "test": "mocha \"tests/**/*.test.js\" --recursive --reporter spec",
+    "test:unit": "mocha \"tests/unit/**/*.test.js\" --recursive --reporter spec",
+    "test:integration": "mocha \"tests/integration/**/*.test.js\" --recursive --reporter spec",
+    "test:smoke": "mocha \"tests/smoke/**/*.test.js\" --recursive --reporter spec",
+    "test:e2e": "playwright test",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
@@ -73,6 +77,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@playwright/test": "^1.58.0",
     "chai": "^4.4.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",

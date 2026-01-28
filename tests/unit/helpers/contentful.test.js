@@ -15,7 +15,7 @@ describe('Contentful Helper Unit Tests', () => {
   };
 
   const listItem = {
-    sys: { id: '123', createdAt: '2025-01-01T12:00:00Z' },
+    sys: { id: '123', createdAt: '2026-01-01T12:00:00Z' },
     fields: {
       title: 'Test Article',
       slug: 'test-article',
@@ -27,7 +27,10 @@ describe('Contentful Helper Unit Tests', () => {
   };
   const fullItem = {
     ...listItem,
-    fields: { ...listItem.fields, bodyContent: { nodeType: 'document', content: [] } },
+    fields: {
+      ...listItem.fields,
+      bodyContent: { nodeType: 'document', content: [] },
+    },
   };
 
   let contentfulHelper;
@@ -72,7 +75,8 @@ describe('Contentful Helper Unit Tests', () => {
       expect(mockClient.getEntries.firstCall.args[0]).to.deep.equal({
         content_type: 'articles',
         order: '-fields.date',
-        select: 'sys.id,fields.slug,fields.title,fields.author,fields.date,fields.readTime,fields.tags,fields.excerpt,fields.coverImage',
+        select:
+          'sys.id,fields.slug,fields.title,fields.author,fields.date,fields.readTime,fields.tags,fields.excerpt,fields.coverImage',
       });
       expect(result).to.have.lengthOf(1);
       expect(result[0]).to.include({
@@ -102,7 +106,9 @@ describe('Contentful Helper Unit Tests', () => {
 
       expect(result).to.be.an('array').that.is.empty;
       expect(consoleStub.calledOnce).to.be.true;
-      expect(consoleStub.firstCall.args[0]).to.include('Error fetching Contentful articles');
+      expect(consoleStub.firstCall.args[0]).to.include(
+        'Error fetching Contentful articles'
+      );
     });
   });
 
@@ -113,10 +119,12 @@ describe('Contentful Helper Unit Tests', () => {
 
       const result = await contentfulHelper.getArticleBySlug('test-article');
 
-      expect(mockClient.getEntries.calledOnceWith({
-        content_type: 'articles',
-        'fields.slug': 'test-article',
-      })).to.be.true;
+      expect(
+        mockClient.getEntries.calledOnceWith({
+          content_type: 'articles',
+          'fields.slug': 'test-article',
+        })
+      ).to.be.true;
       expect(result).to.not.be.null;
       expect(result.title).to.equal('Test Article');
       expect(result.slug).to.equal('test-article');
@@ -159,7 +167,9 @@ describe('Contentful Helper Unit Tests', () => {
       const result = await contentfulHelper.getArticleBySlug('any-slug');
 
       expect(result).to.be.null;
-      expect(consoleStub.firstCall.args[0]).to.include('Error fetching Contentful article by slug');
+      expect(consoleStub.firstCall.args[0]).to.include(
+        'Error fetching Contentful article by slug'
+      );
     });
   });
 });

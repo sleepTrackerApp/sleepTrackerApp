@@ -32,25 +32,35 @@ async function getReply(userMessage, userId) {
 
   if (/\b(schedule|schedules|reminder|bedtime|notification)\b/.test(lower)) {
     if (!userId) {
-      return "To show your schedules, please sign in.";
+      return 'To show your schedules, please sign in.';
     }
     try {
-      const { items, total } = await scheduleService.listSchedules(userId, 1, 5);
+      const { items, total } = await scheduleService.listSchedules(
+        userId,
+        1,
+        5
+      );
       if (!items.length) {
         return "You don't have any schedules set up yet. Go to your Dashboard → Sleep Schedules to add one!";
       }
       let reply = `You have ${total} schedule${total === 1 ? '' : 's'}:`;
       for (const sched of items) {
         if (sched.type === 'bedtime') {
-          const days = Array.isArray(sched.daysOfWeek) && sched.daysOfWeek.length
-            ? sched.daysOfWeek.map(d => ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d]).join(', ')
-            : 'every day';
-          reply += `\n• ${sched.name}: Bedtime at ${sched.timeOfDay?.hour?.toString().padStart(2,'0') ?? '--'}:${sched.timeOfDay?.minute?.toString().padStart(2,'0') ?? '--'} on ${days}`;
+          const days =
+            Array.isArray(sched.daysOfWeek) && sched.daysOfWeek.length
+              ? sched.daysOfWeek
+                  .map(
+                    (d) => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d]
+                  )
+                  .join(', ')
+              : 'every day';
+          reply += `\n• ${sched.name}: Bedtime at ${sched.timeOfDay?.hour?.toString().padStart(2, '0') ?? '--'}:${sched.timeOfDay?.minute?.toString().padStart(2, '0') ?? '--'} on ${days}`;
         } else {
           reply += `\n• ${sched.name}: Custom schedule (${sched.cron})`;
         }
       }
-      if (total > items.length) reply += `\n(Only showing the first ${items.length}. See Dashboard for all.)`;
+      if (total > items.length)
+        reply += `\n(Only showing the first ${items.length}. See Dashboard for all.)`;
       return reply;
     } catch (err) {
       return "Sorry, I couldn't fetch your schedules right now. Please try again later.";
@@ -74,7 +84,7 @@ async function getReply(userMessage, userId) {
   }
 
   // For all other questions, just return a static message
-  return "Just text me chat.";
+  return 'I can help with schedules, sleep tips, and logging — just ask in a sentence or two.';
 }
 
 module.exports = { getReply };

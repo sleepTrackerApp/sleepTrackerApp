@@ -84,12 +84,18 @@ async function postChatMessage(req, res) {
       userId: String(userId),
       content: content.substring(0, 80),
     });
+    
+    // Save the user's message first
+    const message = await messageService.saveUserMessage(userId, content);
     console.log('[Chat] user message saved, socket chat:message emitted', { messageId: message._id });
+    
+    // Get bot reply and save it
     const replyText = await getReply(content, userId);
     const reply = await messageService.sendReply(userId, replyText);
     console.log('[Chat] bot reply saved, socket chat:reply emitted', {
       replyId: reply._id,
     });
+    
     res.status(201).json({ success: true, message, reply });
   } catch (error) {
     console.error('Error saving chat message:', error);
