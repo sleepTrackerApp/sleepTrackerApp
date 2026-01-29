@@ -1,6 +1,9 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
-const { buildAuthConfig, userSyncMiddleware } = require('../../../src/helpers/auth');
+const {
+  buildAuthConfig,
+  userSyncMiddleware,
+} = require('../../../src/helpers/auth');
 const userService = require('../../../src/services/userService');
 
 describe('Auth0 auth helpers', () => {
@@ -20,7 +23,11 @@ describe('Auth0 auth helpers', () => {
     const config = buildAuthConfig();
     expect(config.authRequired).to.be.false;
     expect(config.auth0Logout).to.be.true;
-    expect(config.routes).to.deep.equal({ login: false, logout: false, callback: '/auth/callback' });
+    expect(config.routes).to.deep.equal({
+      login: false,
+      logout: false,
+      callback: '/auth/callback',
+    });
     expect(config).to.not.have.property('afterCallback');
   });
 
@@ -36,8 +43,8 @@ describe('Auth0 auth helpers', () => {
 
     const existingUser = {
       authIdHash: 'hash',
-      createdAt: new Date('2024-01-01T00:00:00Z'),
-      updatedAt: new Date('2024-01-02T00:00:00Z'),
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      updatedAt: new Date('2026-01-02T00:00:00Z'),
     };
     userService.getOrCreateUser.resolves(existingUser);
 
@@ -46,7 +53,8 @@ describe('Auth0 auth helpers', () => {
     expect(res.locals.isAuthenticated).to.be.true;
     expect(res.locals.userRecord).to.deep.equal(existingUser);
     expect(res.locals.isFirstLogin).to.be.false;
-    expect(userService.getOrCreateUser.calledOnceWithExactly('auth0|existing')).to.be.true;
+    expect(userService.getOrCreateUser.calledOnceWithExactly('auth0|existing'))
+      .to.be.true;
     expect(next.calledOnce).to.be.true;
   });
 
@@ -62,14 +70,15 @@ describe('Auth0 auth helpers', () => {
 
     const newUser = {
       authIdHash: 'hash',
-      createdAt: new Date('2024-01-01T00:00:00Z'),
-      updatedAt: new Date('2024-01-01T00:00:00Z'),
+      createdAt: new Date('2026-01-01T00:00:00Z'),
+      updatedAt: new Date('2026-01-01T00:00:00Z'),
     };
     userService.getOrCreateUser.resolves(newUser);
 
     await userSyncMiddleware(req, res, next);
 
-    expect(userService.getOrCreateUser.calledOnceWithExactly('auth0|new-user')).to.be.true;
+    expect(userService.getOrCreateUser.calledOnceWithExactly('auth0|new-user'))
+      .to.be.true;
     expect(res.locals.userRecord).to.deep.equal(newUser);
     expect(res.locals.isFirstLogin).to.be.true;
     expect(next.calledOnce).to.be.true;

@@ -127,15 +127,79 @@
     }
 }
 
-.message-pill {
-  display: inline-block;
-  padding: 8px 14px;
-  margin: 6px 0;
-  background: #89CFF0;
-  border-radius: 20px;
-  font-size: 14px;
-  color: #333;
-  border: 1px solid #ddd;
+.card-head h3 {
+    font-size: 32px !important;
+    font-weight: 700;
+    margin-top: 0;
 }
 
-.message-pill.text { background: #e8f0fe; }
+/* Announcement Card Style */
+.message-pill {
+    display: flex;
+    align-item: center;
+    gap: 24px;
+    padding: 8px 14px;
+    margin: 6px 20px;
+    border-radius: 2px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+}
+
+.message-pill-text {
+    border-left: 2px solid #ddd;
+    padding-left: 20px;
+    margin-top: 6px;
+    font-weight: bold;
+}
+
+.message-date {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: center;
+    font-size: 12px;
+    color: #555;
+    margin-left: 10px;
+}
+
+.message .year {
+    font-weight: bold;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+
+/* Profile Button Styles */
+.btn-card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    border-radius: 25px;
+    padding: 20px 16px 20px 20px;
+    max-width: 960px;
+}
+
+.btn-card-hello {
+    font-size: 26px !important;
+    font-weight: 760;
+    margin-top: 0;
+    margin-bottom: 0.2rem;
+}
+
+.btn-card-header {
+    font-size: 26px !important;
+    font-weight: 800;
+    margin-top: 0;
+    margin-bottom: 0.2rem;
+
+}
+
+.warn-btn-card {
+    border: 2px solid red;
+    box-shadow: 0 4px 8px 0 rgba(255, 0, 0, 0.2);
+    transition: 0.3s;
+    border-radius: 25px;
+    max-width: 960px;
+    padding: 20px 16px 20px 20px;
+}
+
+
+

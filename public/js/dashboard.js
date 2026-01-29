@@ -191,23 +191,74 @@ document.addEventListener('DOMContentLoaded', function () {
         trendsSection.style.display = totalPages > 0 ? 'flex' : 'none';
       }
 
+
+
       historyBody.innerHTML = entries
         .map((entry) => {
           const date = new Date(entry.entryDate).toLocaleDateString('en-US', {
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
+            month: 'short', day: 'numeric', year: 'numeric',
           });
           const hrs = Math.floor(entry.duration / 60);
           const mins = entry.duration % 60;
 
           return `<tr>
-                <td>${date}</td>
-                <td>${hrs} hrs ${mins.toString().padStart(2, '0')} mins</td>
-                <td>${entry.rating}/10</td>
-            </tr>`;
+                  <td>${date}</td>
+                  <td>${hrs} hrs ${mins.toString().padStart(2, '0')} mins</td>
+                  <td>${entry.rating}/10</td>
+                  
+                  <td class="right-align">
+                      <button class="btn-flat small waves-effect red-text js-delete-record" 
+                              data-date="${entry.entryDate}" 
+                              style="padding: 0 10px;">
+                          <i class="material-icons">delete</i>
+                      </button>
+                  </td>
+              </tr>`;
         })
         .join('');
+
+      document.querySelectorAll('.js-delete-record').forEach((btn) => {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+
+          const dateToDelete = this.getAttribute('data-date');
+          const dateObj = new Date(dateToDelete);
+          const month = dateObj.toLocaleString('en-US', { month: 'short' });
+          const day = dateObj.getDate(); 
+          const year = dateObj.getFullYear(); 
+
+          const getSuffix = (d) => {
+            if (d > 3 && d < 21) return 'th';
+            switch (d % 10) {
+              case 1: return "st";
+              case 2: return "nd";
+              case 3: return "rd";
+              default: return "th";
+            }
+          };
+
+          // Confirmation Modal
+          const formattedDate = `${month} ${day}${getSuffix(day)}, ${year}`;
+
+          const dateText = document.getElementById('delete-confirm-date');
+          if (dateText) dateText.innerText = formattedDate;
+
+          const finalBtn = document.getElementById('btn-final-delete');
+          if (finalBtn) finalBtn.setAttribute('data-target-date', dateToDelete);
+
+          const modalElem = document.getElementById('modal-delete-confirm');
+
+          let instance = M.Modal.getInstance(modalElem);
+
+          if (!instance) {
+            instance = M.Modal.init(modalElem, {
+              dismissible: true, 
+              opacity: 0.5      
+            });
+          }
+          instance.open();
+        });
+      });
 
       const pageInfoEl = document.getElementById('page-info');
       if (pageInfoEl) {
@@ -654,7 +705,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Trigger the red bell notification
         if (typeof window.refreshNotifications === 'function') {
-          window.refreshNotifications(); 
+          window.refreshNotifications();
         }
 
       } catch (err) {
@@ -694,4 +745,76 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     });
   }
+
+  const finalDeleteBtn = document.getElementById('btn-final-delete');
+  if (finalDeleteBtn) {
+    // Clone button to remove any old broken listeners
+    const newBtn = finalDeleteBtn.cloneNode(true);
+    finalDeleteBtn.parentNode.replaceChild(newBtn, finalDeleteBtn);
+
+    newBtn.addEventListener('click', function () {
+      console.log("Red Delete Button Clicked!"); // Check console for this!
+
+      const dateToDelete = this.getAttribute('data-target-date');
+      console.log("Target Date:", dateToDelete);
+
+      if (dateToDelete) {
+        // Call the global function
+        deleteEntry(dateToDelete);
+
+        // Close the modal
+        const modalElem = document.getElementById('modal-delete-confirm');
+        const instance = M.Modal.getInstance(modalElem);
+        if (instance) instance.close();
+      } else {
+        console.error("No date found on button!");
+      }
+    });
+  }
 });
+
+async function deleteEntry(date) {
+    console.log("Starting deletion for:", date); 
+
+    try {
+        const safeDate = encodeURIComponent(date);
+        const url = `/api/sleep-entries/${safeDate}`; 
+        const payload = { entryDate: date };
+
+        console.log("Sending DELETE to URL:", url);
+
+        const res = await fetch(url, { 
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload) 
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            // Show message for 5 seconds
+            M.toast({ 
+                html: 'Sleep entry deleted successfully', 
+                classes: 'green', 
+                displayLength: 5000 
+            });
+
+            // Removing the row instantly
+            const btn = document.querySelector(`.js-delete-record[data-date='${date}']`);
+            if (btn) {
+                const row = btn.closest('tr');
+                if (row) {
+                    row.style.transition = "opacity 0.5s";
+                    row.style.opacity = "0";
+                    setTimeout(() => row.remove(), 500); 
+                }
+            }            
+        } else {
+            const msg = (data.error && data.error.message) ? data.error.message : 'Failed to delete';
+            M.toast({html: msg, classes: 'red', displayLength: 5000});
+        }
+    } catch (err) {
+        console.error("Delete Error:", err);
+        M.toast({html: 'Server connection error', classes: 'red'});
+    }
+}

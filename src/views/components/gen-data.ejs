@@ -1,0 +1,52 @@
+<script>
+    document.getElementById('gen-data')?.addEventListener('click', async () => {
+        const initialDate = new Date("2026-01-01");
+
+        // Loop through 60 days worth of data
+        for (let i = 0; i < 60; i++){
+
+            const inputDate = new Date(initialDate);
+            inputDate.setDate(initialDate.getDate() + i);
+
+            const entryDate = inputDate.toISOString().split("T")[0];
+
+            const ranHours = Math.floor(Math.random() * (22 - 14 + 1)) + 14;
+            const ranMinutes = Math.floor(Math.random() * 58) + 1;
+
+            const startTime = `${entryDate}T${String(ranHours).padStart(2, "0")}:${String(ranMinutes).padStart(2, "0")}:00`;
+            const endTime = `${entryDate}T23:59:59`;
+
+            const entryData = { 
+                entryTime: entryDate, 
+                startTime, 
+                endTime, 
+                rating: Math.floor(Math.random() * 10) + 1, 
+
+            };
+            console.log(startTime);
+
+            try{
+                fetch('/api/sleep-entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(entryData),
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        } 
+
+        // Set Rnadom Goal 
+        const goal = Math.floor(Math.random() * (775 - 360 + 1)) + 360; 
+        try{
+            fetch('/api/goal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ value: goal }),
+            });
+        } catch (err){
+            console.log(err)
+        }
+
+    });
+</script>

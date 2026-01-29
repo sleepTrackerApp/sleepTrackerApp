@@ -9,22 +9,32 @@ const { createAuthMiddleware, userSyncMiddleware } = require('./helpers/auth');
 const routes = require('./routes');
 const { render404, render500 } = require('./controllers/errorControllers');
 
-
 /**
  * Application factory to create and configure the Express app
+ * @param {object} [options={}] - Configuration options for overriding app components
  * @returns {import('express').Express}
  */
-function createApp() {
+function createApp(options = {}) {
+  // Extract app components from options or use defaults
+  const {
+    // Auth middleware (Auth0 OIDC)
+    authMiddlewareOption = createAuthMiddleware(),
+    // User sync middleware
+    userSyncMiddlewareOption = userSyncMiddleware,
+    // Application routes
+    routesOption = routes,
+  } = options;
+
   const app = express();
 
   // Serve static files
   app.use(express.static(path.join(__dirname, '..', 'public')));
 
-  /* ---------------- Middleware ---------------- */
+  /* ---------------- Connect Middleware ---------------- */
 
   // Auth0 OIDC middleware & user sync
-  app.use(createAuthMiddleware());
-  app.use(userSyncMiddleware);
+  app.use(authMiddlewareOption);
+  app.use(userSyncMiddlewareOption);
 
   // Parse incoming request bodies
   app.use(express.json());
@@ -34,11 +44,11 @@ function createApp() {
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'views'));
 
-  /* ---------------- Routes ---------------- */
+  /* ---------------- Connect Routes ---------------- */
 
-  app.use('/', routes);
+  app.use('/', routesOption);
 
-  /* ---------------- Error Handling ---------------- */
+  /* ---------------- Connect Error Handling ---------------- */
 
   // 404 handler
   app.use(render404);

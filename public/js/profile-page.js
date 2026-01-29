@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+    
+    // Load all announcements for user
     let currentPage = 1;
     let totalPages = 1;
     const entriesPerPage = 10;
@@ -17,15 +18,26 @@ document.addEventListener('DOMContentLoaded', function() {
             const { messages, total } = result || {};
             totalPages = Math.ceil((total || 0) / entriesPerPage);
             const message = messages || [];
-            
+
             messageHistoryBody.innerHTML = message
-                .map(msg => `
-                    <div class="message-pill">
-                        ${msg.content.trim()}
-                    </div>
-                    `)
-                .join('<br>');
-        };
+                .map(msg => {
+                    const d = new Date(msg.updatedAt);
+                    const month = d.toLocaleString("en-US", { month: "short" });
+                    const day = d.getDate();
+                    const year = d.getFullYear();
+
+                    return `
+                        <div class="message-pill">
+                        <span class="message-date">
+                        ${month} ${day}<span class="year">${year}</span>
+                        </span>
+                        <span class="message-pill-text">${msg.content.trim()}</span>
+                        </div>
+                        `;
+                })
+                .join('');
+
+       };
 
         const pageInfoEl = document.getElementById('page-info');
         if (pageInfoEl) {
