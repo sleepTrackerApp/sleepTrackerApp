@@ -322,7 +322,7 @@ async function getSleepEntryByDate(userId, entryDate) {
  * @parm userId - ID of the user object
  */
 async function getAllSleepEntries(userId) {
-    return SleepEntry.find({ userId })
+    return SleepEntry.find({ userId }).lean();
 }
 
 /**
