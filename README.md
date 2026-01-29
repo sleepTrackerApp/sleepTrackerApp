@@ -18,6 +18,8 @@ to manage configuration across environments securely.
 - [Testing](#testing)
 - [Static Assets](#static-assets)
 - [Auth0 Integration](#auth0-integration)
+- [Contentful Integration](#contentful-integration)
+- [OpenAI Integration](#openai-integration)
 - [Environment Variables](#environment-variables)
 - [How to Run](#how-to-run)
 - [Version Control Practices](#version-control-practices)
@@ -526,6 +528,32 @@ When a user logs in for the first time:
 No email addresses, names, or other personal information are stored in the
 database.
 
+## Contentful Integration
+The application uses **Contentful** as a Headless CMS to decouple content management from core application logic.
+This allows for real-time updates to educational content, sleep insights, and assets without requiring code deployments.
+
+### Core Implementation
+- Fetches sleep-related educational content and AI analysis prompts via the Contentful Delivery API.
+- Centralises all images, logos, and media assets within the Contentful media library.
+- Uses defined Content Types to ensure structural consistency across the articles.
+
+### Configuration Requirements
+To enable Contentful integration, ensure the following keys are set in your `.env` file:
+- `CONTENTFUL_SPACE_ID=replace-with-space-id`
+- `CONTENTFUL_ACCESS_TOKEN=replace-with-access-token`
+
+## OpenAI Integration
+The application uses OpenAI's Large Language Models (LLMs) to provide users with a personalised sleep health consultant and score directly in their dashboard.
+
+### Core Implementation
+- Analyses the last 7 days of sleep logs to calculate a comprehensive "Sleep Score" out of 100 based on duration and consistency.
+- Generates three distinct output sections: Headline Insight, Data-Driven Analysis, and Actionable Recommendations.
+- To minimise API costs, the system compares logs and goals against a MongoDB cache; new generation only occurs if data has actually changed.
+
+### Configuration Requirements
+To enable OpenAI integration, ensure the following token is set in your `.env` file:
+- `OPENAI_API_KEY=replace-with-openai-api-key`
+
 # Environment Variables
 
 Create a `.env` file in the project root (or use system environment variables)
@@ -542,29 +570,33 @@ with the following keys:
 | `AUTH0_CLIENT_ID`         | `replace-with-auth0-client-id`                  | Auth0 client ID                                        |
 | `AUTH0_CLIENT_SECRET`     | `replace-with-auth0-client-secret`              | Auth0 client secret                                    |
 | `AUTH0_SECRET`            | `replace-with-auth0-session-secret`             | Auth0 session secret                                   |
-| `OPENAI_API_KEY`          | *(optional)*                                    | OpenAI API key for AI-generated sleep insights         |
-| `CONTENTFUL_SPACE_ID`     | *(optional)*                                    | Contentful space ID for insights/articles              |
-| `CONTENTFUL_ACCESS_TOKEN` | *(optional)*                                    | Contentful access token for CMS content                |
+| `OPENAI_API_KEY`          | `replace-with-openai-api-key`                   | OpenAI API key for AI-generated sleep insights         |
+| `CONTENTFUL_SPACE_ID`     | `replace-with-space-id`                         | Contentful space ID for insights/articles              |
+| `CONTENTFUL_ACCESS_TOKEN` | `replace-with-access-token`                     | Contentful access token for CMS content                |
 | `VERCEL`                  | *(optional)*                                    | Serverless environment flag (Vercel)                   |
 
 # How to Run
 
-1. Install dependencies
+1. Clone the repository
+   ```bash
+   git clone https://github.com/sleepTrackerApp/sleepTrackerApp.git
+   ```
+2. Install dependencies
    ```bash
    npm install
    ```
-2. Set up environment variables  
+3. Set up environment variables  
    Create a `.env` file in the project root based on `.env.example`
-3. Run tests (optional)
+4. Run tests (optional)
    ```bash
    npm test
    ```
-4. Start the development server
+5. Start the development server
    ```bash
    cd src
    node server.js
    ```
-5. Open the application in a browser at `http://localhost:3000`
+6. Open the application in a browser at `http://localhost:3000`
 
 # Version Control Practices
 
