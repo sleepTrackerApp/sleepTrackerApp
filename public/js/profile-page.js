@@ -155,8 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     ids: pendingDeleteData.ids, 
-                    startDate: pendingDeleteData.startDate || null, 
-                    endDate: pendingDeleteData.endDate || null 
+                    startDate: pendingDeleteData.finalStartDate || null, 
+                    endDate: pendingDeleteData.finalEndDate || null 
                 })
             });
 
