@@ -201,5 +201,52 @@
     padding: 20px 16px 20px 20px;
 }
 
+/* --- Bulk Delete Modal Styling --- */
+#modal-bulk-delete.modal {
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    max-width: 450px;
+    max-height: auto;
+    border-radius: 20px !important;
+    overflow: hidden;
+    box-shadow: 0 24px 38px 3px rgba(0,0,0,0.14), 0 9px 46px 8px rgba(0,0,0,0.12), 0 11px 15px -7px rgba(0,0,0,0.2);
+}
 
+#modal-bulk-delete .modal-content {
+    padding: 30px 24px 10px 24px;
+    text-align: center;
+}
 
+#modal-bulk-delete .modal-content h4 {
+    font-weight: 800;
+    color: #1DB0FF;
+    margin-top: 0;
+    font-size: 1.8rem;
+}
+
+#modal-bulk-delete .modal-content p {
+    font-size: 1.1rem;
+    margin-top: 30px;
+}
+
+#modal-bulk-delete .modal-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 24px 30px 24px;
+    background: transparent;
+    height: auto;
+}
+
+#modal-bulk-delete .btn, 
+#modal-bulk-delete .btn-flat {
+    border-radius: 50px;
+    padding: 0 25px;
+    font-weight: 600;
+}
+
+#modal-bulk-delete .btn-flat.modal-close {
+    border: 1px solid black;
+}

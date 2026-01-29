@@ -5,6 +5,7 @@
  */
 const { Message } = require('../models');
 const { deliver } = require('../helpers/socket');
+const messageHelper = require('../helpers/message');
 
 const DEFAULT_PAGE_SIZE = 20;
 
@@ -211,6 +212,31 @@ async function getUnreadCount(userId) {
   return Message.countDocuments({ userId, isRead: false, messageType: 'text' });
 }
 
+/**
+ * Count how many messages match the bulk delete criteria.
+ * @param {string} userId 
+ * @param {Object} criteria - { ids, startDate, endDate }
+ * @returns {Promise<number>}
+ */
+async function getBulkCount(userId, { ids, startDate, endDate }) {
+  const filter = messageHelper.buildBulkFilter(userId, ids, startDate, endDate);
+  if (!ids?.length && (!startDate || !endDate)) return 0;
+  return await Message.countDocuments(filter);
+}
+
+/**
+ * Delete messages matching the bulk delete criteria.
+ * @param {string} userId 
+ * @param {Object} criteria - { ids, startDate, endDate }
+ * @returns {Promise<number>} - Number of deleted documents
+ */
+async function deleteBulk(userId, { ids, startDate, endDate }) {
+  const filter = messageHelper.buildBulkFilter(userId, ids, startDate, endDate);
+  if (!ids?.length && (!startDate || !endDate)) return 0;
+  const result = await Message.deleteMany(filter);
+  return result.deletedCount;
+}
+
 module.exports = {
   sendText,
   sendReply,
@@ -221,4 +247,6 @@ module.exports = {
   deleteMessage,
   deleteUser,
   getUnreadCount,
+  getBulkCount,
+  deleteBulk,
 };

@@ -23,6 +23,12 @@ router.post('/mark-all-read', requireAuthAPI, messageController.markAllAsRead);
 /** PATCH /api/messages/:id/read — mark as read */
 router.patch('/:id/read', requireAuthAPI, messageController.markAsRead);
 
+/** POST /api/messages/bulk-delete-count — Get count before delete */
+router.post('/bulk-delete-count', requireAuthAPI, messageController.getBulkDeleteCount);
+
+/** DELETE /api/messages/bulk-delete — delete message */
+router.delete('/bulk-delete', requireAuthAPI, messageController.bulkDeleteMessages);
+
 /** DELETE /api/messages/:id — delete message */
 router.delete('/:id', requireAuthAPI, messageController.deleteMessage);
 

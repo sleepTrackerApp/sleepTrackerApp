@@ -1,5 +1,6 @@
 const messageService = require('../services/messageService');
 const { getReply } = require('../helpers/chatBot');
+const Message = require('../models/Message');
 
 /**
  * GET /api/messages/list — paginated list of all messages (query: page, pageSize).
@@ -75,6 +76,37 @@ async function markAllAsRead(req, res) {
 }
 
 /**
+ * POST /api/messages/bulk-delete-count
+ */
+async function getBulkDeleteCount(req, res) {
+  try {
+    const userId = res.locals.userRecord._id;
+    const count = await messageService.getBulkCount(userId, req.body);
+    res.json({ success: true, count });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
+ * DELETE /api/messages/bulk-delete — delete message.
+ */
+async function bulkDeleteMessages(req, res) {
+  try {
+    const userId = res.locals.userRecord._id;
+    const deletedCount = await messageService.deleteBulk(userId, req.body);
+
+    if (deletedCount === 0 && !req.body.ids && !req.body.startDate) {
+        return res.status(400).json({ error: 'No selection provided.' });
+    }
+
+    res.json({ success: true, deletedCount });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+/**
  * DELETE /api/messages/:id — delete message.
  */
 async function deleteMessage(req, res) {
@@ -144,4 +176,6 @@ module.exports = {
   deleteMessage,
   postChatMessage,
   getUnreadCount,
+  getBulkDeleteCount,
+  bulkDeleteMessages,
 };
