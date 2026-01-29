@@ -19,7 +19,6 @@
             withBOM: false,
         });
 
-        console.log(entry);
         return parser.parse(entry);
     }
 
