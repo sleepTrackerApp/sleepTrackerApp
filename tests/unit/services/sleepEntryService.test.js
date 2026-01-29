@@ -59,8 +59,12 @@ describe('Sleep Entry Service', () => {
                 duration: 480,
             };
 
+            const mockQuery = { 
+                lean: sandbox.stub().resolves([mockEntry]) 
+            };
+
             const SleepEntryStub = {
-                find: sandbox.stub().resolves(mockEntry),
+                find: sandbox.stub().returns(mockQuery),
             };
             
             const sleepEntryService = proxyquire(
@@ -74,8 +78,9 @@ describe('Sleep Entry Service', () => {
                 mockUserId,
                 '2026-01-01'
             );
+
             expect(SleepEntryStub.find.calledOnce).to.be.true;
-            expect(result).to.deep.equal(mockEntry);
+            expect(result).to.deep.equal([mockEntry]);
         });
     });
     
