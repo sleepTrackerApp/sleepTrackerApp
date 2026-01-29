@@ -16,7 +16,7 @@
        
         const parser = new Parser({
             delimiter: ',',
-            withBOM: true,
+            withBOM: false,
         });
 
         console.log(entry);
