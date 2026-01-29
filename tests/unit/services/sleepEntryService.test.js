@@ -49,6 +49,36 @@ describe('Sleep Entry Service', () => {
     });
   });
 
+    describe('getAllSleepEntries', () => {
+        it('should get all sleep entries', async () => {
+
+            const mockEntry = {
+                _id: 'entry1',
+                userId: mockUserId,
+                entryDate: new Date('2026-01-01'),
+                duration: 480,
+            };
+
+            const SleepEntryStub = {
+                find: sandbox.stub().resolves(mockEntry),
+            };
+            
+            const sleepEntryService = proxyquire(
+                '../../../src/services/sleepEntryService',
+                {
+                    '../models': { SleepEntry: SleepEntryStub },
+                }
+            );
+
+            const result = await sleepEntryService.getAllSleepEntries(
+                mockUserId,
+                '2026-01-01'
+            );
+            expect(SleepEntryStub.find.calledOnce).to.be.true;
+            expect(result).to.deep.equal(mockEntry);
+        });
+    });
+    
   describe('getSleepEntryByDate', () => {
     it('should find sleep entry by date', async () => {
       const mockEntry = {
