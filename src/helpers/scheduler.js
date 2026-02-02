@@ -8,7 +8,103 @@ const { deliver } = require('./socket');
 
 const jobs = new Map(); // key: scheduleId -> cron task
 
+// Weekly Summary Notification Logic:
+async function getWeeklyStats(userId) {
+  try {
+    const now = new Date();
 
+    const referenceDate = new Date(now);
+    referenceDate.setDate(now.getDate() - 1); 
+
+    // 1. Calculate Start of that Week
+    const dayOfWeek = referenceDate.getDay();
+    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+    const startOfWeek = new Date(referenceDate);
+    startOfWeek.setDate(referenceDate.getDate() - diffToMonday);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    // 2. Calculate End of that Week
+    const endOfWeek = new Date(referenceDate);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    // 3. Fetch Data
+    const entries = await SleepEntry.find({
+      userId: userId,
+      date: { $gte: startOfWeek, $lte: endOfWeek }
+    });
+
+    // 4. Do the Calculation
+    const daysTracked = entries.length;
+    let totalMinutes = 0;
+    entries.forEach(entry => totalMinutes += entry.duration);
+
+    const avgHours = daysTracked > 0
+      ? (totalMinutes / daysTracked / 60).toFixed(1)
+      : 0;
+
+    return { avgHours, daysTracked };
+
+  } catch (err) {
+    console.error("Error calculating weekly stats:", err);
+    return { avgHours: 0, daysTracked: 0 };
+  }
+}
+
+async function sendWeeklySummary(userId) {
+  try {
+    const stats = await getWeeklyStats(userId);
+
+    // Only send if they used the app last week
+    if (stats.daysTracked === 0) return;
+
+    const content = `Weekly Recap: You tracked ${stats.daysTracked}/7 days last week with an average of ${stats.avgHours} hrs/night.`;
+
+    // Check for duplicate entries
+    const startOfDay = new Date(); startOfDay.setHours(0, 0, 0, 0);
+    const existing = await Message.findOne({
+      userId: userId,
+      type: 'summary',
+      createdAt: { $gte: startOfDay }
+    });
+    if (existing) return;
+
+    // Save to DB
+    const newMsg = await Message.create({
+      userId: userId,
+      content: content,
+      type: 'summary',
+      isRead: false,
+      createdAt: new Date()
+    });
+
+    // Socket Alert
+    deliver(userId, {
+      type: 'notification',
+      title: 'Weekly Summary',
+      message: content,
+      messageId: newMsg._id
+    }, 'schedule:notification');
+
+    console.log(`[Weekly Check] Summary sent to user ${userId}`);
+
+  } catch (err) {
+    console.error(`[Weekly Check] Failed for ${userId}`, err);
+  }
+}
+
+// Checks DB for data to send weekly summary at 8am on monday.
+function startWeeklySummaryCheck() {
+  cron.schedule('0 8 * * 1', async () => {
+    console.log('[Weekly Check] Generating Monday Morning reports...');
+    const users = await User.find({});
+    for (const user of users) {
+      await sendWeeklySummary(user._id);
+    }
+  });
+}
+
+// Missing Sleep Entry Notification
 // Checks if the user has already logged their entry
 async function hasLoggedSleepToday(userId) {
   try {
@@ -76,18 +172,18 @@ async function sendPersistentNotification(userId) {
 
 // Runs sleep check for the day if its not already done.
 async function runSleepCheckNow() {
-    console.log('[Global Check] Scanning all users for missing sleep logs...');
-    try {
-      const users = await User.find({});
-      for (const user of users) {
-        const hasLogged = await hasLoggedSleepToday(user._id);
-        if (!hasLogged) {
-          await sendPersistentNotification(user._id);
-        }
+  console.log('[Global Check] Scanning all users for missing sleep logs...');
+  try {
+    const users = await User.find({});
+    for (const user of users) {
+      const hasLogged = await hasLoggedSleepToday(user._id);
+      if (!hasLogged) {
+        await sendPersistentNotification(user._id);
       }
-    } catch (err) {
-      console.error('[Global Check] Error:', err);
     }
+  } catch (err) {
+    console.error('[Global Check] Error:', err);
+  }
 }
 
 // 

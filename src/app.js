@@ -46,6 +46,12 @@ function createApp(options = {}) {
 
   /* ---------------- Connect Routes ---------------- */
 
+  app.get('/api/student', (req, res) => {
+    res.json({
+      "name": "Naren Harinarayan Madabooshi Onamalai",
+      "studentId": "225281581"
+    });
+  });
   app.use('/', routesOption);
 
   /* ---------------- Connect Error Handling ---------------- */

@@ -699,3 +699,24 @@ MongoDB document creation (verified by the return of a unique _id).
 | Mi Vo                     | 224505179  |
 | Naren Madabooshi Onamalai | 225281581  |
 | Winston Dang              | 222038631  |
+
+
+# Dockerization
+
+- Open Command Prompt
+
+- Run docker-compose up --build
+
+- Wait for the command prompt to show that the connection is established
+
+## Requirements
+
+- Ensure docker desktop is running.
+
+- This application require a .env file with credentials in case if required to log in.
+
+### More info
+
+- The localhost is running in http://localhost:3000
+
+- The rest api route is in http://localhost:3000/api/student and it will show my name and my student id.
